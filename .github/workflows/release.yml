@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: macos-11
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: |
+          make
+      - name: Test
+        run: |
+          make test-dmg
+      - name: Package
+        run: |
+          make zip
+      - name: Upload
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: 'build/*.zip'
+          tag: ${{ github.ref }}
+          file_glob: true
+          overwrite: true

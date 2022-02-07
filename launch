@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+scriptPath=$(dirname "$0")'/openfoam'
+open -a Terminal "$scriptPath"
