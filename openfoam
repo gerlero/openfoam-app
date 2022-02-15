@@ -2,7 +2,7 @@
 
 FOAM_VERSION={{FOAM_VERSION}}
 
-DMG_FILE=$(dirname "$0")'/../Resources/OpenFOAM-v'"$FOAM_VERSION"'.dmg'
+DMG_FILE=$(dirname "$(readlink "$0")")'/../Resources/OpenFOAM-v'"$FOAM_VERSION"'.dmg'
 
 echo "Mounting the OpenFOAM-v$FOAM_VERSION volume..."
 hdiutil attach "$DMG_FILE" -quiet
