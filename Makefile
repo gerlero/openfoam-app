@@ -89,6 +89,7 @@ $(BUILD_DMG_FILE): $(SOURCE_TARBALL) $(DEPENDENCIES)
 		-kahip-path '$$(brew --prefix)/opt/kahip' \
 		-metis-path '$$(brew --prefix)/opt/metis' \
 		-scotch-path '$$(brew --prefix)/opt/scotch'
+	echo 'export FOAM_DYLD_LIBRARY_PATH="$$DYLD_LIBRARY_PATH"' >> $(VOLUME)/etc/bashrc
 	cd $(VOLUME) && source etc/bashrc && foamSystemCheck && ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
 	hdiutil detach $(VOLUME)
 
