@@ -117,6 +117,15 @@ test-dmg:
 		&& decomposePar \
 		&& mpirun -np 4 --oversubscribe laplacianFoam -parallel \
 		&& reconstructPar
+	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/basic/laplacianFoam/flange $(TEST_DIR)/flange2
+	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/flange2 \
+		&& foamDictionary -entry numberOfSubdomains -set 2 system/decomposeParDict \
+		&& $(SHELL) -e ./Allrun-parallel \
+		&& reconstructPar
+	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/incompressible/simpleFoam/backwardFacingStep2D $(TEST_DIR)/
+	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/backwardFacingStep2D \
+		&& $(SHELL) -e ./Allrun \
+		&& ! grep 'FOAM Warning' log.simpleFoam
 	hdiutil detach $(VOLUME)
 
 clean-build:
