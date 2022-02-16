@@ -1,3 +1,4 @@
+brew "bash"
 brew "open-mpi"
 brew "libomp"
 brew "adios2"

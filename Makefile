@@ -1,4 +1,4 @@
-SHELL = /bin/zsh
+SHELL = bash
 
 FOAM_VERSION = 2112
 
