@@ -1,4 +1,4 @@
-SHELL = /bin/zsh
+SHELL = bash
 
 FOAM_VERSION = 2112
 
@@ -89,6 +89,7 @@ $(BUILD_DMG_FILE): $(SOURCE_TARBALL) $(DEPENDENCIES)
 		-kahip-path '$$(brew --prefix)/opt/kahip' \
 		-metis-path '$$(brew --prefix)/opt/metis' \
 		-scotch-path '$$(brew --prefix)/opt/scotch'
+	echo 'export FOAM_DYLD_LIBRARY_PATH="$$DYLD_LIBRARY_PATH"' >> $(VOLUME)/etc/bashrc
 	cd $(VOLUME) && source etc/bashrc && foamSystemCheck && ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
 	hdiutil detach $(VOLUME)
 
@@ -116,6 +117,15 @@ test-dmg:
 		&& decomposePar \
 		&& mpirun -np 4 --oversubscribe laplacianFoam -parallel \
 		&& reconstructPar
+	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/basic/laplacianFoam/flange $(TEST_DIR)/flange2
+	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/flange2 \
+		&& foamDictionary -entry numberOfSubdomains -set 2 system/decomposeParDict \
+		&& $(SHELL) -e ./Allrun-parallel \
+		&& reconstructPar
+	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/incompressible/simpleFoam/backwardFacingStep2D $(TEST_DIR)/
+	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/backwardFacingStep2D \
+		&& $(SHELL) -e ./Allrun \
+		&& ! grep 'FOAM Warning' log.simpleFoam
 	hdiutil detach $(VOLUME)
 
 clean-build:
