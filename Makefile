@@ -88,7 +88,7 @@ $(BUILD_DMG_FILE): $(SOURCE_TARBALL) $(DEPENDENCIES)
 		-fftw-path '$$(brew --prefix fftw)' \
 		-kahip-path '$$(brew --prefix kahip)' \
 		-metis-path '$$(brew --prefix metis)' \
-		-scotch-path '$$(brew --prefix scotch)'
+		-scotch-path '$$(brew --prefix scotch-no-pthread)'
 	echo 'export FOAM_DYLD_LIBRARY_PATH="$$DYLD_LIBRARY_PATH"' >> $(VOLUME)/etc/bashrc
 	cd $(VOLUME) && source etc/bashrc && foamSystemCheck && ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
 	hdiutil detach $(VOLUME)
