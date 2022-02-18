@@ -79,16 +79,16 @@ $(BUILD_DMG_FILE): $(SOURCE_TARBALL) $(DEPENDENCIES)
 	cp Brewfile $(VOLUME)/
 	cp Brewfile.lock.json $(VOLUME)/
 	echo 'export WM_COMPILER=Clang' >> $(VOLUME)/etc/prefs.sh
-	echo 'export CPATH=$$(brew --prefix)/include' >> $(VOLUME)/etc/prefs.sh
-	echo 'export LIBRARY_PATH=$$(brew --prefix)/lib' >> $(VOLUME)/etc/prefs.sh
+	echo 'export CPATH=$$(brew --prefix libomp)/include' >> $(VOLUME)/etc/prefs.sh
+	echo 'export LIBRARY_PATH=$$(brew --prefix libomp)/lib' >> $(VOLUME)/etc/prefs.sh
 	cd $(VOLUME) && bin/tools/foamConfigurePaths \
-		-adios-path '$$(brew --prefix)/opt/adios2' \
-		-boost-path '$$(brew --prefix)/opt/boost' \
-		-cmake-path '$$(brew --prefix)/opt/cmake' \
-		-fftw-path '$$(brew --prefix)/opt/fftw' \
-		-kahip-path '$$(brew --prefix)/opt/kahip' \
-		-metis-path '$$(brew --prefix)/opt/metis' \
-		-scotch-path '$$(brew --prefix)/opt/scotch'
+		-adios-path '$$(brew --prefix adios2)' \
+		-boost-path '$$(brew --prefix boost)' \
+		-cmake-path '$$(brew --prefix cmake)' \
+		-fftw-path '$$(brew --prefix fftw)' \
+		-kahip-path '$$(brew --prefix kahip)' \
+		-metis-path '$$(brew --prefix metis)' \
+		-scotch-path '$$(brew --prefix scotch)'
 	echo 'export FOAM_DYLD_LIBRARY_PATH="$$DYLD_LIBRARY_PATH"' >> $(VOLUME)/etc/bashrc
 	cd $(VOLUME) && source etc/bashrc && foamSystemCheck && ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
 	hdiutil detach $(VOLUME)
