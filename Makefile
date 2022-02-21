@@ -1,6 +1,8 @@
 SHELL = bash
 
 FOAM_VERSION = 2112
+SOURCE_TARBALL_URL = https://sourceforge.net/projects/openfoam/files/v$(FOAM_VERSION)/OpenFOAM-v$(FOAM_VERSION).tgz
+SOURCE_TARBALL_SHA256 = 3e838731e79db1c288acc27aad8cc8a43d9dac1f24e5773e3b9fa91419a8c3f7
 
 TARGET = app
 
@@ -13,11 +15,8 @@ BUILD_DMG_SIZE = 5g
 DIST_NAME = openfoam$(FOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = ~/Applications/
 
-SOURCE_TARBALL = OpenFOAM-v$(FOAM_VERSION).tgz
-SOURCE_TARBALL_URL = https://sourceforge.net/projects/openfoam/files/v$(FOAM_VERSION)/OpenFOAM-v$(FOAM_VERSION).tgz
 
-
-DEPENDENCIES = Brewfile.lock.json
+SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
 BUILD_DMG_FILE = build/$(APP_NAME)-build.dmg
 FINAL_DMG_FILE = build/$(APP_NAME).dmg
 VOLUME = /Volumes/$(APP_NAME)
@@ -25,27 +24,27 @@ APP_BUNDLE = build/$(APP_NAME).app
 ZIPPED_APP_BUNDLE = build/$(DIST_NAME).zip
 INSTALLED_APP_BUNDLE = $(INSTALL_DIR)/$(APP_NAME).app
 
+
 default: $(TARGET)
-zip: $(ZIPPED_APP_BUNDLE)
 app: $(APP_BUNDLE)
 dmg: $(FINAL_DMG_FILE)
 build: $(BUILD_DMG_FILE)
 fetch-source: $(SOURCE_TARBALL)
-install-dependencies: $(DEPENDENCIES)
+install-dependencies: Brewfile.lock.json
+zip: $(ZIPPED_APP_BUNDLE)
 install: $(INSTALLED_APP_BUNDLE)
 
+
 $(ZIPPED_APP_BUNDLE): $(APP_BUNDLE)
-	cd build && zip -r ../$(ZIPPED_APP_BUNDLE) $(APP_NAME).app
+	cd $(<D) && zip -r $(CURDIR)/$(ZIPPED_APP_BUNDLE) $(<F)
 	shasum -a 256 $(ZIPPED_APP_BUNDLE)
 
 $(INSTALLED_APP_BUNDLE): $(APP_BUNDLE)
 	cp -r $(APP_BUNDLE) $(INSTALLED_APP_BUNDLE)
 
-$(APP_BUNDLE): $(FINAL_DMG_FILE)
-	mkdir $(APP_BUNDLE)
-	mkdir $(APP_BUNDLE)/Contents
-	mkdir $(APP_BUNDLE)/Contents/MacOS
-	mkdir $(APP_BUNDLE)/Contents/Resources
+$(APP_BUNDLE): $(FINAL_DMG_FILE) Info.plist launch openfoam icon.icns LICENSE
+	mkdir -p $(APP_BUNDLE)/Contents/MacOS
+	mkdir -p $(APP_BUNDLE)/Contents/Resources
 	cp Info.plist $(APP_BUNDLE)/Contents/
 	cp launch $(APP_BUNDLE)/Contents/MacOS/
 	cp openfoam $(APP_BUNDLE)/Contents/MacOS/
@@ -67,7 +66,10 @@ $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
 	hdiutil convert $(TEMP_DMG_FILE) -format $(FINAL_DMG_FORMAT) -o $(FINAL_DMG_FILE)
 	rm $(TEMP_DMG_FILE)
 
-$(BUILD_DMG_FILE): $(SOURCE_TARBALL) $(DEPENDENCIES)
+$(BUILD_DMG_FILE): $(SOURCE_TARBALL) Brewfile.lock.json icon.icns Brewfile configure.sh
+	echo "$(SOURCE_TARBALL_SHA256)  $(SOURCE_TARBALL)" | shasum -a 256 -c -
+	brew bundle check --verbose --no-upgrade
+	cat Brewfile.lock.json
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	mkdir -p build
 	hdiutil create -fs $(DMG_FILESYSTEM) -size $(BUILD_DMG_SIZE) -volname $(APP_NAME) $(BUILD_DMG_FILE)
@@ -78,55 +80,43 @@ $(BUILD_DMG_FILE): $(SOURCE_TARBALL) $(DEPENDENCIES)
 	SetFile -a C $(VOLUME)
 	cp Brewfile $(VOLUME)/
 	cp Brewfile.lock.json $(VOLUME)/
-	echo 'export WM_COMPILER=Clang' >> $(VOLUME)/etc/prefs.sh
-	echo 'export CPATH=$$(brew --prefix libomp)/include' >> $(VOLUME)/etc/prefs.sh
-	echo 'export LIBRARY_PATH=$$(brew --prefix libomp)/lib' >> $(VOLUME)/etc/prefs.sh
-	cd $(VOLUME) && bin/tools/foamConfigurePaths \
-		-adios-path '$$(brew --prefix adios2)' \
-		-boost-path '$$(brew --prefix boost)' \
-		-cmake-path '$$(brew --prefix cmake)' \
-		-fftw-path '$$(brew --prefix fftw)' \
-		-kahip-path '$$(brew --prefix kahip)' \
-		-metis-path '$$(brew --prefix metis)' \
-		-scotch-path '$$(brew --prefix scotch-no-pthread)'
-	echo 'export FOAM_DYLD_LIBRARY_PATH="$$DYLD_LIBRARY_PATH"' >> $(VOLUME)/etc/bashrc
-	cd $(VOLUME) && source etc/bashrc && foamSystemCheck && ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
+	cd $(VOLUME) \
+		&& $(SHELL) -ex $(CURDIR)/configure.sh \
+		&& source etc/bashrc \
+		&& foamSystemCheck \
+		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
 	hdiutil detach $(VOLUME)
 
 $(SOURCE_TARBALL):
 	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
 
-$(DEPENDENCIES): Brewfile
-	brew bundle
+Brewfile.lock.json: Brewfile
+	brew bundle -f
+
 
 TEST_DIR = build/test
+test: test-dmg test-shell
+
 test-dmg:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach $(FINAL_DMG_FILE)
-	source $(VOLUME)/etc/bashrc && foamInstallationTest
-	rm -rf $(TEST_DIR)/
+	rm -rf $(TEST_DIR)
 	mkdir -p $(TEST_DIR)
-	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/incompressible/simpleFoam/pitzDaily $(TEST_DIR)/
-	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/pitzDaily \
-		&& blockMesh \
-		&& simpleFoam
-	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/basic/laplacianFoam/flange $(TEST_DIR)/
-	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/flange \
-		&& cp -r 0.orig 0 \
-		&& ansysToFoam "$$FOAM_TUTORIALS"/resources/geometry/flange.ans -scale 0.001 \
-		&& decomposePar \
-		&& mpirun -np 4 --oversubscribe laplacianFoam -parallel \
-		&& reconstructPar
-	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/basic/laplacianFoam/flange $(TEST_DIR)/flange2
-	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/flange2 \
-		&& foamDictionary -entry numberOfSubdomains -set 2 system/decomposeParDict \
-		&& $(SHELL) -e ./Allrun-parallel \
-		&& reconstructPar
-	source $(VOLUME)/etc/bashrc && cp -r "$$FOAM_TUTORIALS"/incompressible/simpleFoam/backwardFacingStep2D $(TEST_DIR)/
-	source $(VOLUME)/etc/bashrc && cd $(TEST_DIR)/backwardFacingStep2D \
-		&& $(SHELL) -e ./Allrun \
-		&& ! grep 'FOAM Warning' log.simpleFoam
+	cd $(TEST_DIR) \
+		&& source $(VOLUME)/etc/bashrc \
+		&& foamInstallationTest \
+		&& $(SHELL) -ex $(CURDIR)/test.sh
 	hdiutil detach $(VOLUME)
+
+test-shell:
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	rm -rf $(TEST_DIR)
+	mkdir -p $(TEST_DIR)
+	$(APP_BUNDLE)/Contents/MacOS/openfoam -c foamInstallationTest
+	cd $(TEST_DIR) \
+		&& $(CURDIR)/$(APP_BUNDLE)/Contents/MacOS/openfoam < $(CURDIR)/test.sh
+	hdiutil detach $(VOLUME)
+
 
 clean-build:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
@@ -134,10 +124,12 @@ clean-build:
 	rm -rf $(APP_BUNDLE) $(TEST_DIR)
 	rmdir build || true
 
-clean-all: clean-build
+clean: clean-build
 	rm -f $(SOURCE_TARBALL) Brewfile.lock.json
+
 
 uninstall:
 	rm -rf $(INSTALLED_APP_BUNDLE)
 
-.PHONY: default zip app dmg build fetch-source install-dependencies install test-dmg clean-build clean-all uninstall
+
+.PHONY: default app dmg build fetch-source install-dependencies zip install test test-dmg test-shell clean-build clean uninstall
