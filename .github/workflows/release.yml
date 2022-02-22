@@ -16,7 +16,7 @@ jobs:
           make
       - name: Test
         run: |
-          make test-dmg
+          make test
       - name: Package
         run: |
           make zip
