@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/zsh -e
 
 FOAM_VERSION={{FOAM_VERSION}}
 
@@ -16,4 +16,4 @@ hdiutil attach "$DMG_FILE" -quiet
 echo "You can safely unmount the volume from the Finder after use."
 
 echo "Activating the OpenFOAM environment..."
-"/Volumes/OpenFOAM-v$FOAM_VERSION/etc/openfoam" "$@"
+exec "/Volumes/OpenFOAM-v$FOAM_VERSION/etc/openfoam" "$@"
