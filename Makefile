@@ -20,6 +20,7 @@ SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
 BUILD_DMG_FILE = build/$(APP_NAME)-build.dmg
 FINAL_DMG_FILE = build/$(APP_NAME).dmg
 VOLUME = /Volumes/$(APP_NAME)
+VOLUME_ID_FILE = $(VOLUME)/.vol_id
 APP_BUNDLE = build/$(APP_NAME).app
 ZIPPED_APP_BUNDLE = build/$(DIST_NAME).zip
 INSTALLED_APP_BUNDLE = $(INSTALL_DIR)/$(APP_NAME).app
@@ -58,6 +59,8 @@ $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	cp $(BUILD_DMG_FILE) $(TEMP_DMG_FILE)
 	hdiutil attach $(TEMP_DMG_FILE)
+	uuidgen > $(VOLUME_ID_FILE)
+	cat $(VOLUME_ID_FILE)
 	rm -rf $(VOLUME)/build
 	rm -f $(VOLUME)/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd || true
