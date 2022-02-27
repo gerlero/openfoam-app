@@ -22,6 +22,7 @@ FINAL_DMG_FILE = build/$(APP_NAME).dmg
 VOLUME = /Volumes/$(APP_NAME)
 VOLUME_ID_FILE = $(VOLUME)/.vol_id
 APP_BUNDLE = build/$(APP_NAME).app
+APP_DMG_FILE = $(APP_BUNDLE)/Contents/Resources/$(APP_NAME).dmg
 ZIPPED_APP_BUNDLE = build/$(DIST_NAME).zip
 INSTALLED_APP_BUNDLE = $(INSTALL_DIR)/$(APP_NAME).app
 
@@ -52,7 +53,12 @@ $(APP_BUNDLE): $(FINAL_DMG_FILE) Info.plist launch openfoam icon.icns LICENSE
 	sed -i '' "s/{{FOAM_VERSION}}/$(FOAM_VERSION)/g" $(APP_BUNDLE)/Contents/MacOS/openfoam
 	cp icon.icns $(APP_BUNDLE)/Contents/Resources/
 	cp LICENSE $(APP_BUNDLE)/Contents/Resources/
-	cp $(FINAL_DMG_FILE) $(APP_BUNDLE)/Contents/Resources/
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	cp $(FINAL_DMG_FILE) $(APP_DMG_FILE)
+	hdiutil attach $(APP_DMG_FILE)
+	cat $(VOLUME_ID_FILE)
+	sed -i '' "s/{{VOLUME_ID}}/$$(cat $(VOLUME_ID_FILE))/g" $(APP_BUNDLE)/Contents/MacOS/openfoam
+	hdiutil detach $(VOLUME)
 
 TEMP_DMG_FILE = build/temp.dmg
 $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
