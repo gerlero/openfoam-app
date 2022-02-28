@@ -2,6 +2,12 @@
 
 FOAM_VERSION={{FOAM_VERSION}}
 
+VOLUME_ID={{VOLUME_ID}}
+
+DMG_FILE="${0:A:h}/../Resources/OpenFOAM-v$FOAM_VERSION.dmg"
+VOLUME="/Volumes/OpenFOAM-v$FOAM_VERSION"
+VOLUME_ID_FILE="$VOLUME/.vol_id"
+
 echo "---------------------------------------------------------------------------"
 echo "             |                 °°° OpenFOAM-v$FOAM_VERSION.app °°°                  "
 echo "   ( )       |         https://github.com/gerlero/openfoam$FOAM_VERSION-app         "
@@ -10,10 +16,19 @@ echo "      ( )    | Precompiled OpenFOAM v$FOAM_VERSION for macOS              
 echo "             | Built from the OpenFOAM source code (www.openfoam.com)      "
 echo "---------------------------------------------------------------------------"
 
-echo "Mounting the OpenFOAM-v$FOAM_VERSION volume..."
-DMG_FILE="${0:A:h}/../Resources/OpenFOAM-v$FOAM_VERSION.dmg"
-hdiutil attach "$DMG_FILE" -quiet
-echo "You can safely unmount the volume from the Finder after use."
+if [ ! -d "$VOLUME" ]
+then
+    echo "Mounting the OpenFOAM-v$FOAM_VERSION volume..."
+    hdiutil attach -quiet "$DMG_FILE"
+    echo "You can safely eject the volume from the Finder after use."
+fi
+
+if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]
+then
+    echo "ERROR: Volume mounted at $VOLUME does not match this version." 1>&2
+    echo "Eject the volume and try again?" 1>&2
+    exit 1
+fi
 
 echo "Activating the OpenFOAM environment..."
-exec "/Volumes/OpenFOAM-v$FOAM_VERSION/etc/openfoam" "$@"
+exec bash "$VOLUME/etc/openfoam" "$@"
