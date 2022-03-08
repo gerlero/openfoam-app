@@ -31,3 +31,9 @@ cd backwardFacingStep2D
 $BASH -e ./Allrun
 ! grep 'FOAM Warning' log.simpleFoam
 cd ..
+
+rm -rf blob
+cp -r "$FOAM_TUTORIALS/mesh/foamyHexMesh/blob" blob
+cd blob
+$BASH -e ./Allrun
+cd ..
