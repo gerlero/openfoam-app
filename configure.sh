@@ -1,15 +1,39 @@
 #!/bin/bash -e
 
-echo 'export WM_COMPILER=Clang' >> etc/prefs.sh
-echo 'export CPATH=$(brew --prefix libomp)/include:$(brew --prefix gmp)/include:$(brew --prefix mpfr)/include' >> etc/prefs.sh
-echo 'export LIBRARY_PATH=$(brew --prefix libomp)/lib:$(brew --prefix gmp)/lib:$(brew --prefix mpfr)/lib' >> etc/prefs.sh
+SYSTEM_COMPILER="Clang"
+
+ADIOS_PATH='`brew --prefix adios2`'
+BOOST_PATH='`brew --prefix boost`'
+CGAL_PATH='`brew --prefix cgal\@4`'
+CMAKE_PATH='`brew --prefix cmake`'
+FFTW_PATH='`brew --prefix fftw`'
+KAHIP_PATH='`brew --prefix kahip`'
+METIS_PATH='`brew --prefix metis`'
+SCOTCH_PATH='`brew --prefix scotch-no-pthread`'
+
+LIBOMP_PATH='`brew --prefix libomp`'
+GMP_PATH='`brew --prefix gmp`'
+MPFR_PATH='`brew --prefix mpfr`'
+
+
 bin/tools/foamConfigurePaths \
-    -adios-path '$(brew --prefix adios2)' \
-    -boost-path '$(brew --prefix boost)' \
-    -cgal-path '$(brew --prefix cgal\@4)' \
-    -cmake-path '$(brew --prefix cmake)' \
-    -fftw-path '$(brew --prefix fftw)' \
-    -kahip-path '$(brew --prefix kahip)' \
-    -metis-path '$(brew --prefix metis)' \
-    -scotch-path '$(brew --prefix scotch-no-pthread)'
+    -system-compiler "$SYSTEM_COMPILER" \
+    -adios-path "$ADIOS_PATH"  \
+    -boost-path "$BOOST_PATH"  \
+    -cgal-path "$CGAL_PATH"  \
+    -cmake-path "$CMAKE_PATH"  \
+    -fftw-path "$FFTW_PATH"  \
+    -kahip-path "$KAHIP_PATH"  \
+    -metis-path "$METIS_PATH"  \
+    -scotch-path "$SCOTCH_PATH"
+
+CPATH="$LIBOMP_PATH/include:$GMP_PATH/include:$MPFR_PATH/include"
+LIBRARY_PATH="$LIBOMP_PATH/lib:$GMP_PATH/lib:$MPFR_PATH/lib"
+
+echo "export CPATH=\"$CPATH\"" >> etc/prefs.sh
+echo "setenv CPATH \"$CPATH\"" >> etc/prefs.csh
+echo "export LIBRARY_PATH=\"$LIBRARY_PATH\"" >> etc/prefs.sh
+echo "setenv LIBRARY_PATH \"$LIBRARY_PATH\"" >> etc/prefs.csh
+
 echo 'export FOAM_DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"' >> etc/bashrc
+echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
