@@ -44,13 +44,11 @@ $(ZIPPED_APP_BUNDLE): $(APP_BUNDLE)
 $(INSTALLED_APP_BUNDLE): $(APP_BUNDLE)
 	cp -r $(APP_BUNDLE) $(INSTALLED_APP_BUNDLE)
 
-$(APP_BUNDLE): $(FINAL_DMG_FILE) Info.plist launch openfoam icon.icns LICENSE
-	mkdir -p $(APP_BUNDLE)/Contents/MacOS
-	mkdir -p $(APP_BUNDLE)/Contents/Resources
-	cp Info.plist $(APP_BUNDLE)/Contents/
-	cp launch $(APP_BUNDLE)/Contents/MacOS/
-	cp openfoam $(APP_BUNDLE)/Contents/MacOS/
+$(APP_BUNDLE): $(FINAL_DMG_FILE) $(wildcard Contents/**/*) icon.icns LICENSE
+	mkdir -p $(APP_BUNDLE)
+	cp -r Contents $(APP_BUNDLE)/Contents
 	sed -i '' "s/{{FOAM_VERSION}}/$(FOAM_VERSION)/g" $(APP_BUNDLE)/Contents/MacOS/openfoam
+	mkdir -p $(APP_BUNDLE)/Contents/Resources
 	cp icon.icns $(APP_BUNDLE)/Contents/Resources/
 	cp LICENSE $(APP_BUNDLE)/Contents/Resources/
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
