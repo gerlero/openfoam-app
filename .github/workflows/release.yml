@@ -9,17 +9,19 @@ jobs:
   release:
     runs-on: macos-11
     steps:
+      - name: get_version
+        uses: battila7/get-version-action@v2
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
         run: |
-          make
+          make APP_VERSION=${{ steps.get_version.outputs.version-without-v }}
       - name: Test
         run: |
           make test
       - name: Package
         run: |
-          make zip
+          make zip APP_VERSION=${{ steps.get_version.outputs.version-without-v }}
       - name: Upload
         uses: svenstaro/upload-release-action@v2
         with:

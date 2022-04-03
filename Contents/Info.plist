@@ -6,5 +6,9 @@
     <string>launch</string>
     <key>CFBundleIconFile</key>
     <string>icon.icns</string>
+    <key>CFBundleVersion</key>
+    <string>{{APP_VERSION}}</string>
+    <key>CFBundleShortVersionString</key>
+    <string>{{APP_VERSION}}</string>
 </dict>
 </plist>

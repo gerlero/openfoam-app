@@ -49,6 +49,7 @@ $(APP_BUNDLE): $(FINAL_DMG_FILE) $(wildcard Contents/**/*) icon.icns LICENSE
 	mkdir -p $(APP_BUNDLE)
 	cp -r Contents $(APP_BUNDLE)/Contents
 	sed -i '' "s/{{FOAM_VERSION}}/$(FOAM_VERSION)/g" $(APP_BUNDLE)/Contents/MacOS/openfoam
+	sed -i '' "s/{{APP_VERSION}}/$(APP_VERSION)/g" $(APP_BUNDLE)/Contents/Info.plist
 	mkdir -p $(APP_BUNDLE)/Contents/Resources
 	cp icon.icns $(APP_BUNDLE)/Contents/Resources/
 	cp LICENSE $(APP_BUNDLE)/Contents/Resources/
