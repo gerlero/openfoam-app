@@ -2,7 +2,6 @@ SHELL = bash
 
 FOAM_VERSION = 2112
 SOURCE_TARBALL_URL = https://sourceforge.net/projects/openfoam/files/v$(FOAM_VERSION)/OpenFOAM-v$(FOAM_VERSION).tgz
-SOURCE_TARBALL_SHA256 = 3e838731e79db1c288acc27aad8cc8a43d9dac1f24e5773e3b9fa91419a8c3f7
 
 TARGET = app
 
@@ -77,7 +76,6 @@ $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
 	rm $(TEMP_DMG_FILE)
 
 $(BUILD_DMG_FILE): $(SOURCE_TARBALL) Brewfile.lock.json icon.icns Brewfile configure.sh
-	echo "$(SOURCE_TARBALL_SHA256)  $(SOURCE_TARBALL)" | shasum -a 256 -c -
 	rm -f $(BUILD_DMG_FILE)
 	brew bundle check --verbose --no-upgrade
 	cat Brewfile.lock.json
@@ -98,8 +96,9 @@ $(BUILD_DMG_FILE): $(SOURCE_TARBALL) Brewfile.lock.json icon.icns Brewfile confi
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
 	hdiutil detach $(VOLUME)
 
-$(SOURCE_TARBALL):
+$(SOURCE_TARBALL): sha256sums.txt
 	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
+	shasum -a 256 -c sha256sums.txt
 
 Brewfile.lock.json: Brewfile
 	brew bundle -f
