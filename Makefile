@@ -45,6 +45,7 @@ $(INSTALLED_APP_BUNDLE): $(APP_BUNDLE)
 	cp -r $(APP_BUNDLE) $(INSTALLED_APP_BUNDLE)
 
 $(APP_BUNDLE): $(FINAL_DMG_FILE) $(wildcard Contents/**/*) icon.icns LICENSE
+	rm -rf $(APP_BUNDLE)
 	mkdir -p $(APP_BUNDLE)
 	cp -r Contents $(APP_BUNDLE)/Contents
 	sed -i '' "s/{{FOAM_VERSION}}/$(FOAM_VERSION)/g" $(APP_BUNDLE)/Contents/MacOS/openfoam
@@ -60,6 +61,7 @@ $(APP_BUNDLE): $(FINAL_DMG_FILE) $(wildcard Contents/**/*) icon.icns LICENSE
 
 TEMP_DMG_FILE = build/temp.dmg
 $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
+	rm -f $(FINAL_DMG_FILE)
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	cp $(BUILD_DMG_FILE) $(TEMP_DMG_FILE)
 	hdiutil attach $(TEMP_DMG_FILE)
@@ -75,6 +77,7 @@ $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
 
 $(BUILD_DMG_FILE): $(SOURCE_TARBALL) Brewfile.lock.json icon.icns Brewfile configure.sh
 	echo "$(SOURCE_TARBALL_SHA256)  $(SOURCE_TARBALL)" | shasum -a 256 -c -
+	rm -f $(BUILD_DMG_FILE)
 	brew bundle check --verbose --no-upgrade
 	cat Brewfile.lock.json
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
