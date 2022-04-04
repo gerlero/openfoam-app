@@ -2,7 +2,6 @@ SHELL = bash
 
 FOAM_VERSION = 2112
 SOURCE_TARBALL_URL = https://sourceforge.net/projects/openfoam/files/v$(FOAM_VERSION)/OpenFOAM-v$(FOAM_VERSION).tgz
-SOURCE_TARBALL_SHA256 = 3e838731e79db1c288acc27aad8cc8a43d9dac1f24e5773e3b9fa91419a8c3f7
 
 TARGET = app
 
@@ -44,13 +43,13 @@ $(ZIPPED_APP_BUNDLE): $(APP_BUNDLE)
 $(INSTALLED_APP_BUNDLE): $(APP_BUNDLE)
 	cp -r $(APP_BUNDLE) $(INSTALLED_APP_BUNDLE)
 
-$(APP_BUNDLE): $(FINAL_DMG_FILE) Info.plist launch openfoam icon.icns LICENSE
-	mkdir -p $(APP_BUNDLE)/Contents/MacOS
-	mkdir -p $(APP_BUNDLE)/Contents/Resources
-	cp Info.plist $(APP_BUNDLE)/Contents/
-	cp launch $(APP_BUNDLE)/Contents/MacOS/
-	cp openfoam $(APP_BUNDLE)/Contents/MacOS/
+$(APP_BUNDLE): $(FINAL_DMG_FILE) $(wildcard Contents/**/*) icon.icns LICENSE
+	rm -rf $(APP_BUNDLE)
+	mkdir -p $(APP_BUNDLE)
+	cp -r Contents $(APP_BUNDLE)/Contents
 	sed -i '' "s/{{FOAM_VERSION}}/$(FOAM_VERSION)/g" $(APP_BUNDLE)/Contents/MacOS/openfoam
+	sed -i '' "s/{{APP_VERSION}}/$(APP_VERSION)/g" $(APP_BUNDLE)/Contents/Info.plist
+	mkdir -p $(APP_BUNDLE)/Contents/Resources
 	cp icon.icns $(APP_BUNDLE)/Contents/Resources/
 	cp LICENSE $(APP_BUNDLE)/Contents/Resources/
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
@@ -62,6 +61,7 @@ $(APP_BUNDLE): $(FINAL_DMG_FILE) Info.plist launch openfoam icon.icns LICENSE
 
 TEMP_DMG_FILE = build/temp.dmg
 $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
+	rm -f $(FINAL_DMG_FILE)
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	cp $(BUILD_DMG_FILE) $(TEMP_DMG_FILE)
 	hdiutil attach $(TEMP_DMG_FILE)
@@ -76,7 +76,7 @@ $(FINAL_DMG_FILE): $(BUILD_DMG_FILE)
 	rm $(TEMP_DMG_FILE)
 
 $(BUILD_DMG_FILE): $(SOURCE_TARBALL) Brewfile.lock.json icon.icns Brewfile configure.sh
-	echo "$(SOURCE_TARBALL_SHA256)  $(SOURCE_TARBALL)" | shasum -a 256 -c -
+	rm -f $(BUILD_DMG_FILE)
 	brew bundle check --verbose --no-upgrade
 	cat Brewfile.lock.json
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
@@ -96,8 +96,9 @@ $(BUILD_DMG_FILE): $(SOURCE_TARBALL) Brewfile.lock.json icon.icns Brewfile confi
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
 	hdiutil detach $(VOLUME)
 
-$(SOURCE_TARBALL):
+$(SOURCE_TARBALL): sha256sums.txt
 	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
+	shasum -a 256 -c sha256sums.txt
 
 Brewfile.lock.json: Brewfile
 	brew bundle -f
