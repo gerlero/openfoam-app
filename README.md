@@ -14,7 +14,15 @@ The preferred method of installation is to use [Homebrew](https://brew.sh). With
 brew install --no-quarantine gerlero/openfoam/openfoam2112
 ```
 
-The command will automatically pick the appropriate variant for your hardware, and will also collect all necessary dependencies. The ``--no-quarantine`` option tells macOS Gatekeeper to allow running this app despite the fact that it is not currently signed (you can also override Gatekeeper manually on the first launch via Finder right-click + Open). After the command finishes, you should see a new **OpenFOAM-v2112** app installed on your Mac. 
+The command will automatically pick the appropriate variant for your hardware, and will also collect all necessary dependencies. The ``--no-quarantine`` option tells macOS Gatekeeper to allow running this app despite the fact that it is not currently signed (you can also override Gatekeeper manually on the first launch via Finder right-click + Open). After the command finishes, you should see a new **OpenFOAM-v2112** app installed on your Mac.
+
+**📈 ParaView**: if you need ParaView for visualization, you can install it with Homebrew as well:
+
+```sh
+brew install paraview
+```
+
+It is recommended to install ParaView this way, so that it can be found by OpenFOAM's `paraFoam` command.
 
 ## 🧑‍💻 Use
 
@@ -24,13 +32,14 @@ Just launch the **OpenFOAM-v2112** app to activate an OpenFOAM session in a new 
 
 A terminal command to activate the OpenFOAM environment is also available after installing with Homebrew:
 
-```sh
+```sh<img width="682" alt="image" src="https://user-images.githubusercontent.com/15150530/162010892-554bae6e-a4f4-4a2b-af2a-e7f8bc52396d.png">
+
 openfoam2112
 ```
 
 That's it! When using OpenFOAM, an `OpenFOAM-v2112` read-only volume will be loaded and visible in the Finder. The OpenFOAM installation lives inside this virtual disk. When you're not actively using OpenFOAM, you can safely "eject" the volume from the Finder sidebar.
 
-**A note on case sensitivity:** while in many situations OpenFOAM will work okay regardless (this mostly depends on the specific field names used by the different solvers), it is recommended that users format a separate drive or partition with a case-sensitive filesystem, or create a case-sensitive disk image (both of which can be accomplished with the built-in macOS Disk Utility) to store OpenFOAM-related user files (e.g. OpenFOAM cases).
+**🔠 A note on case sensitivity:** while in many situations OpenFOAM will work okay regardless (this mostly depends on the specific field names used by the different solvers), it is recommended that users format a separate drive or partition with a case-sensitive filesystem, or create a case-sensitive disk image (both of which can be accomplished with the built-in macOS Disk Utility) to store OpenFOAM-related user files (e.g. OpenFOAM cases).
 
 ## ⚙️ How it works
 
