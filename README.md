@@ -32,8 +32,7 @@ Just launch the **OpenFOAM-v2112** app to activate an OpenFOAM session in a new 
 
 A terminal command to activate the OpenFOAM environment is also available after installing with Homebrew:
 
-```sh<img width="682" alt="image" src="https://user-images.githubusercontent.com/15150530/162010892-554bae6e-a4f4-4a2b-af2a-e7f8bc52396d.png">
-
+```sh
 openfoam2112
 ```
 
