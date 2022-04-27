@@ -5,7 +5,6 @@ SYSTEM_COMPILER="Clang"
 ADIOS_PATH='`brew --prefix adios2`'
 BOOST_PATH='`brew --prefix boost`'
 CGAL_PATH='`brew --prefix cgal\@4`'
-CMAKE_PATH='`brew --prefix cmake`'
 FFTW_PATH='`brew --prefix fftw`'
 KAHIP_PATH='`brew --prefix kahip`'
 METIS_PATH='`brew --prefix metis`'
@@ -21,7 +20,6 @@ bin/tools/foamConfigurePaths \
     -adios-path "$ADIOS_PATH"  \
     -boost-path "$BOOST_PATH"  \
     -cgal-path "$CGAL_PATH"  \
-    -cmake-path "$CMAKE_PATH"  \
     -fftw-path "$FFTW_PATH"  \
     -kahip-path "$KAHIP_PATH"  \
     -metis-path "$METIS_PATH"  \
