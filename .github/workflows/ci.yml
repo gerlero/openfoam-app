@@ -10,13 +10,53 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
         run: |
-          make
+          make zip
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dmg
+          path: |
+            build/*.dmg
+            !build/*-build.dmg
+          if-no-files-found: error
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zip
+          path: build/*.zip
+          if-no-files-found: error
+
+  test:
+    needs: build
+    strategy:
+      matrix:
+        os: [macos-10.15, macos-11, macos-12]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download DMG artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dmg
+          path: build
+      - name: Download ZIP artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: zip
+          path: build
+      - name: Unzip the app
+        run: |
+          unzip *.zip
+        working-directory: build
       - name: Test
         run: |
+          make install-dependencies
           make test
