@@ -19,39 +19,26 @@ jobs:
         uses: battila7/get-version-action@v2
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Download DMG artifact from previous run
-        id: download
-        uses: dawidd6/action-download-artifact@v2
+      - name: Cache DMG file
+        id: cache_dmg
+        uses: actions/cache@v3
         with:
-          workflow: ci.yml
-          workflow_conclusion: success
-          commit: ${{ github.sha }}
-          event: push
-          name: dmg
-          path: build
-        continue-on-error: true
-      - name: Set up for partial rebuild
-        if: steps.download.outcome == 'success'
+          path: |
+            build/*.dmg
+            !build/*-build.dmg
+          key: dmg-${{ runner.arch }}-${{ hashFiles('Brewfile', 'configure.sh', 'icon.icns', 'Makefile', 'sha256sums.txt') }}
+      - name: Reuse cached DMG
+        if: steps.cache_dmg.outputs.cache-hit == 'true'
         run: |
           make install-dependencies
           make --touch dmg
       - name: Build
         run: |
-          make zip APP_VERSION=$APP_VERSION
-        env:
-          APP_VERSION: ${{ steps.get_version.outputs.version-without-v }}
-      - name: Upload DMG artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dmg
-          path: |
-            build/*.dmg
-            !build/*-build.dmg
-          if-no-files-found: error
+          make zip APP_VERSION=${{ steps.get_version.outputs.version-without-v }}
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v3
         with:
-          name: zip
+          name: zip-${{ runner.arch }}
           path: build/*.zip
           if-no-files-found: error
 
@@ -65,19 +52,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Download DMG artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: dmg
-          path: build
       - name: Download ZIP artifact
         uses: actions/download-artifact@v3
         with:
-          name: zip
+          name: zip-${{ runner.arch }}
           path: build
-      - name: Unzip app
+      - name: Recover app and DMG file from artifact
         run: |
           unzip *.zip
+          cp *.app/Contents/Resources/*.dmg .
         working-directory: build
       - name: Test
         run: |
@@ -92,7 +75,7 @@ jobs:
       - name: Download ZIP artifact
         uses: actions/download-artifact@v3
         with:
-          name: zip
+          name: zip-${{ runner.arch }}
       - name: Upload ZIP to release
         uses: svenstaro/upload-release-action@v2
         with:
