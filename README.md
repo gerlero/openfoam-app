@@ -4,7 +4,7 @@
 
 **Native OpenFOAM v2112 as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
-[![CI](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml)
+[![CI](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam) ![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam2112-app/total)
 
 ## ⬇️ Install
 
@@ -22,7 +22,7 @@ The command will automatically pick the appropriate variant for your hardware, a
 brew install paraview
 ```
 
-It is recommended to install ParaView this way, so that it can be found by OpenFOAM's `paraFoam` command.
+You should install ParaView this way if you want to be able to launch it using OpenFOAM's `paraFoam` command.
 
 ## 🧑‍💻 Use
 
@@ -30,7 +30,7 @@ Just launch the **OpenFOAM-v2112** app to activate an OpenFOAM session in a new 
 
 <img src="screenshot.png" width="650">
 
-A terminal command to activate the OpenFOAM environment is also available after installing with Homebrew:
+A useful terminal command to activate the OpenFOAM environment is also available after installing with Homebrew:
 
 ```sh
 openfoam2112
@@ -46,13 +46,14 @@ As of OpenFOAM v2112, [it is possible to compile OpenFOAM for macOS without code
 
 ## 🔨 Build
 
-Building the **OpenFOAM-v2112** application yourself is as easy as cloning this repo and running:
+If you need to, building the **OpenFOAM-v2112** application yourself is easy as cloning this repo and running `make`:
 
 ```sh
+git clone https://github.com/gerlero/openfoam2112-app.git
 cd openfoam2112-app
 make
 ```
-[Homebrew](https://brew.sh) is required. See all available targets in the [`Makefile`](Makefile). Note that the OpenFOAM build may take a while.
+[Homebrew](https://brew.sh) is required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
 
 ## 📄 Legal notices
 
