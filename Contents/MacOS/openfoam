@@ -1,24 +1,24 @@
 #!/bin/zsh -e
 
-FOAM_VERSION={{FOAM_VERSION}}
+VOLUME_ID="{{VOLUME_ID}}"
 
-VOLUME_ID={{VOLUME_ID}}
-
-DMG_FILE="${0:A:h}/../Resources/OpenFOAM-v$FOAM_VERSION.dmg"
-VOLUME="/Volumes/OpenFOAM-v$FOAM_VERSION"
+APP_BUNDLE="${0:A:h:h:h}"
+APP_NAME="${APP_BUNDLE:t:r}"
+DMG_FILE="$APP_BUNDLE/Contents/Resources/$APP_NAME.dmg"
+VOLUME="/Volumes/$APP_NAME"
 VOLUME_ID_FILE="$VOLUME/.vol_id"
 
 echo "---------------------------------------------------------------------------"
-echo "             |                 °°° OpenFOAM-v$FOAM_VERSION.app °°°                  "
-echo "   ( )       |         https://github.com/gerlero/openfoam$FOAM_VERSION-app         "
+echo "             |                                                             "
+echo "   ( )       |                 °°° $APP_NAME.app °°°                  "
 echo "  ( )    ( ) |                                                             "
-echo "      ( )    | Precompiled OpenFOAM v$FOAM_VERSION for macOS                        "
-echo "             | Built from the OpenFOAM source code (www.openfoam.com)      "
+echo "      ( )    | Precompiled OpenFOAM for macOS                        "
+echo "             | {{APP_HOMEPAGE}}                 "
 echo "---------------------------------------------------------------------------"
 
 if [ ! -d "$VOLUME" ]
 then
-    echo "Mounting the OpenFOAM-v$FOAM_VERSION volume..."
+    echo "Mounting the $APP_NAME volume..."
     hdiutil attach -quiet "$DMG_FILE"
     echo "You can safely eject the volume from the Finder after use."
 fi
