@@ -30,8 +30,7 @@ jobs:
       - name: Reuse cached DMG
         if: steps.cache_dmg.outputs.cache-hit == 'true'
         run: |
-          make install-dependencies
-          make --touch dmg
+          touch build/*.dmg
       - name: Build
         run: |
           make zip APP_VERSION=${{ steps.get_version.outputs.version-without-v }}
@@ -57,10 +56,9 @@ jobs:
         with:
           name: zip-${{ runner.arch }}
           path: build
-      - name: Recover app and DMG file from artifact
+      - name: Unzip app
         run: |
           unzip *.zip
-          cp *.app/Contents/Resources/*.dmg .
         working-directory: build
       - name: Test
         run: |
