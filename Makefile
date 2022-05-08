@@ -151,7 +151,8 @@ clean-build:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -f build/$(APP_NAME).dmg build/$(APP_NAME)-shrunk.dmg build/$(APP_NAME)-build.dmg build/$(DIST_NAME).zip
 	rm -rf build/$(APP_NAME).app build/test/test-dmg build/test/test-shell
-	rmdir -p build
+	rmdir build/test || true
+	rmdir build || true
 
 clean: clean-build
 	rm -f $(SOURCE_TARBALL) Brewfile.lock.json
