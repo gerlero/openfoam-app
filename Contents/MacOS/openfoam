@@ -30,5 +30,8 @@ then
     exit 1
 fi
 
+# Keep the volume directory open in this process (prevents accidental ejection)
+exec {fd}<"$VOLUME"
+
 echo "Activating the OpenFOAM environment..."
 exec bash "$VOLUME/etc/openfoam" "$@"
