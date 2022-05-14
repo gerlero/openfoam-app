@@ -11,7 +11,7 @@ BUILD_DMG_SIZE = 5g
 WMAKE_NJOBS = ''
 FINAL_DMG_FORMAT = UDRO
 DIST_NAME = openfoam$(FOAM_VERSION)-app-$(shell uname -m)
-INSTALL_DIR = ~/Applications
+INSTALL_DIR = /Applications
 
 
 # Build targets
