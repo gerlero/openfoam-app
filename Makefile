@@ -77,9 +77,7 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME).dmg
 	cp build/$(APP_NAME).dmg build/$(APP_NAME).app/Contents/Resources/
 
 build/$(APP_NAME).dmg: build/$(APP_NAME)-shrunk.dmg
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -f build/$(APP_NAME).dmg
-	hdiutil convert build/$(APP_NAME)-shrunk.dmg -format $(FINAL_DMG_FORMAT) -o build/$(APP_NAME).dmg
+	hdiutil convert build/$(APP_NAME)-shrunk.dmg -format $(FINAL_DMG_FORMAT) -o build/$(APP_NAME).dmg -ov
 
 build/$(APP_NAME)-shrunk.dmg: build/$(APP_NAME)-build.dmg
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
@@ -98,9 +96,12 @@ build/$(APP_NAME)-build.dmg: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh B
 	cat Brewfile.lock.json
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	mkdir -p build
-	rm -f build/$(APP_NAME)-build.dmg
-	hdiutil create -fs $(DMG_FILESYSTEM) -size $(BUILD_DMG_SIZE) -volname $(APP_NAME) build/$(APP_NAME)-build.dmg
-	hdiutil attach build/$(APP_NAME)-build.dmg
+	hdiutil create \
+		-fs $(DMG_FILESYSTEM) \
+		-size $(BUILD_DMG_SIZE) \
+	    -volname $(APP_NAME) \
+		build/$(APP_NAME)-build.dmg \
+		-ov -attach
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
 	cp icon.icns $(VOLUME)/.VolumeIcon.icns
 	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
