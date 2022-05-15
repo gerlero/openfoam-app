@@ -21,19 +21,19 @@ rm -rf flange2
 cp -r "$FOAM_TUTORIALS/basic/laplacianFoam/flange" flange2
 cd flange2
 foamDictionary -entry numberOfSubdomains -set 2 system/decomposeParDict
-$BASH -e ./Allrun-parallel
+./Allrun-parallel
 reconstructPar
 cd ..
 
 rm -rf backwardFacingStep2D
 cp -r "$FOAM_TUTORIALS/incompressible/simpleFoam/backwardFacingStep2D" backwardFacingStep2D
 cd backwardFacingStep2D
-$BASH -e ./Allrun
+./Allrun
 ! grep 'FOAM Warning' log.simpleFoam
 cd ..
 
 rm -rf blob
 cp -r "$FOAM_TUTORIALS/mesh/foamyHexMesh/blob" blob
 cd blob
-$BASH -e ./Allrun
+./Allrun
 cd ..

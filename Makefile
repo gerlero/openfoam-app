@@ -134,28 +134,50 @@ Brewfile.lock.json: Brewfile
 
 
 # Non-build targets and rules
-test: test-dmg test-shell
+test: test-openfoam test-bash test-zsh
+
+test-openfoam:
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	rm -rf build/test/test-openfoam
+	mkdir -p build/test/test-openfoam
+	build/$(APP_NAME).app/Contents/MacOS/openfoam -c foamInstallationTest
+	cd build/test/test-openfoam \
+		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/MacOS/openfoam" < "$(CURDIR)/test.sh"
+	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
+
+test-bash:
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	rm -rf build/test/test-bash
+	mkdir -p build/test/test-bash
+	bash -c \
+		set -ex; \
+		source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
+		foamInstallationTest; \
+		cd build/test/test-bash; \
+		source "$(CURDIR)/test.sh"
+	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
+
+test-zsh:
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	rm -rf build/test/test-zsh
+	mkdir -p build/test/test-zsh
+	zsh -c \
+		set -ex; \
+		source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
+		foamInstallationTest; \
+		cd build/test/test-zsh; \
+		source "$(CURDIR)/test.sh"
+	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
 
 test-dmg:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
-	 || hdiutil attach build/$(APP_NAME).dmg \
-	 || hdiutil attach build/$(APP_NAME)-build.dmg 
+	hdiutil attach build/$(APP_NAME).dmg
 	rm -rf build/test/test-dmg
 	mkdir -p build/test/test-dmg
 	cd build/test/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
 		&& $(SHELL) -ex "$(CURDIR)/test.sh"
-	hdiutil detach $(VOLUME)
-
-test-shell:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -rf build/test/test-shell
-	mkdir -p build/test/test-shell
-	build/$(APP_NAME).app/Contents/MacOS/openfoam -c foamInstallationTest
-	cd build/test/test-shell \
-		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/MacOS/openfoam" < "$(CURDIR)/test.sh"
 	hdiutil detach $(VOLUME)
 
 clean-build:
@@ -173,7 +195,7 @@ uninstall:
 
 
 # Set special targets
-.PHONY: app dmg build fetch-source install-dependencies zip install test test-dmg test-shell clean-build clean uninstall
+.PHONY: app dmg build fetch-source install-dependencies zip install test test-openfoam test-bash test-zsh test-dmg clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.dmg
 .INTERMEDIATE: build/$(APP_NAME)-shrunk.dmg
 .SECONDARY: $(SOURCE_TARBALL) Brewfile.lock.json build/$(APP_NAME)-build.dmg build/$(APP_NAME).dmg
