@@ -1,12 +1,7 @@
 #!/bin/zsh -e
 
-VOLUME_ID="{{VOLUME_ID}}"
-
 APP_BUNDLE="${0:A:h:h:h}"
 APP_NAME="${APP_BUNDLE:t:r}"
-DMG_FILE="$APP_BUNDLE/Contents/Resources/$APP_NAME.dmg"
-VOLUME="/Volumes/$APP_NAME"
-VOLUME_ID_FILE="$VOLUME/.vol_id"
 
 echo "---------------------------------------------------------------------------"
 echo "             |                                                             "
@@ -16,19 +11,9 @@ echo "      ( )    | Precompiled OpenFOAM for macOS                        "
 echo "             | {{APP_HOMEPAGE}}                 "
 echo "---------------------------------------------------------------------------"
 
-if [ ! -d "$VOLUME" ]
-then
-    echo "Mounting the $APP_NAME volume..."
-    hdiutil attach -quiet "$DMG_FILE"
-    echo "You can safely eject the volume from the Finder after use."
-fi
+"$APP_BUNDLE/Contents/MacOS/volume" mount
 
-if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]
-then
-    echo "ERROR: Volume mounted at $VOLUME does not match this version." 1>&2
-    echo "Eject the volume and try again?" 1>&2
-    exit 1
-fi
+VOLUME=$("$APP_BUNDLE/Contents/MacOS/volume" -show-prefix)
 
 # Keep the volume directory open in this process (prevents accidental ejection)
 exec {fd}<"$VOLUME"

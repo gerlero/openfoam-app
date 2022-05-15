@@ -28,12 +28,14 @@ install: $(INSTALL_DIR)/$(APP_NAME).app
 VOLUME = /Volumes/$(APP_NAME)
 VOLUME_ID_FILE = $(VOLUME)/.vol_id
 
-APP_CONTENTS = build/$(APP_NAME).app/Contents/Info.plist \
-	           build/$(APP_NAME).app/Contents/MacOS/launch \
-	           build/$(APP_NAME).app/Contents/MacOS/openfoam \
-	           build/$(APP_NAME).app/Contents/Resources/LICENSE \
-	           build/$(APP_NAME).app/Contents/Resources/icon.icns \
-	           build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+APP_CONTENTS = \
+	build/$(APP_NAME).app/Contents/Info.plist \
+	build/$(APP_NAME).app/Contents/MacOS/openfoam \
+	build/$(APP_NAME).app/Contents/MacOS/volume \
+	build/$(APP_NAME).app/Contents/MacOS/launch \
+	build/$(APP_NAME).app/Contents/Resources/LICENSE \
+	build/$(APP_NAME).app/Contents/Resources/icon.icns \
+	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 
 
 $(INSTALL_DIR)/$(APP_NAME).app: build/$(APP_NAME).app
@@ -50,14 +52,17 @@ build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAM
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
 	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
 
-build/$(APP_NAME).app/Contents/MacOS/openfoam: build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg Contents/MacOS/openfoam
+build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam | build/$(APP_NAME).app/Contents/MacOS/volume
 	mkdir -p build/$(APP_NAME).app/Contents/MacOS/
 	cp Contents/MacOS/openfoam build/$(APP_NAME).app/Contents/MacOS/
 	sed -i '' "s|{{APP_HOMEPAGE}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/MacOS/openfoam
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+
+build/$(APP_NAME).app/Contents/MacOS/volume: build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg Contents/MacOS/volume
+	mkdir -p build/$(APP_NAME).app/Contents/MacOS/
+	cp Contents/MacOS/volume build/$(APP_NAME).app/Contents/MacOS/
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	cat $(VOLUME_ID_FILE)
-	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/MacOS/openfoam
+	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/MacOS/volume
 	hdiutil detach $(VOLUME)
 
 build/$(APP_NAME).app/Contents/MacOS/launch: Contents/MacOS/launch | build/$(APP_NAME).app/Contents/MacOS/openfoam

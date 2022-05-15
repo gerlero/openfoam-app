@@ -1,0 +1,134 @@
+#!/bin/zsh -e
+
+VOLUME_ID="{{VOLUME_ID}}"
+
+APP_BUNDLE="${0:A:h:h:h}"
+APP_NAME="${APP_BUNDLE:t:r}"
+DMG_FILE="$APP_BUNDLE/Contents/Resources/$APP_NAME.dmg"
+VOLUME="/Volumes/$APP_NAME"
+VOLUME_ID_FILE="$VOLUME/.vol_id"
+
+printHelp() {
+    cat<<HELP_USAGE
+
+Usage: ${0##*/} [OPTION] <command>
+
+commands:
+  mount             Mount the $APP_NAME volume. Does nothing if the volume is
+                    already mounted
+  eject             Eject the $APP_NAME volume
+
+options:
+  -quiet            Do not print status messages to stdout
+  -force            Eject or replace the mounted volume even if it is in use
+                    and/or it does not belong to this app
+  -show-prefix      Print the volume mount point and exit
+  -help             Print this message and exit
+
+Manage the $APP_NAME mountable volume (virtual disk) that contains the OpenFOAM
+installation
+
+HELP_USAGE
+}
+
+QUIET=false
+FORCE=false
+
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+        -quiet)
+            QUIET=true
+            shift
+            ;;
+        -force)
+            FORCE=true
+            shift
+            ;;
+        -show-prefix)
+            echo "$VOLUME"
+            exit 0
+            ;;
+        -h | -help)
+            printHelp
+            exit 0
+            ;;
+        -*)
+            echo "Invalid option '$1'" 2>&1
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [ "$#" -ne 1 ]
+then
+    echo "A command is required" 2>&1
+    exit 1
+fi
+
+case "$1" in
+    mount)
+        if [ -d "$VOLUME" ]; then
+            if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]; then
+                if $FORCE; then
+                    $QUIET || echo "Ejecting different volume already mounted at $VOLUME..."
+                    if ! hdiutil detach -quiet "$VOLUME" -force; then
+                        echo "ERROR: Failed to force eject a different volume at $VOLUME" 1>&2
+                        exit 1
+                    fi
+                else
+                    echo "ERROR: A different volume is already mounted at $VOLUME" 1>&2
+                    echo "Eject the volume and try again?" 1>&2
+                    exit 1
+                fi
+            fi
+            $QUIET || echo "The $APP_NAME volume is already mounted."
+        else
+            $QUIET || echo "Mounting the $APP_NAME volume..."
+            if ! hdiutil attach -quiet "$DMG_FILE"; then
+                echo "ERROR: Failed to mount the $APP_NAME volume" 1>&2
+                exit 1
+            fi
+            if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]; then
+                echo "ERROR: A different volume is mounted at $VOLUME" 1>&2
+                echo "Eject the volume and try again?" 1>&2
+                exit 1
+            fi
+        fi
+        $QUIET || echo "You can safely eject the volume from the Finder after use."
+        exit 0
+        ;;
+    eject)
+        if [ ! -d "$VOLUME" ]; then
+            $QUIET || echo "The $APP_NAME volume is not mounted."
+            exit 0
+        fi
+        if $FORCE; then
+            $QUIET || echo "Ejecting the volume at $VOLUME..."
+            if ! hdiutil detach -quiet "$VOLUME" -force; then
+                echo "ERROR: Failed to force eject the volume at $VOLUME" 1>&2
+                exit 1
+            fi
+        else
+            if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]; then
+                $QUIET || echo "A different volume is mounted at $VOLUME (use -force to eject it anyway)."
+                exit 0
+            fi
+            $QUIET || echo "Ejecting the $APP_NAME volume..."
+            if ! hdiutil detach -quiet "$VOLUME"; then
+                echo "ERROR: Failed to eject the $APP_NAME volume" 1>&2
+                echo "The volume is probably in use (use -force to override)" 1>&2
+                exit 1
+            fi
+        fi
+        $QUIET || echo "Done."
+        exit 0
+        ;;
+    *)
+        "Invalid command '$1'"  2>&1
+        exit 1
+        ;;
+esac
