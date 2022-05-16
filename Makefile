@@ -86,20 +86,18 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME).dmg
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp build/$(APP_NAME).dmg build/$(APP_NAME).app/Contents/Resources/
 
-build/$(APP_NAME).dmg: build/$(APP_NAME)-shrunk.dmg
-	hdiutil convert build/$(APP_NAME)-shrunk.dmg -format $(FINAL_DMG_FORMAT) -o build/$(APP_NAME).dmg -ov
-
-build/$(APP_NAME)-shrunk.dmg: build/$(APP_NAME)-build.dmg
+build/$(APP_NAME).dmg: build/$(APP_NAME)-build.dmg
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	cp build/$(APP_NAME)-build.dmg build/$(APP_NAME)-shrunk.dmg
-	hdiutil attach build/$(APP_NAME)-shrunk.dmg
+	cp build/$(APP_NAME)-build.dmg build/$(APP_NAME).dmg
+	hdiutil attach build/$(APP_NAME).dmg
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
 	rm -rf $(VOLUME)/build
 	rm -f $(VOLUME)/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd || true
 	hdiutil detach $(VOLUME)
-	hdiutil resize -sectors min build/$(APP_NAME)-shrunk.dmg
+	hdiutil resize -sectors min build/$(APP_NAME).dmg
+	hdiutil convert build/$(APP_NAME).dmg -format $(FINAL_DMG_FORMAT) -o build/$(APP_NAME).dmg -ov
 
 build/$(APP_NAME)-build.dmg: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh Brewfile icon.icns
 	brew bundle check --verbose --no-upgrade
@@ -182,7 +180,7 @@ test-dmg:
 
 clean-build:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -f build/$(APP_NAME).dmg build/$(APP_NAME)-shrunk.dmg build/$(APP_NAME)-build.dmg build/$(DIST_NAME).zip
+	rm -f build/$(APP_NAME).dmg build/$(APP_NAME)-build.dmg build/$(DIST_NAME).zip
 	rm -rf build/$(APP_NAME).app build/test/test-dmg build/test/test-shell
 	rmdir build/test || true
 	rmdir build || true
@@ -197,6 +195,5 @@ uninstall:
 # Set special targets
 .PHONY: app dmg build fetch-source install-dependencies zip install test test-openfoam test-bash test-zsh test-dmg clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.dmg
-.INTERMEDIATE: build/$(APP_NAME)-shrunk.dmg
 .SECONDARY: $(SOURCE_TARBALL) Brewfile.lock.json build/$(APP_NAME)-build.dmg build/$(APP_NAME).dmg
 .DELETE_ON_ERROR:
