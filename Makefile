@@ -107,7 +107,7 @@ build/$(APP_NAME)-build.dmg: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh B
 	hdiutil create \
 		-fs $(DMG_FILESYSTEM) \
 		-size $(BUILD_DMG_SIZE) \
-	    -volname $(APP_NAME) \
+		-volname $(APP_NAME) \
 		build/$(APP_NAME)-build.dmg \
 		-ov -attach
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
