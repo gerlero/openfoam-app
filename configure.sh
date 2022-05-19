@@ -2,17 +2,17 @@
 
 SYSTEM_COMPILER="Clang"
 
-ADIOS_PATH='`brew --prefix adios2`'
-BOOST_PATH='`brew --prefix boost`'
-CGAL_PATH='`brew --prefix cgal\@4`'
-FFTW_PATH='`brew --prefix fftw`'
-KAHIP_PATH='`brew --prefix kahip`'
-METIS_PATH='`brew --prefix metis`'
-SCOTCH_PATH='`brew --prefix scotch-no-pthread`'
+ADIOS_PATH=$(brew --prefix --installed adios2)
+BOOST_PATH=$(brew --prefix --installed boost)
+CGAL_PATH=$(brew --prefix --installed cgal@4)
+FFTW_PATH=$(brew --prefix --installed fftw)
+KAHIP_PATH=$(brew --prefix --installed kahip)
+METIS_PATH=$(brew --prefix --installed metis)
+SCOTCH_PATH=$(brew --prefix --installed scotch-no-pthread)
 
-LIBOMP_PATH='`brew --prefix libomp`'
-GMP_PATH='`brew --prefix gmp`'
-MPFR_PATH='`brew --prefix mpfr`'
+LIBOMP_PATH=$(brew --prefix --installed libomp)
+GMP_PATH=$(brew --prefix --installed gmp)
+MPFR_PATH=$(brew --prefix --installed mpfr)
 
 
 bin/tools/foamConfigurePaths \
