@@ -1,16 +1,16 @@
 # Build configuration
 SHELL = bash
-FOAM_VERSION = 2112
-APP_NAME = OpenFOAM-v$(FOAM_VERSION)
-APP_HOMEPAGE = https://github.com/gerlero/openfoam$(FOAM_VERSION)-app
+OPENFOAM_VERSION = 2112
+APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
+APP_HOMEPAGE = https://github.com/gerlero/openfoam$(OPENFOAM_VERSION)-app
 APP_VERSION = ''
-SOURCE_TARBALL_URL = https://sourceforge.net/projects/openfoam/files/v$(FOAM_VERSION)/OpenFOAM-v$(FOAM_VERSION).tgz
+SOURCE_TARBALL_URL = https://sourceforge.net/projects/openfoam/files/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
 DMG_FILESYSTEM = 'Case-sensitive APFS'
 BUILD_DMG_SIZE = 5g
 WMAKE_NJOBS = ''
 FINAL_DMG_FORMAT = UDRO
-DIST_NAME = openfoam$(FOAM_VERSION)-app-$(shell uname -m)
+DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = /Applications
 
 
@@ -120,7 +120,8 @@ build/$(APP_NAME)-build.dmg: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh B
 		&& $(SHELL) -ex "$(CURDIR)/configure.sh" \
 		&& source etc/bashrc \
 		&& foamSystemCheck \
-		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k; ./Allwmake -j $(WMAKE_NJOBS) -s )
+		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
+		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	hdiutil detach $(VOLUME)
 
 $(SOURCE_TARBALL): sha256sums.txt
@@ -148,11 +149,11 @@ test-bash:
 	rm -rf build/test/test-bash
 	mkdir -p build/test/test-bash
 	bash -c \
+		'source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
 		set -ex; \
-		source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
 		foamInstallationTest; \
 		cd build/test/test-bash; \
-		source "$(CURDIR)/test.sh"
+		source "$(CURDIR)/test.sh"'
 	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
 
 test-zsh:
@@ -160,11 +161,11 @@ test-zsh:
 	rm -rf build/test/test-zsh
 	mkdir -p build/test/test-zsh
 	zsh -c \
+		'source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
 		set -ex; \
-		source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
 		foamInstallationTest; \
 		cd build/test/test-zsh; \
-		source "$(CURDIR)/test.sh"
+		source "$(CURDIR)/test.sh"'
 	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
 
 test-dmg:
@@ -181,7 +182,7 @@ test-dmg:
 clean-build:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -f build/$(APP_NAME).dmg build/$(APP_NAME)-build.dmg build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME).app build/test/test-dmg build/test/test-shell
+	rm -rf build/$(APP_NAME).app build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
 	rmdir build/test || true
 	rmdir build || true
 
