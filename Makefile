@@ -124,9 +124,10 @@ build/$(APP_NAME)-build.dmg: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh B
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	hdiutil detach $(VOLUME)
 
-$(SOURCE_TARBALL): sha256sums.txt
+$(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
+					$(warning No checksum file found for $(SOURCE_TARBALL); will skip verification))
 	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
-	shasum -a 256 -c sha256sums.txt
+	[ -z $< ] || shasum -a 256 -c $<
 
 Brewfile.lock.json: Brewfile
 	brew bundle -f
