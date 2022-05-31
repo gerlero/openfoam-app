@@ -26,7 +26,7 @@ jobs:
           path: |
             build/*.dmg
             !build/*-build.dmg
-          key: dmg-${{ runner.arch }}-${{ hashFiles('Brewfile', 'configure.sh', 'icon.icns', 'Makefile', 'sha256sums.txt') }}
+          key: dmg-${{ runner.arch }}-${{ hashFiles('Brewfile', 'configure.sh', 'icon.icns', 'Makefile', 'OpenFOAM-v2112.tgz.sha256') }}
       - name: Reuse cached DMG
         if: steps.cache_dmg.outputs.cache-hit == 'true'
         run: |

@@ -4,7 +4,7 @@ OPENFOAM_VERSION = 2112
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 APP_HOMEPAGE = https://github.com/gerlero/openfoam$(OPENFOAM_VERSION)-app
 APP_VERSION = ''
-SOURCE_TARBALL_URL = https://sourceforge.net/projects/openfoam/files/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
+SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
 DMG_FILESYSTEM = 'Case-sensitive APFS'
 BUILD_DMG_SIZE = 5g
@@ -124,9 +124,10 @@ build/$(APP_NAME)-build.dmg: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh B
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	hdiutil detach $(VOLUME)
 
-$(SOURCE_TARBALL): sha256sums.txt
+$(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
+					$(warning No checksum file found for $(SOURCE_TARBALL); will skip verification))
 	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
-	shasum -a 256 -c sha256sums.txt
+	[ -z $< ] || shasum -a 256 -c $<
 
 Brewfile.lock.json: Brewfile
 	brew bundle -f
