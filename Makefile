@@ -2,7 +2,7 @@
 SHELL = bash
 OPENFOAM_VERSION = 2112
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
-APP_HOMEPAGE = https://github.com/gerlero/openfoam$(OPENFOAM_VERSION)-app
+APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION = ''
 SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
