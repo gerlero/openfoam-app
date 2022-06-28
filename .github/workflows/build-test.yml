@@ -1,0 +1,86 @@
+name: Build and test
+
+on:
+  workflow_call:
+    inputs:
+      openfoam-version:
+        type: string
+        required: true
+      app-version:
+        type: string
+        default: ${{ github.ref_name }}
+        required: false
+      release:
+        type: boolean
+        default: false
+        required: false
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache DMG file
+        id: cache_dmg
+        uses: actions/cache@v3
+        with:
+          path: |
+            build/*.dmg
+            !build/*-build.dmg
+          key: dmg-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Brewfile', 'configure.sh', 'icon.icns', 'Makefile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version)) }}
+      - name: Reuse cached DMG
+        if: steps.cache_dmg.outputs.cache-hit == 'true'
+        run: |
+          touch build/*.dmg
+      - name: Build
+        run: |
+          make zip OPENFOAM_VERSION=${{ inputs.openfoam-version }} APP_VERSION=${{ inputs.app-version }}
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zip-${{ inputs.openfoam-version }}
+          path: build/*-app-*.zip
+          if-no-files-found: error
+
+  test:
+    needs: build
+    strategy:
+      matrix:
+        os: [macos-10.15, macos-11, macos-12]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download ZIP artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: zip-${{ inputs.openfoam-version }}
+          path: build
+      - name: Unzip app
+        run: |
+          unzip *-app-$(uname -m).zip
+        working-directory: build
+      - name: Test
+        run: |
+          make install-dependencies OPENFOAM_VERSION=${{ inputs.openfoam-version }}
+          make test OPENFOAM_VERSION=${{ inputs.openfoam-version }}
+
+  release:
+    if: inputs.release == 'true'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download ZIP artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: zip-${{ inputs.openfoam-version }}
+      - name: Upload ZIP to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: '*.zip'
+          tag: ${{ github.ref }}
+          file_glob: true
+          overwrite: false
