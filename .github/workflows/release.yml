@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version-without-v }}
+    steps:
+      - name: Get version number
+        id: get_version
+        uses: battila7/get-version-action@v2
+
+  build:
+    needs: get-version
+    uses: ./.github/workflows/ci.yml
+    with:
+      app-version: needs.get-version.outputs.version
+  
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download ZIP artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: zip
+      - name: Upload ZIP to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: '*.zip'
+          tag: ${{ github.ref }}
+          file_glob: true
+          overwrite: true

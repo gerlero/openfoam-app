@@ -4,7 +4,7 @@
 
 **Native OpenFOAM v2112 as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
-[![CI](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam) ![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam2112-app/total)
+[![CI](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam2112-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam2112-app/actions/workflows/release.yml) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam) ![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam2112-app/total)
 
 ## ⬇️ Install
 
