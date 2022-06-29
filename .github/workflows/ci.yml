@@ -7,60 +7,18 @@ on:
   pull_request:
     branches:
       - main
-  workflow_call:
-    inputs:
-      app-version:
-        type: string
-        required: true
 
 jobs:
-  build:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Cache DMG file
-        id: cache_dmg
-        uses: actions/cache@v3
-        with:
-          path: |
-            build/*.dmg
-            !build/*-build.dmg
-          key: dmg-${{ runner.arch }}-${{ hashFiles('Brewfile', 'configure.sh', 'icon.icns', 'Makefile', 'OpenFOAM-v2112.tgz.sha256') }}
-      - name: Reuse cached DMG
-        if: steps.cache_dmg.outputs.cache-hit == 'true'
-        run: |
-          touch build/*.dmg
-      - name: Build
-        run: |
-          make zip APP_VERSION=${{ inputs.app-version }}
-      - name: Upload ZIP artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: zip
-          path: build/*-app-*.zip
-          if-no-files-found: error
+  openfoam2206:
+    name: OpenFOAM-v2206.app
+    uses: ./.github/workflows/build-test.yml
+    with:
+      openfoam-version: 2206
+      release: false
 
-  test:
-    needs: build
-    strategy:
-      matrix:
-        os: [macos-10.15, macos-11, macos-12]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Download ZIP artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: zip
-          path: build
-      - name: Unzip app
-        run: |
-          unzip *-app-$(uname -m).zip
-        working-directory: build
-      - name: Test
-        run: |
-          make install-dependencies
-          make test
+  openfoam2112:
+    name: OpenFOAM-v2112.app
+    uses: ./.github/workflows/build-test.yml
+    with:
+      openfoam-version: 2112
+      release: false
