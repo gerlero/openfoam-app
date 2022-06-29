@@ -1,10 +1,10 @@
 [<img src="icon.png" width="150">](#)
 
-# OpenFOAM-v2112.app
+# OpenFOAM.app: OpenFOAM for macOS
 
 **Native OpenFOAM v2112 as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
-[![CI](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam2112-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam2112-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam2112-app/actions/workflows/release.yml) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam) ![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam2112-app/total)
+[![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam) ![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)
 
 ## ⬇️ Install
 
@@ -49,8 +49,8 @@ As of OpenFOAM v2112, [it is possible to compile OpenFOAM for macOS without code
 If you need to, building the **OpenFOAM-v2112** application yourself is easy as cloning this repo and running `make`:
 
 ```sh
-git clone https://github.com/gerlero/openfoam2112-app.git
-cd openfoam2112-app
+git clone https://github.com/gerlero/openfoam-app.git
+cd openfoam-app
 make
 ```
 [Homebrew](https://brew.sh) is required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
