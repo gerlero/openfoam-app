@@ -68,7 +68,7 @@ jobs:
           make test OPENFOAM_VERSION=${{ inputs.openfoam-version }}
 
   release:
-    if: inputs.release == 'true'
+    if: ${{ inputs.release }}
     needs: test
     runs-on: ubuntu-latest
     steps:
