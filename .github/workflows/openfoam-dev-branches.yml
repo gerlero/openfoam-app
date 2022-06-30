@@ -1,0 +1,22 @@
+name: OpenFOAM development branches
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'
+
+jobs:
+  openfoam-master-branch:
+    name: OpenFOAM master branch
+    uses: ./.github/workflows/build-test.yml
+    with:
+      openfoam-version: master
+      source-tarball-url: https://develop.openfoam.com/Development/openfoam/-/archive/master/openfoam-master.tar.gz
+      ignore-cached: true
+
+  openfoam-develop-branch:
+    name: OpenFOAM develop branch
+    uses: ./.github/workflows/build-test.yml
+    with:
+      openfoam-version: develop
+      source-tarball-url: https://develop.openfoam.com/Development/openfoam/-/archive/develop/openfoam-develop.tar.gz
+      ignore-cached: true

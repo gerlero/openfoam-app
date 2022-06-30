@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: '0 6 1 * *'
 
 jobs:
   openfoam2206:
@@ -14,11 +16,11 @@ jobs:
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2206
-      release: false
+      ignore-cached: ${{ github.event_name == 'schedule' }}
 
   openfoam2112:
     name: OpenFOAM-v2112.app
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2112
-      release: false
+      ignore-cached: ${{ github.event_name == 'schedule' }}
