@@ -7,11 +7,12 @@ on:
 
 jobs:
   get-version:
+    name: Get app version
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.get_version.outputs.version-without-v }}
+      app-version: ${{ steps.get_version.outputs.version-without-v }}
     steps:
-      - name: Get version number
+      - name: Extract version from release tag
         id: get_version
         uses: battila7/get-version-action@v2
 
@@ -21,7 +22,7 @@ jobs:
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2206
-      app-version: ${{ needs.get-version.outputs.version }}
+      app-version: ${{ needs.get-version.outputs.app-version }}
       release: true
 
   openfoam2112:
@@ -30,5 +31,5 @@ jobs:
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2112
-      app-version: ${{ needs.get-version.outputs.version }}
+      app-version: ${{ needs.get-version.outputs.app-version }}
       release: true
