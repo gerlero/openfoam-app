@@ -1,6 +1,6 @@
 # Build configuration
 SHELL = bash
-OPENFOAM_VERSION = 2112
+OPENFOAM_VERSION = 2206
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION = ''
