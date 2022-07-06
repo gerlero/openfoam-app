@@ -9,9 +9,19 @@
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2206-informational)](https://github.com/gerlero/homebrew-openfoam) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam) ![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)
 
+## ✅ Prerequisites
+
+Before installing, make sure you have the following:
+
+* A Mac with an Intel or an Apple silicon processor
+* A recent version of macOS
+    * Intel: macOS 10.15 or later (older macOS versions are untested)
+    * Apple silicon: macOS 12 (macOS 11 should also work, but is not tested)
+* The [Homebrew](https://brew.sh) package manager installed (will be used to manage OpenFOAM dependencies and to install/update the app itself)
+
 ## ⬇️ Install
 
-The preferred method of installation is to use [Homebrew](https://brew.sh). With Homebrew installed on your Mac, run any of the following commands in the Terminal:
+Run any of the following commands in a terminal, depending on which version(s) of OpenFOAM you want to install:
 
 * **OpenFOAM v2206**
 
