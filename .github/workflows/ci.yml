@@ -8,7 +8,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 6 1 * *'
+    - cron: '0 6 * * 5'
 
 jobs:
   openfoam2206:
