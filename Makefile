@@ -10,7 +10,7 @@ DMG_FILESYSTEM = 'Case-sensitive APFS'
 BUILD_DMG_SIZE = 5g
 WMAKE_NJOBS = ''
 FINAL_DMG_FORMAT = UDRO
-DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
+DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-homebrew-$(shell uname -m)
 INSTALL_DIR = /Applications
 
 
