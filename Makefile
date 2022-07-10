@@ -52,6 +52,7 @@ build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAM
 	mkdir -p build/$(APP_NAME).app/Contents
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
 	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
 
 build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam | build/$(APP_NAME).app/Contents/MacOS/volume
 	mkdir -p build/$(APP_NAME).app/Contents/MacOS/
