@@ -35,11 +35,13 @@ Run any of the following commands in a terminal, depending on which version(s) o
 
 The commands will automatically pick the appropriate variant for your hardware, and will also collect all necessary dependencies. The ``--no-quarantine`` option tells macOS Gatekeeper to allow running the apps despite the fact that they are not currently signed (you can also override Gatekeeper manually on the first launch via Finder right-click + Open). After the install command finishes, you should see a new **OpenFOAM** app installed on your Mac.
 
-**📈 ParaView**: if you need ParaView for visualization, you can install it with Homebrew as well (recommended if you want to be able to launch Paraview with OpenFOAM's `paraFoam` command):
+**👁 ParaView**: if you need [ParaView](https://www.paraview.org) for visualization, you can install it with Homebrew as well (recommended if you want to be able to launch Paraview with OpenFOAM's `paraFoam` command):
 
 ```sh
 brew install paraview
 ```
+
+**🗑 Uninstall**: to uninstall, run `brew uninstall openfoam2206` (replace the `openfoam2206` name accordingly). After that, you can run [`brew autoremove`](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
 
 ## 🧑‍💻 Usage
 
