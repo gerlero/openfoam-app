@@ -2,14 +2,14 @@
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
-| 🎉  [OpenFOAM v2206 is now available!](#%EF%B8%8F-installation) |
+| 🎉  [OpenFOAM v2206 is now available!](#%EF%B8%8F-install) |
 | ---- |
 
 **Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2206-informational)](https://github.com/gerlero/homebrew-openfoam) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam) ![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)
 
-## 📦 Requirements
+## 📦 Prerequisites
 
 * An Intel or Apple silicon Mac
 * A recent version of macOS
@@ -17,7 +17,7 @@
     * Apple silicon: macOS 12 (macOS 11 should also work, but is not tested)
 * The [Homebrew](https://brew.sh) package manager (will be used to manage OpenFOAM dependencies and to install/update the app itself)
 
-## ⬇️ Installation
+## ⬇️ Install
 
 Run any of the following commands in a terminal, depending on which version(s) of OpenFOAM you want to install:
 
@@ -43,9 +43,9 @@ brew install paraview
 
 **🗑 Uninstall**: to uninstall, run `brew uninstall openfoam2206` (replace the `openfoam2206` name accordingly). After that, you can run [`brew autoremove`](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
 
-## 🧑‍💻 Usage
+## 🧑‍💻 Use
 
-Just launch the **OpenFOAM** app to activate an OpenFOAM session in a new Terminal window.
+Just launch the **OpenFOAM** app to start an OpenFOAM session in a new Terminal window.
 
 <img src="screenshot.png" width="650">
 
