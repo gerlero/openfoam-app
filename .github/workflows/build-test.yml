@@ -71,7 +71,7 @@ jobs:
           path: build
       - name: Unzip app
         run: |
-          unzip *-app-$(uname -m).zip
+          unzip *-app-homebrew-$(uname -m).zip
         working-directory: build
       - name: Test
         run: |

@@ -10,7 +10,7 @@ DMG_FILESYSTEM = 'Case-sensitive APFS'
 BUILD_DMG_SIZE = 5g
 WMAKE_NJOBS = ''
 FINAL_DMG_FORMAT = UDRO
-DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
+DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-homebrew-$(shell uname -m)
 INSTALL_DIR = /Applications
 
 
@@ -52,6 +52,7 @@ build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAM
 	mkdir -p build/$(APP_NAME).app/Contents
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
 	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
 
 build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam | build/$(APP_NAME).app/Contents/MacOS/volume
 	mkdir -p build/$(APP_NAME).app/Contents/MacOS/
