@@ -6,10 +6,9 @@ APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION = ''
 SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
-DMG_FILESYSTEM = 'Case-sensitive APFS'
-BUILD_DMG_SIZE = 5g
+VOLUME_FILESYSTEM = 'Case-sensitive APFS'
 WMAKE_NJOBS = ''
-FINAL_DMG_FORMAT = UDRO
+DMG_FORMAT = UDRO
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-homebrew-$(shell uname -m)
 INSTALL_DIR = /Applications
 
@@ -17,7 +16,7 @@ INSTALL_DIR = /Applications
 # Build targets
 app: build/$(APP_NAME).app
 dmg: build/$(APP_NAME).dmg
-build: build/$(APP_NAME)-build.dmg
+build: build/$(APP_NAME)-build.sparsebundle
 fetch-source: $(SOURCE_TARBALL)
 install-dependencies: Brewfile.lock.json
 zip: build/$(DIST_NAME).zip
@@ -62,6 +61,7 @@ build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam | build/$
 build/$(APP_NAME).app/Contents/MacOS/volume: build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg Contents/MacOS/volume
 	mkdir -p build/$(APP_NAME).app/Contents/MacOS/
 	cp Contents/MacOS/volume build/$(APP_NAME).app/Contents/MacOS/
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	cat $(VOLUME_ID_FILE)
 	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/MacOS/volume
@@ -87,29 +87,37 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME).dmg
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp build/$(APP_NAME).dmg build/$(APP_NAME).app/Contents/Resources/
 
-build/$(APP_NAME).dmg: build/$(APP_NAME)-build.dmg
+build/$(APP_NAME).dmg: build/$(APP_NAME).sparsebundle
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	cp build/$(APP_NAME)-build.dmg build/$(APP_NAME).dmg
-	hdiutil attach build/$(APP_NAME).dmg
+	hdiutil attach build/$(APP_NAME).sparsebundle
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
 	rm -rf $(VOLUME)/build
 	rm -f $(VOLUME)/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd || true
 	hdiutil detach $(VOLUME)
-	hdiutil resize -sectors min build/$(APP_NAME).dmg
-	hdiutil convert build/$(APP_NAME).dmg -format $(FINAL_DMG_FORMAT) -o build/$(APP_NAME).dmg -ov
+	hdiutil resize \
+		-sectors min \
+		build/$(APP_NAME).sparsebundle
+	hdiutil convert \
+		build/$(APP_NAME).sparsebundle \
+		-format $(DMG_FORMAT) \
+		-o build/$(APP_NAME).dmg -ov
 
-build/$(APP_NAME)-build.dmg: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh Brewfile icon.icns
+build/$(APP_NAME).sparsebundle: build/$(APP_NAME)-build.sparsebundle
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	cp -r build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).sparsebundle
+
+build/$(APP_NAME)-build.sparsebundle: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh Brewfile icon.icns
 	brew bundle check --verbose --no-upgrade
 	cat Brewfile.lock.json
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	mkdir -p build
 	hdiutil create \
-		-fs $(DMG_FILESYSTEM) \
-		-size $(BUILD_DMG_SIZE) \
+		-size 50g \
+		-fs $(VOLUME_FILESYSTEM) \
 		-volname $(APP_NAME) \
-		build/$(APP_NAME)-build.dmg \
+		build/$(APP_NAME)-build.sparsebundle \
 		-ov -attach
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
 	cp icon.icns $(VOLUME)/.VolumeIcon.icns
@@ -183,8 +191,8 @@ test-dmg:
 
 clean-build:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -f build/$(APP_NAME).dmg build/$(APP_NAME)-build.dmg build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME).app build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
+	rm -f build/$(APP_NAME).dmg build/$(DIST_NAME).zip
+	rm -rf build/$(APP_NAME).app build/$(APP_NAME)-build.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
 	rmdir build/test || true
 	rmdir build || true
 
@@ -197,6 +205,7 @@ uninstall:
 
 # Set special targets
 .PHONY: app dmg build fetch-source install-dependencies zip install test test-openfoam test-bash test-zsh test-dmg clean-build clean uninstall
-.PRECIOUS: build/$(APP_NAME)-build.dmg
-.SECONDARY: $(SOURCE_TARBALL) Brewfile.lock.json build/$(APP_NAME)-build.dmg build/$(APP_NAME).dmg
+.PRECIOUS: build/$(APP_NAME)-build.sparsebundle
+.SECONDARY: $(SOURCE_TARBALL) Brewfile.lock.json build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).dmg
+.INTERMEDIATE: build/$(APP_NAME).sparsebundle
 .DELETE_ON_ERROR:
