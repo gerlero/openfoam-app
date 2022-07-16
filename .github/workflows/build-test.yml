@@ -14,11 +14,11 @@ on:
         type: string
         default: ''
         required: false
-      release:
+      cache:
         type: boolean
-        default: false
+        default: true
         required: false
-      ignore-cached:
+      release:
         type: boolean
         default: false
         required: false
@@ -30,16 +30,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache DMG file
-        id: cache_dmg
+        if: inputs.cache
         uses: actions/cache@v3
         with:
           path: |
             build/*.dmg
           key: dmg-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Brewfile', 'configure.sh', 'icon.icns', 'Makefile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version)) }}
-      - name: Reuse cached DMG
-        if: ${{ steps.cache_dmg.outputs.cache-hit == 'true' && !inputs.ignore-cached }}
+      - name: Reuse cached DMG if possible
         run: |
-          touch build/*.dmg
+          touch -c build/*.dmg
       - name: Build
         run: >
           make zip
