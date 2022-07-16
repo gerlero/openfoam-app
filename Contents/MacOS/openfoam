@@ -7,7 +7,7 @@ echo "--------------------------------------------------------------------------
 echo "             |                                                             "
 echo "   ( )       |                 °°° $APP_NAME.app °°°                  "
 echo "  ( )    ( ) |                                                             "
-echo "      ( )    | Precompiled OpenFOAM for macOS                        "
+echo "      ( )    | Native OpenFOAM for macOS                             "
 echo "             | {{APP_HOMEPAGE}}                 "
 echo "---------------------------------------------------------------------------"
 
