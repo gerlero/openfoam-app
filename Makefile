@@ -87,26 +87,32 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME).dmg
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp build/$(APP_NAME).dmg build/$(APP_NAME).app/Contents/Resources/
 
-build/$(APP_NAME).dmg: build/$(APP_NAME).sparsebundle
+build/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	hdiutil attach build/$(APP_NAME).sparsebundle
+	cp -r build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-temp.sparsebundle
+	hdiutil attach build/$(APP_NAME)-temp.sparsebundle
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
 	rm -rf $(VOLUME)/build
-	rm -f $(VOLUME)/.DS_Store
+	rm -f $(VOLUME)/**/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd || true
 	hdiutil detach $(VOLUME)
 	hdiutil resize \
 		-sectors min \
-		build/$(APP_NAME).sparsebundle
+		build/$(APP_NAME)-temp.sparsebundle
+	hdiutil compact build/$(APP_NAME)-temp.sparsebundle
 	hdiutil convert \
-		build/$(APP_NAME).sparsebundle \
+		build/$(APP_NAME)-temp.sparsebundle \
+		-format UDRW \
+		-o build/$(APP_NAME).dmg -ov
+	rm -rf build/$(APP_NAME)-temp.sparsebundle
+	hdiutil resize \
+		-sectors min \
+		build/$(APP_NAME).dmg
+	hdiutil convert \
+		build/$(APP_NAME).dmg \
 		-format $(DMG_FORMAT) \
 		-o build/$(APP_NAME).dmg -ov
-
-build/$(APP_NAME).sparsebundle: build/$(APP_NAME)-build.sparsebundle
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	cp -r build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).sparsebundle
 
 build/$(APP_NAME)-build.sparsebundle: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh Brewfile icon.icns
 	brew bundle check --verbose --no-upgrade
@@ -207,5 +213,4 @@ uninstall:
 .PHONY: app dmg build fetch-source install-dependencies zip install test test-openfoam test-bash test-zsh test-dmg clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.sparsebundle
 .SECONDARY: $(SOURCE_TARBALL) Brewfile.lock.json build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).dmg
-.INTERMEDIATE: build/$(APP_NAME).sparsebundle
 .DELETE_ON_ERROR:
