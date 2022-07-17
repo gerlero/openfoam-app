@@ -88,7 +88,7 @@ case "$1" in
             $QUIET || echo "The $APP_NAME volume is already mounted."
         else
             $QUIET || echo "Mounting the $APP_NAME volume..."
-            if ! hdiutil attach -quiet "$DMG_FILE"; then
+            if ! hdiutil attach -quiet -noverify "$DMG_FILE"; then
                 echo "ERROR: Failed to mount the $APP_NAME volume" 1>&2
                 exit 1
             fi

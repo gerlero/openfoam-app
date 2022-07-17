@@ -7,7 +7,7 @@
     <key>CFBundleIconFile</key>
     <string>icon.icns</string>
     <key>CFBundleVersion</key>
-    <string>{{APP_VERSION}}-homebrew-{{ARCH}}</string>
+    <string>{{APP_VERSION}}-{{DEPENDENCIES_KIND}}-{{ARCH}}</string>
     <key>CFBundleShortVersionString</key>
     <string>{{APP_VERSION}}</string>
 </dict>
