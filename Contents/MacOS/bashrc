@@ -4,7 +4,9 @@ SCRIPT_DIR="$(\cd $(dirname ${BASH_SOURCE:-${ZSH_NAME:+$0}}) && \pwd -L)"
 
 VOLUME=`"$SCRIPT_DIR/volume" -show-prefix`
 
-# Keep the volume directory open in this process (prevents accidental ejection)
-exec {fd}<"$VOLUME"
+if [ ${BASH_VERSINFO:-4} -ge 4 ]; then
+    # Keep the volume directory open in this process (prevents accidental ejection)
+    exec {fd}<"$VOLUME"
+fi
 
 . "$VOLUME/etc/bashrc"

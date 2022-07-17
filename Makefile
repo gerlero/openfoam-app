@@ -8,17 +8,17 @@ SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOA
 SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
 WMAKE_NJOBS = ''
+DEPENDENCIES_KIND = standalone
 DMG_FORMAT = UDRO
-DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-homebrew-$(shell uname -m)
+DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(DEPENDENCIES_KIND)-$(shell uname -m)
 INSTALL_DIR = /Applications
 
 
 # Build targets
 app: build/$(APP_NAME).app
-dmg: build/$(APP_NAME).dmg
 build: build/$(APP_NAME)-build.sparsebundle
+deps: build/$(APP_NAME)-deps.sparsebundle
 fetch-source: $(SOURCE_TARBALL)
-install-dependencies: Brewfile.lock.json
 zip: build/$(DIST_NAME).zip
 install: $(INSTALL_DIR)/$(APP_NAME).app
 
@@ -51,6 +51,7 @@ build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAM
 	mkdir -p build/$(APP_NAME).app/Contents
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
 	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{DEPENDENCIES_KIND}}|$(DEPENDENCIES_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
 	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
 
 build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam | build/$(APP_NAME).app/Contents/MacOS/volume
@@ -83,54 +84,48 @@ build/$(APP_NAME).app/Contents/Resources/icon.icns: icon.icns
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp icon.icns build/$(APP_NAME).app/Contents/Resources/
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME).dmg
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME).sparsebundle
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
-	cp build/$(APP_NAME).dmg build/$(APP_NAME).app/Contents/Resources/
+	hdiutil convert \
+		build/$(APP_NAME).sparsebundle \
+		-format UDRW \
+		-o build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg -ov
+	hdiutil resize \
+		-sectors min \
+		build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	hdiutil convert \
+		build/$(APP_NAME).sparsebundle \
+		-format $(DMG_FORMAT) \
+		-o build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg -ov
 
-build/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle
+build/$(APP_NAME).sparsebundle: build/$(APP_NAME)-build.sparsebundle icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	cp -r build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-temp.sparsebundle
-	hdiutil attach build/$(APP_NAME)-temp.sparsebundle
+	cp -r build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).sparsebundle
+	hdiutil attach build/$(APP_NAME).sparsebundle
+	cp icon.icns $(VOLUME)/.VolumeIcon.icns
+	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
+	SetFile -a C $(VOLUME)
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
+	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/bin/brew
+	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/Library
+	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/.git
+	[ $(DEPENDENCIES_KIND) != homebrew ] || rm -rf $(VOLUME)/usr
+	[ $(DEPENDENCIES_KIND) != homebrew ] || ln -s $(shell brew --prefix) $(VOLUME)/usr
 	rm -rf $(VOLUME)/build
 	rm -f $(VOLUME)/**/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd || true
 	hdiutil detach $(VOLUME)
 	hdiutil resize \
 		-sectors min \
-		build/$(APP_NAME)-temp.sparsebundle
-	hdiutil compact build/$(APP_NAME)-temp.sparsebundle
-	hdiutil convert \
-		build/$(APP_NAME)-temp.sparsebundle \
-		-format UDRW \
-		-o build/$(APP_NAME).dmg -ov
-	rm -rf build/$(APP_NAME)-temp.sparsebundle
-	hdiutil resize \
-		-sectors min \
-		build/$(APP_NAME).dmg
-	hdiutil convert \
-		build/$(APP_NAME).dmg \
-		-format $(DMG_FORMAT) \
-		-o build/$(APP_NAME).dmg -ov
+		build/$(APP_NAME).sparsebundle
+	hdiutil compact build/$(APP_NAME).sparsebundle
 
-build/$(APP_NAME)-build.sparsebundle: $(SOURCE_TARBALL) Brewfile.lock.json configure.sh Brewfile icon.icns
-	brew bundle check --verbose --no-upgrade
-	cat Brewfile.lock.json
+build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(SOURCE_TARBALL) configure.sh 
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	mkdir -p build
-	hdiutil create \
-		-size 50g \
-		-fs $(VOLUME_FILESYSTEM) \
-		-volname $(APP_NAME) \
-		build/$(APP_NAME)-build.sparsebundle \
-		-ov -attach
+	cp -r build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
+	hdiutil attach build/$(APP_NAME)-build.sparsebundle
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
-	cp icon.icns $(VOLUME)/.VolumeIcon.icns
-	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
-	SetFile -a C $(VOLUME)
-	cp Brewfile $(VOLUME)/
-	cp Brewfile.lock.json $(VOLUME)/
 	cd $(VOLUME) \
 		&& $(SHELL) -ex "$(CURDIR)/configure.sh" \
 		&& source etc/bashrc \
@@ -139,13 +134,26 @@ build/$(APP_NAME)-build.sparsebundle: $(SOURCE_TARBALL) Brewfile.lock.json confi
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	hdiutil detach $(VOLUME)
 
+build/$(APP_NAME)-deps.sparsebundle: Brewfile
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	mkdir -p build
+	hdiutil create \
+		-size 50g \
+		-fs $(VOLUME_FILESYSTEM) \
+		-volname $(APP_NAME) \
+		build/$(APP_NAME)-deps.sparsebundle \
+		-ov -attach
+	cp Brewfile $(VOLUME)/
+	git clone https://github.com/Homebrew/brew $(VOLUME)/usr
+	$(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --verbose
+	$(VOLUME)/usr/bin/brew autoremove
+	cat $(VOLUME)/Brewfile.lock.json
+	hdiutil detach $(VOLUME)
+
 $(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
 					$(warning No checksum file found for $(SOURCE_TARBALL); will skip verification))
 	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
 	[ -z $< ] || shasum -a 256 -c $<
-
-Brewfile.lock.json: Brewfile
-	brew bundle -f
 
 
 # Non-build targets and rules
@@ -164,7 +172,7 @@ test-bash:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -rf build/test/test-bash
 	mkdir -p build/test/test-bash
-	bash -c \
+	PATH=$(VOLUME)/usr/bin:$$PATH bash -c \
 		'source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
 		set -ex; \
 		foamInstallationTest; \
@@ -184,12 +192,12 @@ test-zsh:
 		source "$(CURDIR)/test.sh"'
 	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
 
-test-dmg:
+test-image:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	hdiutil attach build/$(APP_NAME).dmg
-	rm -rf build/test/test-dmg
-	mkdir -p build/test/test-dmg
-	cd build/test/test-dmg \
+	hdiutil attach build/$(APP_NAME).sparsebundle
+	rm -rf build/test/test-image
+	mkdir -p build/test/test-image
+	cd build/test/test-image \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
 		&& $(SHELL) -ex "$(CURDIR)/test.sh"
@@ -197,20 +205,20 @@ test-dmg:
 
 clean-build:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -f build/$(APP_NAME).dmg build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME).app build/$(APP_NAME)-build.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
+	rm -f build/$(DIST_NAME).zip
+	rm -rf build/$(APP_NAME).app build/$(APP_NAME).sparsebundle build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
 	rmdir build/test || true
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(SOURCE_TARBALL) Brewfile.lock.json
+	rm -f $(SOURCE_TARBALL)
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
 
 
 # Set special targets
-.PHONY: app dmg build fetch-source install-dependencies zip install test test-openfoam test-bash test-zsh test-dmg clean-build clean uninstall
+.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-image clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.sparsebundle
-.SECONDARY: $(SOURCE_TARBALL) Brewfile.lock.json build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).dmg
+.SECONDARY: $(SOURCE_TARBALL) build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).sparsebundle
 .DELETE_ON_ERROR:
