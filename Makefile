@@ -84,24 +84,11 @@ build/$(APP_NAME).app/Contents/Resources/icon.icns: icon.icns
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp icon.icns build/$(APP_NAME).app/Contents/Resources/
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME).sparsebundle
-	mkdir -p build/$(APP_NAME).app/Contents/Resources
-	hdiutil convert \
-		build/$(APP_NAME).sparsebundle \
-		-format UDRW \
-		-o build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg -ov
-	hdiutil resize \
-		-sectors min \
-		build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
-	hdiutil convert \
-		build/$(APP_NAME).sparsebundle \
-		-format $(DMG_FORMAT) \
-		-o build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg -ov
-
-build/$(APP_NAME).sparsebundle: build/$(APP_NAME)-build.sparsebundle icon.icns
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	cp -r build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).sparsebundle
-	hdiutil attach build/$(APP_NAME).sparsebundle
+	hdiutil attach \
+		build/$(APP_NAME)-build.sparsebundle \
+		-shadow
 	cp icon.icns $(VOLUME)/.VolumeIcon.icns
 	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
 	SetFile -a C $(VOLUME)
@@ -115,15 +102,20 @@ build/$(APP_NAME).sparsebundle: build/$(APP_NAME)-build.sparsebundle icon.icns
 	rm -rf $(VOLUME)/build
 	rm -f $(VOLUME)/**/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd || true
+	mkdir -p build/$(APP_NAME).app/Contents/Resources
+	hdiutil create \
+		-format $(DMG_FORMAT) \
+		-fs $(VOLUME_FILESYSTEM) \
+		-srcfolder $(VOLUME) \
+		-nocrossdev \
+		build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
+		-ov
 	hdiutil detach $(VOLUME)
-	hdiutil resize \
-		-sectors min \
-		build/$(APP_NAME).sparsebundle
-	hdiutil compact build/$(APP_NAME).sparsebundle
+	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
 build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(SOURCE_TARBALL) configure.sh 
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	cp -r build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
+	mv build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 	hdiutil attach build/$(APP_NAME)-build.sparsebundle
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
 	cd $(VOLUME) \
@@ -157,7 +149,7 @@ $(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
 
 
 # Non-build targets and rules
-test: test-openfoam test-bash test-zsh
+test: test-dmg test-openfoam test-bash test-zsh
 
 test-openfoam:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
@@ -192,21 +184,25 @@ test-zsh:
 		source "$(CURDIR)/test.sh"'
 	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
 
-test-image:
+test-dmg:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	hdiutil attach build/$(APP_NAME).sparsebundle
-	rm -rf build/test/test-image
-	mkdir -p build/test/test-image
-	cd build/test/test-image \
+	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	rm -rf build/test/test-dmg
+	mkdir -p build/test/test-dmg
+	cd build/test/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
 		&& $(SHELL) -ex "$(CURDIR)/test.sh"
 	hdiutil detach $(VOLUME)
 
-clean-build:
+clean-app:
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)	
+	rm -rf build/$(APP_NAME).app
+
+clean-build: clean-app
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -f build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME).app build/$(APP_NAME).sparsebundle build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
+	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
 	rmdir build/test || true
 	rmdir build || true
 
@@ -218,7 +214,7 @@ uninstall:
 
 
 # Set special targets
-.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-image clean-build clean uninstall
+.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-app clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.sparsebundle
-.SECONDARY: $(SOURCE_TARBALL) build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).sparsebundle
+.SECONDARY: $(SOURCE_TARBALL) build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 .DELETE_ON_ERROR:
