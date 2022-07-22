@@ -149,7 +149,7 @@ $(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
 
 
 # Non-build targets and rules
-test: test-openfoam test-bash test-zsh
+test: test-dmg test-openfoam test-bash test-zsh
 
 test-openfoam:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
@@ -184,12 +184,12 @@ test-zsh:
 		source "$(CURDIR)/test.sh"'
 	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
 
-test-image:
+test-dmg:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	hdiutil attach build/$(APP_NAME).sparsebundle
-	rm -rf build/test/test-image
-	mkdir -p build/test/test-image
-	cd build/test/test-image \
+	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	rm -rf build/test/test-dmg
+	mkdir -p build/test/test-dmg
+	cd build/test/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
 		&& $(SHELL) -ex "$(CURDIR)/test.sh"
@@ -198,7 +198,7 @@ test-image:
 clean-build:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -f build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME).app build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
+	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
 	rmdir build/test || true
 	rmdir build || true
 
@@ -210,7 +210,7 @@ uninstall:
 
 
 # Set special targets
-.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-image clean-build clean uninstall
+.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.sparsebundle
 .SECONDARY: $(SOURCE_TARBALL) build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 .DELETE_ON_ERROR:
