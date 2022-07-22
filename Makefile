@@ -195,7 +195,11 @@ test-dmg:
 		&& $(SHELL) -ex "$(CURDIR)/test.sh"
 	hdiutil detach $(VOLUME)
 
-clean-build:
+clean-app:
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)	
+	rm -rf build/$(APP_NAME).app
+
+clean-build: clean-app
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -f build/$(DIST_NAME).zip
 	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
@@ -210,7 +214,7 @@ uninstall:
 
 
 # Set special targets
-.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-build clean uninstall
+.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-app clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.sparsebundle
 .SECONDARY: $(SOURCE_TARBALL) build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 .DELETE_ON_ERROR:
