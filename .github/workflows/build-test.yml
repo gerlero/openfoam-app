@@ -25,7 +25,7 @@ on:
 
 jobs:
   deps:
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
 
   build:
     needs: deps
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -90,7 +90,7 @@ jobs:
       matrix:
         dependencies-kind: [standalone, homebrew]
       fail-fast: false
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -120,7 +120,7 @@ jobs:
     needs: app
     strategy:
       matrix:
-        os: [macos-10.15, macos-11, macos-12]
+        os: [macos-11, macos-12]
         dependencies-kind: [standalone, homebrew]
       fail-fast: false
     runs-on: ${{ matrix.os }}
