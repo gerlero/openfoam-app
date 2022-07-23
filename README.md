@@ -54,7 +54,7 @@ Download the latest version of the app using these links:
 | OpenFOAM v2206 | OpenFOAM v2112 |
 | -------------- | -------------- |
 | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-x86_64.zip) | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-x86_64.zip) |
-| [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/openfoam2206-app-standalone-arm64.zip) | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) |
+| [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-arm64.zip) | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) |
 
 Or choose the `standalone` release you want from the [Releases page](https://github.com/gerlero/openfoam-app/releases). Note that these standalone variants are available on an experimental basis.
 
