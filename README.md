@@ -47,24 +47,22 @@ brew install paraview
 
 **🗑 Uninstall**: to uninstall, run `brew uninstall openfoam2206` (replace the `openfoam2206` name accordingly). After that, you can run [`brew autoremove`](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
 
-### ➡️ Manual download and install (standalone version)
+### ➡️ Manual download and install (standalone variant)
 
-You can download an appropriate release file from the [Releases page](https://github.com/gerlero/openfoam-app/releases). Note that these standalone variants are available on an experimental basis.
+Download the latest version of the app using these links:
 
-Choose the right variant for your computer:
+| OpenFOAM v2206 | OpenFOAM v2112 |
+| -------------- | -------------- |
+| [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-x86_64.zip) | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-x86_64.zip) |
+| [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/openfoam2206-app-standalone-arm64.zip) | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) |
 
-* Intel-based Mac: pick a file that says `standalone-x86_64`
-* Mac with Apple silicon: pick a file that says `standalone-arm64`
-
-The number after `openfoam` in the filenames refers to the version of OpenFOAM they contain.
-
-Download the chosen release file (and extract it, if it doesn't happen automatically) to get the app. Optionally, you can move the app into your Applications folder for convenience.
+Or choose the `standalone` release you want from the [Releases page](https://github.com/gerlero/openfoam-app/releases). Note that these standalone variants are available on an experimental basis.
 
 **👁 ParaView**: download it from the [official site](https://www.paraview.org) if you need it.
 
 **🏗 Development tools**: the standalone apps do not bundle or require a compiler or any other development tools. If you attempt to do something with OpenFOAM that would require a compiler (and you do not have Xcode or the Xcode Command Line Tools already installed), you should be prompted by the system to install the necessary tools from Apple.
 
-**🗑 Uninstall**: the standalone apps are self-contained. To uninstall, just drag them into your Trash.
+**🗑 Uninstall**: the standalone apps are self-contained. To uninstall, just drag the app into your Trash.
 
 ## 🧑‍💻 Use
 
@@ -104,7 +102,7 @@ cd openfoam-app
 make
 ```
 
-See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
+The Xcode Command Line Tools are required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
 
 ## 📄 Legal notices
 
