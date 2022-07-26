@@ -1,7 +1,8 @@
 #!/bin/zsh -e
 
+APP_NAME="{{APP_NAME}}"
+
 APP_BUNDLE="${0:A:h:h:h}"
-APP_NAME="${APP_BUNDLE:t:r}"
 
 echo "---------------------------------------------------------------------------"
 echo "             |                                                             "
