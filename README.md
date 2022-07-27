@@ -10,7 +10,7 @@
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml) [![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)](https://github.com/gerlero/openfoam-app/releases)
 [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2206-informational)](https://github.com/gerlero/homebrew-openfoam) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam)
 
-## 🖥 Prerequisites
+## 🍏 Prerequisites
 
 * An Intel or Apple silicon Mac
 * A recent version of macOS
@@ -21,48 +21,44 @@
 
 Install in one of two ways:
 
-### ➡️ Install with Homebrew
+* ### ⬇️ Install with Homebrew
 
-With [Homebrew](https://brew.sh) installed on your Mac, run any of the following commands in a terminal, depending on which version(s) of OpenFOAM you want:
+   With [Homebrew](https://brew.sh) installed on your Mac, run any of the following commands in a terminal, depending on which version(s) of OpenFOAM you want:
 
-* **OpenFOAM v2206**
+   * **OpenFOAM v2206**
 
-    ```sh
-    brew install --no-quarantine gerlero/openfoam/openfoam2206
-    ```
+       ```sh
+       brew install --no-quarantine gerlero/openfoam/openfoam2206
+       ```
 
-* **OpenFOAM v2112**
+   * **OpenFOAM v2112**
 
-    ```sh
-    brew install --no-quarantine gerlero/openfoam/openfoam2112
-    ```
+       ```sh
+       brew install --no-quarantine gerlero/openfoam/openfoam2112
+       ```
 
-The commands will automatically pick the appropriate variant for your hardware, and will also collect all necessary dependencies. The ``--no-quarantine`` option tells macOS Gatekeeper to allow running the apps despite the fact that they are not currently notarized by Apple (you can also override Gatekeeper manually on the first launch—see below). After the install command finishes, you should see a new **OpenFOAM** app installed on your Mac.
+   The commands will automatically pick the appropriate variant for your hardware, and will also collect all necessary dependencies. The ``--no-quarantine`` option tells macOS Gatekeeper to allow running the apps despite the fact that they are not currently notarized by Apple (you can also override Gatekeeper manually when opening the app for the first time–[see below](#-use)). After the install command finishes, you should see a new **OpenFOAM** app installed on your Mac.
 
-**👁 ParaView**: if you need [ParaView](https://www.paraview.org) for visualization, you can install it with Homebrew as well (recommended if you want to be able to launch Paraview with OpenFOAM's `paraFoam` command):
+   **🖥 ParaView**: if you'll need [ParaView](https://www.paraview.org) for visualization, you may as well [install it with Homebrew too](https://formulae.brew.sh/cask/paraview).
 
-```sh
-brew install paraview
-```
+   **🗑 Uninstall**: to uninstall, run ```brew uninstall openfoam2206``` (replace the ``openfoam2206`` name accordingly). After that, you can run [```brew autoremove```](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
 
-**🗑 Uninstall**: to uninstall, run `brew uninstall openfoam2206` (replace the `openfoam2206` name accordingly). After that, you can run [`brew autoremove`](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
+* ### ⬇️ Manual download and install (standalone app)
 
-### ➡️ Manual download and install (standalone variant)
+   Download the latest version of the app using these links:
 
-Download the latest version of the app using these links:
+   | OpenFOAM v2206 | OpenFOAM v2112 |
+   | -------------- | -------------- |
+   | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-x86_64.zip) | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-x86_64.zip) |
+   | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-arm64.zip) | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) |
 
-| OpenFOAM v2206 | OpenFOAM v2112 |
-| -------------- | -------------- |
-| [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-x86_64.zip) | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-x86_64.zip) |
-| [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-arm64.zip) | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) |
+   Or choose the `standalone` release you want from the [Releases page](https://github.com/gerlero/openfoam-app/releases). Note that these standalone variants are available on an experimental basis.
 
-Or choose the `standalone` release you want from the [Releases page](https://github.com/gerlero/openfoam-app/releases). Note that these standalone variants are available on an experimental basis.
+   **🖥 ParaView**: if you need it, download the macOS version from the [official site](https://www.paraview.org/download/).
 
-**👁 ParaView**: download it from the [official site](https://www.paraview.org) if you need it.
+   **🏗 Development tools**: the standalone apps do not bundle or require a compiler or any other development tools. If you attempt to do something with OpenFOAM that would require a compiler (and you do not have Xcode or the Xcode Command Line Tools already installed), you should be prompted by the system to install the necessary tools from Apple.
 
-**🏗 Development tools**: the standalone apps do not bundle or require a compiler or any other development tools. If you attempt to do something with OpenFOAM that would require a compiler (and you do not have Xcode or the Xcode Command Line Tools already installed), you should be prompted by the system to install the necessary tools from Apple.
-
-**🗑 Uninstall**: the standalone apps are self-contained. To uninstall, just drag the app into your Trash.
+   **🗑 Uninstall**: the standalone apps are self-contained. To uninstall, just drag the app into your Trash.
 
 ## 🧑‍💻 Use
 
@@ -72,9 +68,9 @@ Just launch the **OpenFOAM** app to start an OpenFOAM session in a new Terminal 
 
 That's it! When using OpenFOAM, a read-only volume will be loaded and visible in the Finder. The OpenFOAM installation lives inside this virtual disk. When you're not actively using OpenFOAM, it is safe to "eject" the volume from the Finder sidebar.
 
-**🛡 Gatekeeper**: given that the app is not notarized by Apple, you may see a macOS Gatekeeper dialog that prevents you from initially launching the downloaded app. The simplest way to override this warning for this app only is to right-click on the app in a Finder window and select Open from the context menu. You only need to do this for the first launch.
+**🛡 Gatekeeper**: given that the app is not notarized by Apple, you may see a macOS Gatekeeper dialog that prevents you from opening the downloaded app. The simplest way to override this warning for this app only is to right-click on the app in a Finder window and select Open from the context menu. You only need to do this for the first launch of the app.
 
-**⌨️ From the terminal**: when installed with Homebrew, the app includes a terminal command that starts an OpenFOAM session. For example, **OpenFOAM-v2206.app** provides the command:
+**💻 From the command line**: when installed with Homebrew, the app includes a terminal command that starts an OpenFOAM session. For example, the **OpenFOAM-v2206** app provides the command:
 
 ```sh
 openfoam2206
@@ -102,7 +98,7 @@ cd openfoam-app
 make
 ```
 
-The Xcode Command Line Tools are required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
+The Xcode Command Line Tools are required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM and the necessary dependencies from source may take a while.
 
 ## 📄 Legal notices
 
