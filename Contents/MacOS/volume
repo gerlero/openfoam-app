@@ -1,9 +1,9 @@
 #!/bin/zsh -e
 
+APP_NAME="{{APP_NAME}}"
 VOLUME_ID="{{VOLUME_ID}}"
 
 APP_BUNDLE="${0:A:h:h:h}"
-APP_NAME="${APP_BUNDLE:t:r}"
 DMG_FILE="$APP_BUNDLE/Contents/Resources/$APP_NAME.dmg"
 VOLUME="/Volumes/$APP_NAME"
 VOLUME_ID_FILE="$VOLUME/.vol_id"
