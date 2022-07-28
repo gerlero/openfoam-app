@@ -2,7 +2,7 @@
 
 APP_NAME="{{APP_NAME}}"
 
-APP_BUNDLE="${0:A:h:h:h}"
+APP_BUNDLE="${0:A:h:h:h:h}"
 
 echo "---------------------------------------------------------------------------"
 echo "             |                                                             "
@@ -12,9 +12,9 @@ echo "      ( )    | Native OpenFOAM for macOS                             "
 echo "             | {{APP_HOMEPAGE}}                 "
 echo "---------------------------------------------------------------------------"
 
-"$APP_BUNDLE/Contents/MacOS/volume" mount
+"$APP_BUNDLE/Contents/Resources/volume" mount
 
-VOLUME=$("$APP_BUNDLE/Contents/MacOS/volume" -show-prefix)
+VOLUME=$("$APP_BUNDLE/Contents/Resources/volume" -show-prefix)
 
 # Keep the volume directory open in this process (prevents accidental ejection)
 exec {fd}<"$VOLUME"
