@@ -51,7 +51,7 @@ jobs:
           touch -c build/*-deps.sparsebundle
           make deps $MAKE_VARS
 
-  build:
+  apps:
     needs: deps
     runs-on: macos-11
     steps:
@@ -74,42 +74,34 @@ jobs:
           touch -c build/*-deps.sparsebundle
           touch -c build/*-build.sparsebundle
           make build $MAKE_VARS
-      - name: Upload build artifact
-        if: success() || failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-${{ inputs.openfoam-version }}-${{ runner.arch }}
-          path: build/*-build.sparsebundle
-          if-no-files-found: error
-
-  app:
-    needs: build
-    strategy:
-      matrix:
-        dependencies-kind: [standalone, homebrew]
-      fail-fast: false
-    runs-on: macos-11
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: build-${{ inputs.openfoam-version }}-${{ runner.arch }}
-          path: build
-      - name: Make zipped app
+      - name: Reuse cached build
+        if: steps.cache_build.outputs.cache-hit == 'true'
         run: |
           touch -c build/*-build.sparsebundle
-          make zip $MAKE_VARS DEPENDENCIES_KIND=${{ matrix.dependencies-kind }}
-      - name: Upload zip artifact
+      - name: Make standalone app
+        run: |
+          make zip $MAKE_VARS DEPENDENCIES_KIND=standalone
+      - name: Upload standalone app
         uses: actions/upload-artifact@v3
         with:
-          name: zip-${{ inputs.openfoam-version }}-${{ matrix.dependencies-kind }}-${{ runner.arch }}
-          path: build/*-app-*.zip
+          name: zip-${{ inputs.openfoam-version }}-standalone-${{ runner.arch }}
+          path: build/*-app-standalone-*.zip
+          if-no-files-found: error
+      - name: Clean app build
+        run: |
+          make clean-app $MAKE_VARS
+      - name: Make Homebrew-based app
+        run: |
+          make zip $MAKE_VARS DEPENDENCIES_KIND=homebrew
+      - name: Upload Homebrew-based app
+        uses: actions/upload-artifact@v3
+        with:
+          name: zip-${{ inputs.openfoam-version }}-homebrew-${{ runner.arch }}
+          path: build/*-app-homebrew-*.zip
           if-no-files-found: error
 
   test:
-    needs: app
+    needs: apps
     strategy:
       matrix:
         os: [macos-11, macos-12]
@@ -119,7 +111,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Download zip artifact
+      - name: Download app
         uses: actions/download-artifact@v3
         with:
           name: zip-${{ inputs.openfoam-version }}-${{ matrix.dependencies-kind }}-${{ runner.arch }}
