@@ -11,7 +11,7 @@ jobs:
     with:
       openfoam-version: master
       source-tarball-url: https://develop.openfoam.com/Development/openfoam/-/archive/master/openfoam-master.tar.gz
-      cache: false
+      use-cached: false
 
   openfoam-develop-branch:
     name: OpenFOAM develop branch
@@ -19,4 +19,4 @@ jobs:
     with:
       openfoam-version: develop
       source-tarball-url: https://develop.openfoam.com/Development/openfoam/-/archive/develop/openfoam-develop.tar.gz
-      cache: false
+      use-cached: false
