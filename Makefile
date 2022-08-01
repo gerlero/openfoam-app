@@ -35,7 +35,9 @@ APP_CONTENTS = \
 	build/$(APP_NAME).app/Contents/Resources/LICENSE \
 	build/$(APP_NAME).app/Contents/Resources/icon.icns \
 	build/$(APP_NAME).app/Contents/Resources/volume \
-	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
+	build/$(APP_NAME).app/Contents/MacOS/openfoam \
+	build/$(APP_NAME).app/Contents/MacOS/bashrc
 
 
 $(INSTALL_DIR)/$(APP_NAME).app: build/$(APP_NAME).app
@@ -73,6 +75,14 @@ build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build
 build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp LICENSE build/$(APP_NAME).app/Contents/Resources/
+
+build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam
+	mkdir -p build/$(APP_NAME).app/Contents/MacOS
+	cp -R Contents/MacOS/openfoam build/$(APP_NAME).app/Contents/MacOS/
+
+build/$(APP_NAME).app/Contents/MacOS/bashrc: Contents/MacOS/bashrc
+	mkdir -p build/$(APP_NAME).app/Contents/MacOS
+	cp -R Contents/MacOS/bashrc build/$(APP_NAME).app/Contents/MacOS/
 
 build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
