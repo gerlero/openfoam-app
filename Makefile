@@ -1,9 +1,9 @@
 # Build configuration
-SHELL = bash
+SHELL = /bin/zsh
 OPENFOAM_VERSION = 2206
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
-APP_VERSION = ''
+APP_VERSION = unversioned
 SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
@@ -21,6 +21,16 @@ deps: build/$(APP_NAME)-deps.sparsebundle
 fetch-source: $(SOURCE_TARBALL)
 zip: build/$(DIST_NAME).zip
 install: $(INSTALL_DIR)/$(APP_NAME).app
+
+
+# Canned recipes
+define eject-volume =
+[ ! -d $(VOLUME) ] \
+	|| hdiutil detach $(VOLUME) \
+	|| sleep 2 && hdiutil detach $(VOLUME) \
+	|| sleep 5 && hdiutil detach $(VOLUME)
+[ ! -d $(VOLUME) ]
+endef
 
 
 # Build rules
@@ -62,15 +72,15 @@ build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/op
 	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 	sed -i '' "s|{{APP_HOMEPAGE}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 
-build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+build/$(APP_NAME).app/Contents/Resources/volume: build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg Contents/MacOS/volume
 	mkdir -p build/$(APP_NAME).app/Contents/Resources/
 	cp Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	$(eject-volume)
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	cat $(VOLUME_ID_FILE)
 	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/volume
 	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/Resources/volume
-	hdiutil detach $(VOLUME)
+	$(eject-volume)
 
 build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
@@ -88,23 +98,24 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle icon.icns
+	$(eject-volume)
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
 		-shadow
-	cp build/$(APP_NAME).app/Contents/Resources/icon.icns $(VOLUME)/.VolumeIcon.icns
+	cp icon.icns $(VOLUME)/.VolumeIcon.icns
 	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
 	SetFile -a C $(VOLUME)
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
-	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/bin/brew
-	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/Library
-	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/.git
+	rm $(VOLUME)/usr/bin/brew
+	rm -rf $(VOLUME)/usr/.git
+	rm -rf $(VOLUME)/usr/Library/Homebrew
+	rm -rf $(VOLUME)/usr/Library/Taps
 	[ $(DEPENDENCIES_KIND) != homebrew ] || rm -rf $(VOLUME)/usr
 	[ $(DEPENDENCIES_KIND) != homebrew ] || ln -s $(shell brew --prefix) $(VOLUME)/usr
 	rm -rf $(VOLUME)/build
-	rm -f $(VOLUME)/**/.DS_Store
+	rm -f $(VOLUME)/**/.DS_Store || true
 	rm -rf $(VOLUME)/.fseventsd || true
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	hdiutil create \
@@ -114,24 +125,28 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 		-nocrossdev \
 		build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
 		-ov
-	hdiutil detach $(VOLUME)
+	$(eject-volume)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(SOURCE_TARBALL) configure.sh 
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(SOURCE_TARBALL) configure.sh
+	$(eject-volume)
 	mv build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 	hdiutil attach build/$(APP_NAME)-build.sparsebundle
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
+	cd $(VOLUME) && "$(CURDIR)/configure.sh"
 	cd $(VOLUME) \
-		&& $(SHELL) -ex "$(CURDIR)/configure.sh" \
 		&& source etc/bashrc \
-		&& foamSystemCheck \
-		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
+		&& foamSystemCheck
+	cd $(VOLUME) \
+		&& source etc/bashrc \
+		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true )
+	cd $(VOLUME) \
+		&& source etc/bashrc \
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
-	hdiutil detach $(VOLUME)
+	$(eject-volume)
 
 build/$(APP_NAME)-deps.sparsebundle: Brewfile
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	$(eject-volume)
 	mkdir -p build
 	hdiutil create \
 		-size 50g \
@@ -143,8 +158,8 @@ build/$(APP_NAME)-deps.sparsebundle: Brewfile
 	git clone https://github.com/Homebrew/brew $(VOLUME)/usr
 	$(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --verbose
 	$(VOLUME)/usr/bin/brew autoremove
-	cat $(VOLUME)/Brewfile.lock.json
-	hdiutil detach $(VOLUME)
+	$(VOLUME)/usr/bin/brew list --versions
+	$(eject-volume)
 
 $(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
 					$(warning No checksum file found for $(SOURCE_TARBALL); will skip verification))
@@ -156,16 +171,17 @@ $(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
 test: test-dmg test-openfoam test-bash test-zsh
 
 test-openfoam:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	$(eject-volume)
 	rm -rf build/test/test-openfoam
 	mkdir -p build/test/test-openfoam
 	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c foamInstallationTest
 	cd build/test/test-openfoam \
 		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/Resources/etc/openfoam" < "$(CURDIR)/test.sh"
-	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
+	build/$(APP_NAME).app/Contents/Resources/volume eject
+	[ ! -d $(VOLUME) ]
 
 test-bash:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	$(eject-volume)
 	rm -rf build/test/test-bash
 	mkdir -p build/test/test-bash
 	PATH=$(VOLUME)/usr/bin:$$PATH bash -c \
@@ -174,10 +190,11 @@ test-bash:
 		foamInstallationTest; \
 		cd build/test/test-bash; \
 		source "$(CURDIR)/test.sh"'
-	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
+	build/$(APP_NAME).app/Contents/Resources/volume eject
+	[ ! -d $(VOLUME) ]
 
 test-zsh:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	$(eject-volume)
 	rm -rf build/test/test-zsh
 	mkdir -p build/test/test-zsh
 	zsh -c \
@@ -186,25 +203,26 @@ test-zsh:
 		foamInstallationTest; \
 		cd build/test/test-zsh; \
 		source "$(CURDIR)/test.sh"'
-	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
+	build/$(APP_NAME).app/Contents/Resources/volume eject
+	[ ! -d $(VOLUME) ]
 
 test-dmg:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	$(eject-volume)
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	rm -rf build/test/test-dmg
 	mkdir -p build/test/test-dmg
 	cd build/test/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
-		&& $(SHELL) -ex "$(CURDIR)/test.sh"
-	hdiutil detach $(VOLUME)
+		&& "$(CURDIR)/test.sh"
+	$(eject-volume)
 
 clean-app:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)	
+	$(eject-volume)	
 	rm -rf build/$(APP_NAME).app
 
 clean-build: clean-app
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	$(eject-volume)
 	rm -f build/$(DIST_NAME).zip
 	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
 	rmdir build/test || true

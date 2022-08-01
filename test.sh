@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/zsh -e
 
 rm -rf pitzDaily
 cp -r "$FOAM_TUTORIALS/incompressible/simpleFoam/pitzDaily" pitzDaily
