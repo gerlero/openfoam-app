@@ -14,7 +14,7 @@ on:
         type: string
         default: ''
         required: false
-      cache:
+      use-cached:
         type: boolean
         default: true
         required: false
@@ -23,101 +23,85 @@ on:
         default: false
         required: false
 
+env:
+  MAKE_VARS: >
+    OPENFOAM_VERSION=${{ inputs.openfoam-version }}
+    APP_VERSION=${{ inputs.app-version }}
+    ${{ inputs.source-tarball-url != '' && format('SOURCE_TARBALL_URL={0}', inputs.source-tarball-url) || '' }}
+
 jobs:
   deps:
     runs-on: macos-11
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache deps
-        if: inputs.cache
+      - name: Cache build
+        id: cache_build
         uses: actions/cache@v3
         with:
-          path: build/*-deps.sparsebundle
-          key: deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Brewfile', 'Makefile') }}
-      - name: Reuse cached deps if possible
+          path: |
+            build/*-deps.sparsebundle
+            build/*-build.sparsebundle
+          key: deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile') }}-${{ github.run_id }}
+          restore-keys: |
+            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile') }}-${{ ! inputs.use-cached && github.run_id || '' }}
+      - name: Make deps
+        if: steps.cache_build.outputs.cache-hit != 'true'
         run: |
           touch -c build/*-deps.sparsebundle
-      - name: Make deps
-        run: >
-          make deps
-          OPENFOAM_VERSION=${{ inputs.openfoam-version }}
-      - name: Upload deps artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: deps-${{ inputs.openfoam-version }}-${{ runner.arch }}
-          path: build/*-deps.sparsebundle
-          if-no-files-found: error
+          make deps $MAKE_VARS
 
-  build:
+  apps:
     needs: deps
     runs-on: macos-11
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Download deps artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: deps-${{ inputs.openfoam-version }}-${{ runner.arch }}
-          path: build
-      - name: Use deps artifact
-        run: |
-          touch -c build/*-deps.sparsebundle
       - name: Cache build
-        if: inputs.cache
+        id: cache_build
         uses: actions/cache@v3
         with:
-          path: build/*-build.sparsebundle
-          key: build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('build/*-deps.sparsebundle', 'configure.sh', 'Makefile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version)) }}
-      - name: Reuse cached build if possible
-        run: |
-          touch -c build/*-build.sparsebundle
+          path: |
+            build/*-deps.sparsebundle
+            build/*-build.sparsebundle
+          key: build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}
+          restore-keys: |
+            build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ ! inputs.use-cached && github.run_id || '' }}
+            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile') }}-${{ github.run_id }}
       - name: Build
-        run: >
-          make build
-          OPENFOAM_VERSION=${{ inputs.openfoam-version }}
-          ${{ inputs.source-tarball-url != '' && format('SOURCE_TARBALL_URL={0}', inputs.source-tarball-url) || '' }}
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-${{ inputs.openfoam-version }}-${{ runner.arch }}
-          path: build/*-build.sparsebundle
-          if-no-files-found: error
-
-  app:
-    needs: build
-    strategy:
-      matrix:
-        dependencies-kind: [standalone, homebrew]
-      fail-fast: false
-    runs-on: macos-11
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: build-${{ inputs.openfoam-version }}-${{ runner.arch }}
-          path: build
-      - name: Use build artifact
+        if: steps.cache_build.outputs.cache-hit != 'true'
+        run: |
+          touch -c build/*-deps.sparsebundle
+          touch -c build/*-build.sparsebundle
+          make build $MAKE_VARS
+      - name: Reuse cached build
+        if: steps.cache_build.outputs.cache-hit == 'true'
         run: |
           touch -c build/*-build.sparsebundle
-      - name: Build zipped app
-        run: >
-          make zip
-          APP_VERSION=${{ inputs.app-version }}
-          DEPENDENCIES_KIND=${{ matrix.dependencies-kind }}
-          OPENFOAM_VERSION=${{ inputs.openfoam-version }}
-          ${{ inputs.source-tarball-url != '' && format('SOURCE_TARBALL_URL={0}', inputs.source-tarball-url) || '' }}
-      - name: Upload zip artifact
+      - name: Make standalone app
+        run: |
+          make zip $MAKE_VARS DEPENDENCIES_KIND=standalone
+      - name: Upload standalone app
         uses: actions/upload-artifact@v3
         with:
-          name: zip-${{ inputs.openfoam-version }}-${{ matrix.dependencies-kind }}-${{ runner.arch }}
-          path: build/*-app-*.zip
+          name: zip-${{ inputs.openfoam-version }}-standalone-${{ runner.arch }}
+          path: build/*-app-standalone-*.zip
+          if-no-files-found: error
+      - name: Clean app build
+        run: |
+          make clean-app $MAKE_VARS
+      - name: Make Homebrew-based app
+        run: |
+          make zip $MAKE_VARS DEPENDENCIES_KIND=homebrew
+      - name: Upload Homebrew-based app
+        uses: actions/upload-artifact@v3
+        with:
+          name: zip-${{ inputs.openfoam-version }}-homebrew-${{ runner.arch }}
+          path: build/*-app-homebrew-*.zip
           if-no-files-found: error
 
   test:
-    needs: app
+    needs: apps
     strategy:
       matrix:
         os: [macos-11, macos-12]
@@ -127,7 +111,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Download ZIP artifact
+      - name: Download app
         uses: actions/download-artifact@v3
         with:
           name: zip-${{ inputs.openfoam-version }}-${{ matrix.dependencies-kind }}-${{ runner.arch }}
@@ -141,11 +125,8 @@ jobs:
         run: |
           brew bundle --verbose
       - name: Test
-        run: >
-          make test
-          APP_VERSION=${{ inputs.app-version }}
-          OPENFOAM_VERSION=${{ inputs.openfoam-version }}
-          DEPENDENCIES_KIND=${{ matrix.dependencies-kind }}
+        run: |
+          make test $MAKE_VARS DEPENDENCIES_KIND=${{ matrix.dependencies-kind }}
 
   release:
     needs: test

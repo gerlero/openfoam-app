@@ -16,11 +16,11 @@ jobs:
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2206
-      cache: ${{ github.event_name != 'schedule' }}
+      use-cached: ${{ github.event_name != 'schedule' }}
 
   openfoam2112:
     name: OpenFOAM-v2112.app
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2112
-      cache: ${{ github.event_name != 'schedule' }}
+      use-cached: ${{ github.event_name != 'schedule' }}
