@@ -1,3 +1,3 @@
 #!/bin/zsh -e
 
-open -a Terminal "${0:A:h}/openfoam"
+open -a Terminal "${0:A:h:h}/Resources/etc/openfoam"

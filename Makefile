@@ -29,13 +29,15 @@ VOLUME_ID_FILE = $(VOLUME)/.vol_id
 
 APP_CONTENTS = \
 	build/$(APP_NAME).app/Contents/Info.plist \
-	build/$(APP_NAME).app/Contents/MacOS/openfoam \
-	build/$(APP_NAME).app/Contents/MacOS/volume \
 	build/$(APP_NAME).app/Contents/MacOS/launch \
-	build/$(APP_NAME).app/Contents/MacOS/bashrc \
+	build/$(APP_NAME).app/Contents/Resources/etc/openfoam \
+	build/$(APP_NAME).app/Contents/Resources/etc/bashrc \
 	build/$(APP_NAME).app/Contents/Resources/LICENSE \
 	build/$(APP_NAME).app/Contents/Resources/icon.icns \
-	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	build/$(APP_NAME).app/Contents/Resources/volume \
+	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
+	build/$(APP_NAME).app/Contents/MacOS/openfoam \
+	build/$(APP_NAME).app/Contents/MacOS/bashrc
 
 
 $(INSTALL_DIR)/$(APP_NAME).app: build/$(APP_NAME).app
@@ -54,44 +56,44 @@ build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAM
 	sed -i '' "s|{{DEPENDENCIES_KIND}}|$(DEPENDENCIES_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
 	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
 
-build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam | build/$(APP_NAME).app/Contents/MacOS/volume
-	mkdir -p build/$(APP_NAME).app/Contents/MacOS/
-	cp Contents/MacOS/openfoam build/$(APP_NAME).app/Contents/MacOS/
-	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/MacOS/openfoam
-	sed -i '' "s|{{APP_HOMEPAGE}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/MacOS/openfoam
+build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Resources/volume
+	mkdir -p build/$(APP_NAME).app/Contents/Resources/etc/
+	cp Contents/Resources/etc/openfoam build/$(APP_NAME).app/Contents/Resources/etc/
+	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
+	sed -i '' "s|{{APP_HOMEPAGE}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 
-build/$(APP_NAME).app/Contents/MacOS/volume: build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg Contents/MacOS/volume
-	mkdir -p build/$(APP_NAME).app/Contents/MacOS/
-	cp Contents/MacOS/volume build/$(APP_NAME).app/Contents/MacOS/
+build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	mkdir -p build/$(APP_NAME).app/Contents/Resources/
+	cp Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	cat $(VOLUME_ID_FILE)
-	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/MacOS/volume
-	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/MacOS/volume
+	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/volume
+	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/Resources/volume
 	hdiutil detach $(VOLUME)
-
-build/$(APP_NAME).app/Contents/MacOS/launch: Contents/MacOS/launch | build/$(APP_NAME).app/Contents/MacOS/openfoam
-	mkdir -p build/$(APP_NAME).app/Contents/MacOS
-	cp Contents/MacOS/launch build/$(APP_NAME).app/Contents/MacOS/
-
-build/$(APP_NAME).app/Contents/MacOS/bashrc: Contents/MacOS/bashrc | build/$(APP_NAME).app/Contents/MacOS/volume
-	mkdir -p build/$(APP_NAME).app/Contents/MacOS
-	cp Contents/MacOS/bashrc build/$(APP_NAME).app/Contents/MacOS/
 
 build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp LICENSE build/$(APP_NAME).app/Contents/Resources/
 
-build/$(APP_NAME).app/Contents/Resources/icon.icns: icon.icns
-	mkdir -p build/$(APP_NAME).app/Contents/Resources
-	cp icon.icns build/$(APP_NAME).app/Contents/Resources/
+build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam
+	mkdir -p build/$(APP_NAME).app/Contents/MacOS
+	cp -R Contents/MacOS/openfoam build/$(APP_NAME).app/Contents/MacOS/
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle icon.icns
+build/$(APP_NAME).app/Contents/MacOS/bashrc: Contents/MacOS/bashrc
+	mkdir -p build/$(APP_NAME).app/Contents/MacOS
+	cp -R Contents/MacOS/bashrc build/$(APP_NAME).app/Contents/MacOS/
+
+build/$(APP_NAME).app/Contents/%: Contents/%
+	mkdir -p $(@D)
+	cp $< $@
+
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
 		-shadow
-	cp icon.icns $(VOLUME)/.VolumeIcon.icns
+	cp build/$(APP_NAME).app/Contents/Resources/icon.icns $(VOLUME)/.VolumeIcon.icns
 	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
 	SetFile -a C $(VOLUME)
 	uuidgen > $(VOLUME_ID_FILE)
@@ -157,34 +159,34 @@ test-openfoam:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -rf build/test/test-openfoam
 	mkdir -p build/test/test-openfoam
-	build/$(APP_NAME).app/Contents/MacOS/openfoam -c foamInstallationTest
+	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c foamInstallationTest
 	cd build/test/test-openfoam \
-		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/MacOS/openfoam" < "$(CURDIR)/test.sh"
-	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
+		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/Resources/etc/openfoam" < "$(CURDIR)/test.sh"
+	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-bash:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -rf build/test/test-bash
 	mkdir -p build/test/test-bash
 	PATH=$(VOLUME)/usr/bin:$$PATH bash -c \
-		'source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
+		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
 		set -ex; \
 		foamInstallationTest; \
 		cd build/test/test-bash; \
 		source "$(CURDIR)/test.sh"'
-	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
+	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-zsh:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -rf build/test/test-zsh
 	mkdir -p build/test/test-zsh
 	zsh -c \
-		'source build/$(APP_NAME).app/Contents/MacOS/bashrc; \
+		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
 		set -ex; \
 		foamInstallationTest; \
 		cd build/test/test-zsh; \
 		source "$(CURDIR)/test.sh"'
-	build/$(APP_NAME).app/Contents/MacOS/volume eject && [ ! -d $(VOLUME) ]
+	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-dmg:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
