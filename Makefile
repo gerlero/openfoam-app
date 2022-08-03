@@ -44,7 +44,7 @@ $(INSTALL_DIR)/$(APP_NAME).app: build/$(APP_NAME).app
 	cp -r build/$(APP_NAME).app $(INSTALL_DIR)/
 
 build/$(DIST_NAME).zip: build/$(APP_NAME).app
-	cd build && zip -r $(DIST_NAME).zip $(APP_NAME).app
+	cd build && zip -r --symlinks $(DIST_NAME).zip $(APP_NAME).app
 	shasum -a 256 build/$(DIST_NAME).zip
 
 build/$(APP_NAME).app: $(APP_CONTENTS)
