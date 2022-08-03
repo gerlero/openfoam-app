@@ -35,6 +35,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Get Make recipes for caching
+        run: |
+          make deps --dry-run $MAKE_VARS > make_deps.txt
       - name: Cache build
         id: cache_build
         uses: actions/cache@v3
@@ -42,9 +45,9 @@ jobs:
           path: |
             build/*-deps.sparsebundle
             build/*-build.sparsebundle
-          key: deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile') }}-${{ github.run_id }}
+          key: deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ github.run_id }}
           restore-keys: |
-            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile') }}-${{ ! inputs.use-cached && github.run_id || '' }}
+            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ ! inputs.use-cached && github.run_id || '' }}
       - name: Make deps
         if: steps.cache_build.outputs.cache-hit != 'true'
         run: |
@@ -57,6 +60,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Get Make recipes for caching
+        run: |
+          make deps --dry-run $MAKE_VARS > make_deps.txt
+          make build --dry-run $MAKE_VARS > make_build.txt
       - name: Cache build
         id: cache_build
         uses: actions/cache@v3
@@ -64,10 +71,10 @@ jobs:
           path: |
             build/*-deps.sparsebundle
             build/*-build.sparsebundle
-          key: build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}
+          key: build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}
           restore-keys: |
-            build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ ! inputs.use-cached && github.run_id || '' }}
-            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('Makefile', 'Brewfile') }}-${{ github.run_id }}
+            build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ ! inputs.use-cached && github.run_id || '' }}
+            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ github.run_id }}
       - name: Build
         if: steps.cache_build.outputs.cache-hit != 'true'
         run: |
