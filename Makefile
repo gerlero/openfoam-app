@@ -98,9 +98,8 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	SetFile -a C $(VOLUME)
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
-	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/bin/brew
-	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/Library
-	[ $(DEPENDENCIES_KIND) != standalone ] || rm -rf $(VOLUME)/usr/.git
+	rm $(VOLUME)/usr/bin/brew
+	rm -rf $(VOLUME)/homebrew
 	[ $(DEPENDENCIES_KIND) != homebrew ] || rm -rf $(VOLUME)/usr
 	[ $(DEPENDENCIES_KIND) != homebrew ] || ln -s $(shell brew --prefix) $(VOLUME)/usr
 	rm -rf $(VOLUME)/build
@@ -140,10 +139,12 @@ build/$(APP_NAME)-deps.sparsebundle: Brewfile
 		build/$(APP_NAME)-deps.sparsebundle \
 		-ov -attach
 	cp Brewfile $(VOLUME)/
-	git clone https://github.com/Homebrew/brew $(VOLUME)/usr
+	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
+	mkdir -p $(VOLUME)/usr/bin
+	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
 	$(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --verbose
 	$(VOLUME)/usr/bin/brew autoremove
-	cat $(VOLUME)/Brewfile.lock.json
+	$(VOLUME)/usr/bin/brew list --versions
 	hdiutil detach $(VOLUME)
 
 $(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
@@ -204,7 +205,6 @@ clean-app:
 	rm -rf build/$(APP_NAME).app
 
 clean-build: clean-app
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -f build/$(DIST_NAME).zip
 	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
 	rmdir build/test || true
