@@ -12,7 +12,13 @@ bin/tools/foamConfigurePaths \
 
 
 echo "export PATH=\"$PWD/usr/bin:\${PATH+:\$PATH}\"" >> etc/prefs.sh
-echo "setenv PATH $PWD/usr/bin:\$PATH;" >> etc/prefs.csh
+echo "setenv PATH $PWD/usr/bin:\$PATH" >> etc/prefs.csh
+
+echo "export MANPATH=\"$PWD/usr/share/man\${MANPATH+:\$MANPATH}:\"" >> etc/prefs.sh
+echo "setenv MANPATH $PWD/usr/share/man\`[ \${?MANPATH} == 1 ] && echo \":\${MANPATH}\"\`:" >> etc/prefs.csh
+
+echo "export INFOPATH=\"$PWD/usr/share/info:\${INFOPATH:-}\"" >> etc/prefs.sh
+echo "setenv INFOPATH $PWD/usr/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
 
 
 LIBOMP_PATH="$PWD/usr/opt/libomp"
@@ -24,6 +30,7 @@ LIBRARY_PATH="$LIBOMP_PATH/lib:$GMP_PATH/lib:$MPFR_PATH/lib"
 
 echo "export CPATH=\"$CPATH\"" >> etc/prefs.sh
 echo "setenv CPATH \"$CPATH\"" >> etc/prefs.csh
+
 echo "export LIBRARY_PATH=\"$LIBRARY_PATH\"" >> etc/prefs.sh
 echo "setenv LIBRARY_PATH \"$LIBRARY_PATH\"" >> etc/prefs.csh
 
