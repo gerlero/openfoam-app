@@ -37,3 +37,6 @@ cp -r "$FOAM_TUTORIALS/mesh/foamyHexMesh/blob" blob
 cd blob
 ./Allrun
 cd ..
+
+# https://github.com/gerlero/openfoam-app/issues/88
+cartesianMesh -help
