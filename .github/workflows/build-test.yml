@@ -8,7 +8,11 @@ on:
         required: true
       app-version:
         type: string
-        default: ${{ github.ref_name }}
+        default: ''
+        required: false
+      app-name:
+        type: string
+        default: ''
         required: false
       source-tarball-url:
         type: string
@@ -25,100 +29,107 @@ on:
 
 env:
   MAKE_VARS: >
-    OPENFOAM_VERSION=${{ inputs.openfoam-version }}
-    APP_VERSION=${{ inputs.app-version }}
+    ${{ inputs.openfoam-version != '' && format('OPENFOAM_VERSION={0}', inputs.openfoam-version) || '' }}
+    ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
+    ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
     ${{ inputs.source-tarball-url != '' && format('SOURCE_TARBALL_URL={0}', inputs.source-tarball-url) || '' }}
 
 jobs:
   deps:
     runs-on: macos-10.15
+    concurrency:
+      group: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get Make recipes for caching
         run: |
           make deps --dry-run $MAKE_VARS > make_deps.txt
-      - name: Cache build
-        id: cache_build
+      - name: Cache deps
+        id: cache_deps
         uses: actions/cache@v3
         with:
           path: |
             build/*-deps.sparsebundle
-            build/*-build.sparsebundle
-          key: deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ github.run_id }}-end
+          key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ github.run_id }}
           restore-keys: |
-            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ ! inputs.use-cached && 'ignore' || '' }}
+            deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ ! inputs.use-cached && 'ignore' || '' }}
       - name: Make deps
-        if: steps.cache_build.outputs.cache-hit != 'true'
+        if: steps.cache_deps.outputs.cache-hit != 'true'
         run: |
           touch -c build/*-deps.sparsebundle
           make deps $MAKE_VARS
+      - name: Upload deps artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: deps-${{ inputs.openfoam-version }}
+          path: build/*-deps.sparsebundle
+          if-no-files-found: error
   
   build:
     needs: deps
     runs-on: macos-10.15
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+      - name: Download deps artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: deps-${{ inputs.openfoam-version }}
+          path: build
       - name: Get Make recipes for caching
         run: |
-          make deps --dry-run $MAKE_VARS > make_deps.txt
+          touch -c build/*-deps.sparsebundle
           make build --dry-run $MAKE_VARS > make_build.txt
       - name: Cache build
         id: cache_build
         uses: actions/cache@v3
         with:
           path: |
-            build/*-deps.sparsebundle
             build/*-build.sparsebundle
-          key: build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}-end
+          key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'build/*-deps.sparsebundle', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}
           restore-keys: |
-            build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ ! inputs.use-cached && 'ignore' || '' }}
-            deps-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ github.run_id }}-
+            build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'build/*-deps.sparsebundle', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ ! inputs.use-cached && 'ignore' || '' }}
       - name: Build
         if: steps.cache_build.outputs.cache-hit != 'true'
         run: |
-          touch -c build/*-deps.sparsebundle
           touch -c build/*-build.sparsebundle
           make build $MAKE_VARS
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ inputs.openfoam-version }}
+          path: build/*-build.sparsebundle
+          if-no-files-found: error
 
-  app:
+  apps:
     needs: build
-    strategy:
-      matrix:
-        dependencies-kind: [standalone, homebrew]
-      fail-fast: false
     runs-on: macos-10.15
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Get Make recipes for caching
-        run: |
-          make build --dry-run $MAKE_VARS > make_build.txt
-      - name: Cache build
-        id: cache_build
-        uses: actions/cache@v3
+        uses: actions/checkout@v3
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
         with:
-          path: |
-            build/*-deps.sparsebundle
-            build/*-build.sparsebundle
-          key: build-${{ inputs.openfoam-version }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}-end
-      - name: Reuse cached build
-        if: steps.cache_build.outputs.cache-hit == 'true'
+          name: build-${{ inputs.openfoam-version }}
+          path: build
+      - name: Make standalone app
         run: |
           touch -c build/*-build.sparsebundle
-      - name: Make zipped app
+          make zip $MAKE_VARS DEPENDENCIES_KIND=standalone
+      - name: Make Homebrew-based app
         run: |
-          make zip $MAKE_VARS DEPENDENCIES_KIND=${{ matrix.dependencies-kind }}
-      - name: Upload zipped app
+          make clean-app $MAKE_VARS
+          make zip $MAKE_VARS DEPENDENCIES_KIND=homebrew
+      - name: Upload apps artifact
         uses: actions/upload-artifact@v3
         with:
-          name: zip-${{ inputs.openfoam-version }}-${{ matrix.dependencies-kind }}-${{ runner.arch }}
+          name: apps-${{ inputs.openfoam-version }}
           path: build/*-app-*.zip
           if-no-files-found: error
 
   test:
-    needs: app
+    needs: apps
     strategy:
       matrix:
         os: [macos-10.15, macos-11, macos-12]
@@ -127,15 +138,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Download app
+        uses: actions/checkout@v3
+      - name: Download apps artifact
         uses: actions/download-artifact@v3
         with:
-          name: zip-${{ inputs.openfoam-version }}-${{ matrix.dependencies-kind }}-${{ runner.arch }}
+          name: apps-${{ inputs.openfoam-version }}
           path: build
       - name: Unzip app
         run: |
-          unzip *-app-*.zip
+          unzip *-app-${{ matrix.dependencies-kind }}-*.zip
         working-directory: build
       - name: Install Homebrew dependencies
         if: matrix.dependencies-kind == 'homebrew'
@@ -149,16 +160,12 @@ jobs:
     needs: test
     if: inputs.release
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dependencies-kind: [standalone, homebrew]
-      fail-fast: false
     steps:
-      - name: Download zip artifact
+      - name: Download apps artifact
         uses: actions/download-artifact@v3
         with:
-          name: zip-${{ inputs.openfoam-version }}-${{ matrix.dependencies-kind }}-${{ runner.arch }}
-      - name: Upload zip to release
+          name: apps-${{ inputs.openfoam-version }}
+      - name: Upload apps to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
