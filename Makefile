@@ -106,7 +106,7 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	cat $(VOLUME_ID_FILE)
 	rm $(VOLUME)/usr/bin/brew
 	rm -rf $(VOLUME)/homebrew
-ifeq ($(DEPENDENCIES_KIND), "homebrew")
+ifeq ($(DEPENDENCIES_KIND),homebrew)
 	rm -rf $(VOLUME)/usr
 	ln -s $(shell brew --prefix) $(VOLUME)/usr
 endif
