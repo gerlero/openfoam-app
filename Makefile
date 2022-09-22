@@ -2,16 +2,22 @@
 SHELL = bash
 OPENFOAM_VERSION = 2206
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
-APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
-APP_VERSION = ''
 SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
-SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
+OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
+OPENFOAM_GIT_BRANCH =
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
-WMAKE_NJOBS = ''
+WMAKE_NJOBS =
 DEPENDENCIES_KIND = standalone
 DMG_FORMAT = UDRO
+APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
+APP_VERSION =
+TEST_DIR = build/test-v$(OPENFOAM_VERSION)
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(DEPENDENCIES_KIND)-$(shell uname -m)
 INSTALL_DIR = /Applications
+
+ifndef OPENFOAM_GIT_BRANCH
+SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
+endif
 
 
 # Build targets
@@ -100,9 +106,12 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	cat $(VOLUME_ID_FILE)
 	rm $(VOLUME)/usr/bin/brew
 	rm -rf $(VOLUME)/homebrew
-	[ $(DEPENDENCIES_KIND) != homebrew ] || rm -rf $(VOLUME)/usr
-	[ $(DEPENDENCIES_KIND) != homebrew ] || ln -s $(shell brew --prefix) $(VOLUME)/usr
+ifeq ($(DEPENDENCIES_KIND), "homebrew")
+	rm -rf $(VOLUME)/usr
+	ln -s $(shell brew --prefix) $(VOLUME)/usr
+endif
 	rm -rf $(VOLUME)/build
+	rm -rf $(VOLUME)/**/.git
 	rm -f $(VOLUME)/**/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd || true
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
@@ -120,7 +129,14 @@ build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(SOUR
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	mv build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 	hdiutil attach build/$(APP_NAME)-build.sparsebundle
+ifdef SOURCE_TARBALL
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
+else ifdef OPENFOAM_GIT_BRANCH
+	git -C $(VOLUME) init -b $(OPENFOAM_GIT_BRANCH)
+	git -C $(VOLUME) remote add origin $(OPENFOAM_GIT_REPO_URL)
+	git -C $(VOLUME) pull origin $(OPENFOAM_GIT_BRANCH)
+	git -C $(VOLUME) submodule update --init --recursive
+endif
 	cd $(VOLUME) \
 		&& $(SHELL) -ex "$(CURDIR)/configure.sh" \
 		&& source etc/bashrc \
@@ -158,43 +174,43 @@ test: test-dmg test-openfoam test-bash test-zsh
 
 test-openfoam:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -rf build/test/test-openfoam
-	mkdir -p build/test/test-openfoam
+	rm -rf $(TEST_DIR)/test-openfoam
+	mkdir -p $(TEST_DIR)/test-openfoam
 	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c foamInstallationTest
-	cd build/test/test-openfoam \
+	cd $(TEST_DIR)/test-openfoam \
 		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/Resources/etc/openfoam" < "$(CURDIR)/test.sh"
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-bash:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -rf build/test/test-bash
-	mkdir -p build/test/test-bash
+	rm -rf $(TEST_DIR)/test-bash
+	mkdir -p $(TEST_DIR)/test-bash
 	PATH=$(VOLUME)/usr/bin:$$PATH bash -c \
 		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
 		set -ex; \
 		foamInstallationTest; \
-		cd build/test/test-bash; \
+		cd $(TEST_DIR)/test-bash; \
 		source "$(CURDIR)/test.sh"'
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-zsh:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -rf build/test/test-zsh
-	mkdir -p build/test/test-zsh
+	rm -rf $(TEST_DIR)/test-zsh
+	mkdir -p $(TEST_DIR)/test-zsh
 	zsh -c \
 		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
 		set -ex; \
 		foamInstallationTest; \
-		cd build/test/test-zsh; \
+		cd $(TEST_DIR)/test-zsh; \
 		source "$(CURDIR)/test.sh"'
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-dmg:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
-	rm -rf build/test/test-dmg
-	mkdir -p build/test/test-dmg
-	cd build/test/test-dmg \
+	rm -rf $(TEST_DIR)/test-dmg
+	mkdir -p $(TEST_DIR)/test-dmg
+	cd $(TEST_DIR)/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
 		&& $(SHELL) -ex "$(CURDIR)/test.sh"
@@ -206,8 +222,8 @@ clean-app:
 
 clean-build: clean-app
 	rm -f build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle build/test/test-openfoam build/test/test-bash build/test/test-zsh build/test/test-dmg
-	rmdir build/test || true
+	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle $(TEST_DIR)/test-openfoam $(TEST_DIR)/test-bash $(TEST_DIR)/test-zsh $(TEST_DIR)/test-dmg
+	rmdir $(TEST_DIR) || true
 	rmdir build || true
 
 clean: clean-build
