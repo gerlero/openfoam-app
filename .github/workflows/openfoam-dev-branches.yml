@@ -10,6 +10,8 @@ jobs:
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: master
+      app-version: master
+      app-name: OpenFOAM-dev
       source-tarball-url: https://develop.openfoam.com/Development/openfoam/-/archive/master/openfoam-master.tar.gz
       use-cached: false
 
@@ -18,5 +20,7 @@ jobs:
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: develop
+      app-version: develop
+      app-name: OpenFOAM-dev
       source-tarball-url: https://develop.openfoam.com/Development/openfoam/-/archive/develop/openfoam-develop.tar.gz
       use-cached: false
