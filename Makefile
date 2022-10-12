@@ -104,15 +104,21 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	SetFile -a C $(VOLUME)
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
-	rm $(VOLUME)/usr/bin/brew
 	rm -rf $(VOLUME)/homebrew
-ifeq ($(DEPENDENCIES_KIND),homebrew)
-	rm -rf $(VOLUME)/usr
-	ln -s $(shell brew --prefix) $(VOLUME)/usr
-endif
+	[ ! -L $(VOLUME)/usr ] || rm $(VOLUME)/usr
 	rm -rf $(VOLUME)/build
 	rm -rf $(VOLUME)/**/.git
 	rm -f $(VOLUME)/**/.DS_Store
+ifeq ($(DEPENDENCIES_KIND),standalone)
+	rm $(VOLUME)/usr/bin/brew
+	rm $(VOLUME)/Brewfile
+	rm $(VOLUME)/Brewfile.lock.json
+else ifeq ($(DEPENDENCIES_KIND),homebrew)
+	rm -rf $(VOLUME)/usr
+	ln -s $(shell brew --prefix) $(VOLUME)/usr
+else
+	$(error Invalid value for DEPENDENCIES_KIND)
+endif
 	rm -rf $(VOLUME)/.fseventsd || true
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	hdiutil create \
@@ -145,7 +151,7 @@ endif
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	hdiutil detach $(VOLUME)
 
-build/$(APP_NAME)-deps.sparsebundle: Brewfile
+build/$(APP_NAME)-deps.sparsebundle: Brewfile $(if $(filter homebrew,$(DEPENDENCIES_KIND)),Brewfile.lock.json)
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	mkdir -p build
 	hdiutil create \
@@ -155,18 +161,29 @@ build/$(APP_NAME)-deps.sparsebundle: Brewfile
 		build/$(APP_NAME)-deps.sparsebundle \
 		-ov -attach
 	cp Brewfile $(VOLUME)/
+ifeq ($(DEPENDENCIES_KIND),standalone)
 	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
 	mkdir -p $(VOLUME)/usr/bin
 	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
 	$(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --verbose
 	$(VOLUME)/usr/bin/brew autoremove
 	$(VOLUME)/usr/bin/brew list --versions
+else ifeq ($(DEPENDENCIES_KIND),homebrew)
+	brew bundle check --verbose --no-upgrade
+	cp Brewfile.lock.json $(VOLUME)/
+	ln -s $(shell brew --prefix) $(VOLUME)/usr
+else
+	$(error Invalid value for DEPENDENCIES_KIND)
+endif
 	hdiutil detach $(VOLUME)
 
 $(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
 					$(warning No checksum file found for $(SOURCE_TARBALL); will skip verification))
 	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
 	[ -z $< ] || shasum -a 256 -c $<
+
+Brewfile.lock.json: Brewfile
+	brew bundle
 
 
 # Non-build targets and rules
@@ -227,7 +244,7 @@ clean-build: clean-app
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(SOURCE_TARBALL)
+	rm -f $(SOURCE_TARBALL) Brewfile.lock.json
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
