@@ -32,6 +32,7 @@ install: $(INSTALL_DIR)/$(APP_NAME).app
 # Build rules
 VOLUME = /Volumes/$(APP_NAME)
 VOLUME_ID_FILE = $(VOLUME)/.vol_id
+VOLUME_ARCH_FILE = $(VOLUME)/.vol_arch
 
 APP_CONTENTS = \
 	build/$(APP_NAME).app/Contents/Info.plist \
@@ -55,12 +56,15 @@ build/$(DIST_NAME).zip: build/$(APP_NAME).app
 
 build/$(APP_NAME).app: $(APP_CONTENTS)
 
-build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAME).app/Contents/MacOS/launch build/$(APP_NAME).app/Contents/Resources/icon.icns
+build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg | build/$(APP_NAME).app/Contents/MacOS/launch build/$(APP_NAME).app/Contents/Resources/icon.icns
 	mkdir -p build/$(APP_NAME).app/Contents
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
 	sed -i '' "s|{{DEPENDENCIES_KIND}}|$(DEPENDENCIES_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
-	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{ARCH}}|$$(< $(VOLUME_ARCH_FILE))|g" build/$(APP_NAME).app/Contents/Info.plist
+	hdiutil detach $(VOLUME)
 
 build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Resources/volume
 	mkdir -p build/$(APP_NAME).app/Contents/Resources/etc/
@@ -75,7 +79,7 @@ build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	cat $(VOLUME_ID_FILE)
 	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/volume
-	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/Resources/volume
+	sed -i '' "s|{{VOLUME_ID}}|$$(< $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/Resources/volume
 	hdiutil detach $(VOLUME)
 
 build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
@@ -135,6 +139,8 @@ build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(SOUR
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	mv build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 	hdiutil attach build/$(APP_NAME)-build.sparsebundle
+	[ ! -f $(VOLUME_ARCH_FILE) ] || [ $(shell uname -m) == $$(< $(VOLUME_ARCH_FILE)) ]
+	echo $(shell uname -m) > $(VOLUME_ARCH_FILE)
 ifdef SOURCE_TARBALL
 	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
 else ifdef OPENFOAM_GIT_BRANCH
@@ -161,7 +167,8 @@ build/$(APP_NAME)-deps.sparsebundle: Brewfile $(if $(filter homebrew,$(DEPENDENC
 		build/$(APP_NAME)-deps.sparsebundle \
 		-ov -attach
 	cp Brewfile $(VOLUME)/
-ifeq ($(DEPENDENCIES_KIND),standalone)
+ifeq ($(DEPENDENCIES_KIND),standalone)	
+	echo $(shell uname -m) > $(VOLUME_ARCH_FILE)
 	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
 	mkdir -p $(VOLUME)/usr/bin
 	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/

@@ -7,6 +7,7 @@ APP_BUNDLE="${0:A:h:h:h}"
 DMG_FILE="$APP_BUNDLE/Contents/Resources/$APP_NAME.dmg"
 VOLUME="/Volumes/$APP_NAME"
 VOLUME_ID_FILE="$VOLUME/.vol_id"
+VOLUME_ARCH_FILE="$VOLUME/.vol_arch"
 
 printHelp() {
     cat<<HELP_USAGE
@@ -99,6 +100,12 @@ case "$1" in
             fi
         fi
         $QUIET || echo "You can safely eject the volume from the Finder after use."
+        if [ -f "$VOLUME_ARCH_FILE" ] && [ "$(uname -m)" != "$(< "$VOLUME_ARCH_FILE")" ]; then
+            echo 1>&2
+            echo "WARNING: This app has been compiled for a different CPU architecture ($(< "$VOLUME_ARCH_FILE"))" 1>&2
+            echo "Please obtain the correct $APP_NAME.app for your system ($(uname -m))" 1>&2
+            echo 1>&2
+        fi
         exit 0
         ;;
     eject)
