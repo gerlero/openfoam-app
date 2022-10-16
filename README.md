@@ -4,8 +4,8 @@
 
 **Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
-[![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml) [![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)](https://github.com/gerlero/openfoam-app/releases)
-[![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2206-informational)](https://github.com/gerlero/homebrew-openfoam) [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam2112-informational)](https://github.com/gerlero/homebrew-openfoam)
+[![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml) [![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)](https://github.com/gerlero/openfoam-app/releases) [![homebrew tap](https://img.shields.io/badge/homebrew%20tap-gerlero%2Fopenfoam-informational)](https://github.com/gerlero/homebrew-openfoam)
+
 
 ## 🍏 Prerequisites
 
@@ -14,58 +14,49 @@
     * Intel: macOS 10.15 or later (older macOS versions might work, but are not tested)
     * Apple silicon: macOS 12 (macOS 11 should also work, but is not tested)
 
+
 ## 📦 Install
 
-Install in one of two ways:
+* **OpenFOAM v2206**
 
-* ### ⬇️ Install with Homebrew
+    * Using [Homebrew](https://brew.sh):
 
-   With [Homebrew](https://brew.sh) installed on your Mac, run any of the following commands in a terminal, depending on which version(s) of OpenFOAM you want:
+        ```sh
+        brew install --no-quarantine gerlero/openfoam/openfoam2206
+        ```
 
-   * **OpenFOAM v2206**
+    * Manual download (standalone app):
 
-       ```sh
-       brew install --no-quarantine gerlero/openfoam/openfoam2206
-       ```
+        * ⬇️ [Intel (`x86_64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-x86_64.zip) (latest release)
 
-   * **OpenFOAM v2112**
+        * ⬇️ [Apple silicon (`arm64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-arm64.zip) (latest release)
 
-       ```sh
-       brew install --no-quarantine gerlero/openfoam/openfoam2112
-       ```
+        * Or, choose the `standalone` release you want from the [Releases page](https://github.com/gerlero/openfoam-app/releases)
 
-   The commands will automatically pick the appropriate variant for your hardware, and will also collect all necessary dependencies. The ``--no-quarantine`` option tells macOS Gatekeeper to allow running the apps despite the fact that they are not currently notarized by Apple ([or you can override Gatekeeper manually when opening the app for the first time](https://docs.brew.sh/FAQ#why-cant-i-open-a-mac-app-from-an-unidentified-developer)). After the install command finishes, you should see a new **OpenFOAM** app installed on your Mac.
+* **OpenFOAM v2112**
 
-   **🖥 ParaView**: if you'll need [ParaView](https://www.paraview.org) for visualization, you can [install it with Homebrew too](https://formulae.brew.sh/cask/paraview).
+    * Using [Homebrew](https://brew.sh):
 
-   **🗑 Uninstall**: to uninstall, run ```brew uninstall openfoam2206``` (replace the ``openfoam2206`` name accordingly). After that, you can run [```brew autoremove```](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
+        ```sh
+        brew install --no-quarantine gerlero/openfoam/openfoam2112
+        ```
 
-* ### ⬇️ Manual download and install (standalone app)
+    * Manual download (standalone app):
 
-   Download the latest version of the app using these links:
+        * ⬇️ [Intel (`x86_64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-x86_64.zip) (latest release)
 
-   | OpenFOAM v2206 | OpenFOAM v2112 |
-   | -------------- | -------------- |
-   | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-x86_64.zip) | [⬇️ Intel / `x86_64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-x86_64.zip) |
-   | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-arm64.zip) | [⬇️ Apple silicon / `arm64`](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) |
+        * ⬇️ [Apple silicon (`arm64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) (latest release)
 
-   Or choose the `standalone` release you want from the [Releases page](https://github.com/gerlero/openfoam-app/releases). Note that these standalone variants are available on an experimental basis.
+        * Or, choose the `standalone` release you want from the [Releases page](https://github.com/gerlero/openfoam-app/releases)
 
-   **🖥 ParaView**: if you need it, you can download the macOS version from the [official site](https://www.paraview.org/download/).
-
-   **🏗 Development tools**: the standalone apps do not bundle or require a compiler or any other development tools. If you attempt to do something with OpenFOAM that would require a compiler (and you do not have Xcode or the Xcode Command Line Tools already installed), you should be prompted by the system to install the necessary tools from Apple.
-
-   **🗑 Uninstall**: the standalone apps are self-contained. To uninstall, just drag the app into your Trash.
 
 ## 🧑‍💻 Use
 
-Just launch the **OpenFOAM** app to start an OpenFOAM session in a new Terminal window.
+Just open the **OpenFOAM** app to start an OpenFOAM session in a new Terminal window.
 
 <img src="screenshot.png" width="650">
 
 That's it! When using OpenFOAM, a read-only volume will be loaded and visible in the Finder. The OpenFOAM installation lives inside this virtual disk. When you're not actively using OpenFOAM, it is safe to "eject" the volume from the Finder sidebar.
-
-**🛡 Gatekeeper**: given that the app is not notarized by Apple, you may see a macOS Gatekeeper dialog that prevents you from opening the downloaded app. You can allow the app through Gatekeeper by [right-clicking on the app in a Finder window and selecting Open from the context menu](https://docs.brew.sh/FAQ#why-cant-i-open-a-mac-app-from-an-unidentified-developer). You only need to do this for the first launch of the app.
 
 **💻 From the command line**: when installed with Homebrew, the app includes a terminal command that starts an OpenFOAM session. For example, the **OpenFOAM-v2206** app provides the command:
 
@@ -79,11 +70,51 @@ If you did not install with Homebrew, you can get the same by invoking the follo
 /Applications/OpenFOAM-v2206.app/Contents/Resources/etc/openfoam
 ```
 
-**🔠 A note on case sensitivity:** while in many situations OpenFOAM will work okay regardless (this mostly depends on the specific field names used by the different solvers), it is recommended that users format a separate drive or partition with a case-sensitive filesystem, or create a case-sensitive disk image (both of which can be accomplished with the built-in macOS Disk Utility) to store OpenFOAM-related user files (e.g. OpenFOAM cases).
 
-## ⚙️ Background
+## 🙋 Q&A
 
-Starting with OpenFOAM v2112, [it is possible to compile OpenFOAM for macOS without code patches](https://develop.openfoam.com/Development/openfoam/-/wikis/building#darwin-mac-os). However, the build process is not completely straightforward–mainly because OpenFOAM itself requires a case-sensitive filesystem, which is standard on Linux but not on macOS. Making a working **OpenFOAM.app** means creating a case-sensitive disk image for OpenFOAM and compiling it there, with third-party dependencies obtained with Homebrew. The disk image is then shrunk, write-protected, and packaged as a Mac application for easier distribution and use.
+### I also need ParaView. Where/how do I get it?
+
+Get the native macOS version of ParaView from the [official site](https://www.paraview.org/download/) or [install with Homebrew](https://formulae.brew.sh/cask/paraview) (prefer the latter if you'd like to use OpenFOAM's `paraFoam` command).
+
+### Why do I see a dialog that says the app "can't be opened because it is from an unidentified developer"?
+
+This message appears because the app is not notarized by Apple. You can tell macOS to allow the app to run by [right-clicking on the app in a Finder window and selecting Open from the context menu](https://docs.brew.sh/FAQ#why-cant-i-open-a-mac-app-from-an-unidentified-developer). You only need to do this for the first launch of the app.
+   
+If you're installing with Homebrew, the suggested ``--no-quarantine`` option does this for you on install.
+
+### Can I compile and install my own (or third-party) solvers?
+
+Yes. Just a few things to keep in mind:
+
+* The OpenFOAM installation itself is not user-writable. This is very much intentional (and is similar with how it works with packaged OpenFOAM on Linux). The right way to install additional solvers and libraries is to place the binaries in `$FOAM_USER_APPBIN` and `$FOAM_USER_LIBBIN` respectively. See [here](https://github.com/gerlero/porousMicroTransport) for an example of a project that installs this way.
+
+* The compiler used on macOS is Apple's Clang, which is not the same as the GCC compiler used by default on Linux. If your code was never tested with Clang before, some lines might require a little tweaking ([this is the most common fix that is needed](https://github.com/gerlero/openfoam-app/issues/87)) to be able to build across both compilers.
+
+* The default macOS filesystem is case-insensitive, which differs from Linux. See below for what this means.
+
+### What's the deal with case sensitivity?
+
+OpenFOAM's source code is notably written with a case-sensitive filesystem in mind. This is not an issue on Linux systems, which conventionally use case-sensitive filesystems. In practice, a case-sensitive filesystem means that two different files named `phi` and `Phi` in the same directory can exist just fine. In contrast, a case-_insensitive_ filesystem, as is the default on macOS, will only allow one of those files to exist in the same folder.
+
+This project gets around potential case-sensitivity issues by putting OpenFOAM itself inside a (read-only) disk image with its own case-sensitive filesystem, which is mounted as a virtual volume during use. This is enough to accommodate OpenFOAM, and for most purposes you can just use your regular filesystem for everything else (e.g. to store OpenFOAM cases).
+
+However, there are a few circumstances where this is not sufficient (e.g. solvers/cases using case-sensitive field names). If you fall under one of these, consider [creating a case-sensitive disk image with the macOS Disk Utility](https://support.apple.com/en-gb/guide/disk-utility/dskutl11888/mac) for the case-sensitive stuff.
+
+### Why do I get a dialog prompting me to install the "command line developer tools"?
+
+You are attempting something that requires development tools (e.g. a compiler), and you do not have such tools installed yet. Just follow the steps to install the necessary tools from Apple and you should be good to go.
+
+### Can I get an app for a version from the OpenFOAM Foundation ([openfoam.org](openfoam.org), e.g. OpenFOAM 10)?
+
+No. The OpenFOAM Foundation's distribution [does not support native compilation on macOS](https://github.com/gerlero/openfoam-app/issues/14#issuecomment-1049843002).
+
+### How do I uninstall the app?
+
+If you installed with Homebrew, uninstall with ``brew uninstall``. After that, you can run [```brew autoremove```](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
+
+If you installed manually, just delete the app (for the manual install, the apps are fully self-contained).
+
 
 ## 🔨 Building from source
 
@@ -96,6 +127,7 @@ make
 ```
 
 The Xcode Command Line Tools are required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM and the necessary dependencies from source may take a while.
+
 
 ## 📄 Legal notices
 
