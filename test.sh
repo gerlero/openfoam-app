@@ -10,18 +10,17 @@ cd ..
 rm -rf flange
 cp -r "$FOAM_TUTORIALS/basic/laplacianFoam/flange" flange
 cd flange
+OMPI_MCA_rmaps_base_oversubscribe=1 ./Allrun-parallel
+reconstructPar
+cd ..
+
+rm -rf flange_manual
+cp -r "$FOAM_TUTORIALS/basic/laplacianFoam/flange" flange_manual
+cd flange_manual
 cp -r 0.orig 0
 ansysToFoam "$FOAM_TUTORIALS/resources/geometry/flange.ans" -scale 0.001
 decomposePar
 mpirun -np 4 --oversubscribe laplacianFoam -parallel < /dev/null
-reconstructPar
-cd ..
-
-rm -rf flange2
-cp -r "$FOAM_TUTORIALS/basic/laplacianFoam/flange" flange2
-cd flange2
-foamDictionary -entry numberOfSubdomains -set 2 system/decomposeParDict
-./Allrun-parallel
 reconstructPar
 cd ..
 
