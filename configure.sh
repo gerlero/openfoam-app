@@ -11,29 +11,37 @@ bin/tools/foamConfigurePaths \
     -scotch-path $PWD/usr/opt/scotch-no-pthread
 
 
-echo "export PATH=\"$PWD/usr/bin:\${PATH+:\$PATH}\"" >> etc/prefs.sh
-echo "setenv PATH $PWD/usr/bin:\$PATH" >> etc/prefs.csh
+OPENMPI_PATH="$PWD/usr/opt/open-mpi"
+BASH_PATH="$PWD/usr/opt/bash"
 
-echo "export MANPATH=\"$PWD/usr/share/man\${MANPATH+:\$MANPATH}:\"" >> etc/prefs.sh
-echo "setenv MANPATH $PWD/usr/share/man\`[ \${?MANPATH} == 1 ] && echo \":\${MANPATH}\"\`:" >> etc/prefs.csh
+PATH_EXTRA="$BASH_PATH/bin:$OPENMPI_PATH/bin"
+echo "export PATH=\"$PATH_EXTRA\${PATH+:\$PATH}\"" >> etc/prefs.sh
+echo "setenv PATH $PATH_EXTRA:\$PATH" >> etc/prefs.csh
 
-echo "export INFOPATH=\"$PWD/usr/share/info:\${INFOPATH:-}\"" >> etc/prefs.sh
-echo "setenv INFOPATH $PWD/usr/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
+MANPATH_EXTRA="$BASH_PATH/share/man:$OPENMPI_PATH/share/man"
+echo "export MANPATH=\"$MANPATH_EXTRA\${MANPATH+:\$MANPATH}:\"" >> etc/prefs.sh
+echo "setenv MANPATH $MANPATH_EXTRA\`[ \${?MANPATH} == 1 ] && echo \":\${MANPATH}\"\`:" >> etc/prefs.csh
+
+INFOPATH_EXTRA="$BASH_PATH/share/info:$OPENMPI_PATH/share/info"
+echo "export INFOPATH=\"$INFOPATH_EXTRA:\${INFOPATH:-}\"" >> etc/prefs.sh
+echo "setenv INFOPATH $INFOPATH_EXTRA\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
 
 
 LIBOMP_PATH="$PWD/usr/opt/libomp"
 GMP_PATH="$PWD/usr/opt/gmp"
 MPFR_PATH="$PWD/usr/opt/mpfr"
 
-CPATH="$LIBOMP_PATH/include:$GMP_PATH/include:$MPFR_PATH/include"
-LIBRARY_PATH="$LIBOMP_PATH/lib:$GMP_PATH/lib:$MPFR_PATH/lib"
+CPATH_EXTRA="$LIBOMP_PATH/include:$GMP_PATH/include:$MPFR_PATH/include"
+LIBRARY_PATH_EXTRA="$LIBOMP_PATH/lib:$GMP_PATH/lib:$MPFR_PATH/lib"
 
-echo "export CPATH=\"$CPATH\"" >> etc/prefs.sh
-echo "setenv CPATH \"$CPATH\"" >> etc/prefs.csh
+echo "export CPATH=\"$CPATH_EXTRA:\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
+echo "setenv CPATH \"$CPATH_EXTRA\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
 
-echo "export LIBRARY_PATH=\"$LIBRARY_PATH\"" >> etc/prefs.sh
-echo "setenv LIBRARY_PATH \"$LIBRARY_PATH\"" >> etc/prefs.csh
+echo "export LIBRARY_PATH=\"$LIBRARY_PATH_EXTRA:\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
+echo "setenv LIBRARY_PATH \"$LIBRARY_PATH_EXTRA\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
 
+
+# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/1664
 echo 'export FOAM_DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"' >> etc/bashrc
 echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
 
