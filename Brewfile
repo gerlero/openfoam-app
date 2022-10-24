@@ -1,3 +1,5 @@
+tap "gerlero/openfoam"
+
 # Required dependencies
 brew "open-mpi"
 brew "libomp"
