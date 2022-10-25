@@ -20,4 +20,4 @@ VOLUME=$("$APP_BUNDLE/Contents/Resources/volume" -show-prefix)
 exec {fd}<"$VOLUME"
 
 echo "Activating the OpenFOAM environment..."
-PATH="$VOLUME/usr/bin:$PATH" exec bash "$VOLUME/etc/openfoam" "$@"
+PATH="$VOLUME/usr/opt/bash/bin:${PATH+:$PATH}" exec bash "$VOLUME/etc/openfoam" "$@"
