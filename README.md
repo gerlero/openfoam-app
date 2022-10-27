@@ -12,7 +12,7 @@
 * An Intel or Apple silicon Mac
 * A recent version of macOS
     * Intel: macOS 10.15 or later (older macOS versions might work, but are not tested)
-    * Apple silicon: macOS 12 (macOS 11 should also work, but is not tested)
+    * Apple silicon: macOS 12 or later (macOS 11 should also work, but is not tested)
 
 
 ## 📦 Install
