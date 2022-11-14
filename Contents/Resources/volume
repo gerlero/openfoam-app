@@ -54,7 +54,7 @@ do
             exit 0
             ;;
         -*)
-            echo "Invalid option '$1'" 2>&1
+            echo "Invalid option '$1'" 1>&2
             exit 1
             ;;
         *)
@@ -65,7 +65,7 @@ done
 
 if [ "$#" -ne 1 ]
 then
-    echo "A command is required" 2>&1
+    echo "A command is required" 1>&2
     exit 1
 fi
 
@@ -128,7 +128,7 @@ case "$1" in
         exit 0
         ;;
     *)
-        "Invalid command '$1'"  2>&1
+        "Invalid command '$1'" 1>&2
         exit 1
         ;;
 esac
