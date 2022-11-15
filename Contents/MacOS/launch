@@ -1,3 +1,8 @@
-#!/bin/zsh -e
+#!/usr/bin/osascript
 
-open -a Terminal "${0:A:h:h}/Resources/etc/openfoam"
+set MacOSDir to (path to me as text) & "::"
+
+tell application "Terminal"
+    do script (quoted form of POSIX path of MacOSDir) & "../Resources/etc/openfoam"
+    activate
+end tell
