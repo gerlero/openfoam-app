@@ -18,7 +18,7 @@ jobs:
 
   openfoam2206:
     needs: get-version
-    name: OpenFOAM v2206
+    name: OpenFOAM-v2206.app
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2206
@@ -27,7 +27,7 @@ jobs:
 
   openfoam2112:
     needs: get-version
-    name: OpenFOAM v2112
+    name: OpenFOAM-v2112.app
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: 2112
