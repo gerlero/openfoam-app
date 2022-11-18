@@ -41,7 +41,11 @@ APP_CONTENTS = \
 	build/$(APP_NAME).app/Contents/Resources/bashrc \
 	build/$(APP_NAME).app/Contents/Resources/LICENSE \
 	build/$(APP_NAME).app/Contents/Resources/icon.icns \
-	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
+	build/$(APP_NAME).app/Contents/MacOS/bashrc \
+	build/$(APP_NAME).app/Contents/Resources/volume \
+	build/$(APP_NAME).app/Contents/Resources/etc/openfoam \
+	build/$(APP_NAME).app/Contents/Resources/etc/bashrc
 
 
 $(INSTALL_DIR)/$(APP_NAME).app: build/$(APP_NAME).app
@@ -82,7 +86,7 @@ build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 
 build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
-	cp $< $@
+	cp -a $< $@
 
 build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
