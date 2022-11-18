@@ -63,13 +63,13 @@ build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAM
 	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
 
 build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Resources/volume
-	mkdir -p build/$(APP_NAME).app/Contents/Resources/etc/
+	mkdir -p build/$(APP_NAME).app/Contents/Resources/etc
 	cp Contents/Resources/etc/openfoam build/$(APP_NAME).app/Contents/Resources/etc/
 	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 	sed -i '' "s|{{APP_HOMEPAGE}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 
 build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
-	mkdir -p build/$(APP_NAME).app/Contents/Resources/
+	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
@@ -82,17 +82,9 @@ build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp LICENSE build/$(APP_NAME).app/Contents/Resources/
 
-build/$(APP_NAME).app/Contents/MacOS/openfoam: Contents/MacOS/openfoam
-	mkdir -p build/$(APP_NAME).app/Contents/MacOS
-	cp -R Contents/MacOS/openfoam build/$(APP_NAME).app/Contents/MacOS/
-
-build/$(APP_NAME).app/Contents/MacOS/bashrc: Contents/MacOS/bashrc
-	mkdir -p build/$(APP_NAME).app/Contents/MacOS
-	cp -R Contents/MacOS/bashrc build/$(APP_NAME).app/Contents/MacOS/
-
 build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
-	cp $< $@
+	cp -a $< $@
 
 build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
