@@ -1,8 +1,9 @@
 SCRIPT_DIR="$(\cd $(dirname ${BASH_SOURCE:-${ZSH_NAME:+$0}}) && \pwd -L)"
+APP_BUNDLE="${SCRIPT_DIR}/../.."
 
-"$SCRIPT_DIR/../volume" -quiet mount
+"${APP_BUNDLE}/Contents/MacOS/volume" -quiet mount
 
-VOLUME=`"$SCRIPT_DIR/../volume" -show-prefix`
+VOLUME=`"${APP_BUNDLE}/Contents/MacOS/volume" -show-prefix`
 
 if [ ${BASH_VERSINFO:-4} -ge 4 ]; then
     # Keep the volume directory open in this process (prevents accidental ejection)

@@ -1,8 +1,8 @@
 #!/usr/bin/osascript
 
-set MacOSDir to (path to me as text) & "::"
+set openfoam to (path to me as text) & "::openfoam"
 
 tell application "Terminal"
-    do script (quoted form of POSIX path of MacOSDir) & "../Resources/etc/openfoam"
+    do script (quoted form of POSIX path of openfoam)
     activate
 end tell
