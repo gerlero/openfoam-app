@@ -11,6 +11,7 @@ rm -rf flange
 cp -r "$FOAM_TUTORIALS/basic/laplacianFoam/flange" flange
 cd flange
 OMPI_MCA_rmaps_base_oversubscribe=1 ./Allrun-parallel
+! grep 'A system call failed' log.*
 reconstructPar
 cd ..
 
