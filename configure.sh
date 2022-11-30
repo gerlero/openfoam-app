@@ -49,3 +49,8 @@ echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
 
 # Workaround for https://develop.openfoam.com/Community/integration-cfmesh/-/issues/8
 sed -i '' 's|LIB_LIBS =|& $(LINK_OPENMP) |' modules/cfmesh/meshLibrary/Make/options
+
+
+# Workaround for https://github.com/open-mpi/ompi/issues/7393
+echo 'export TMPDIR=/tmp' >> etc/prefs.sh
+echo 'setenv TMPDIR /tmp' >> etc/prefs.csh
