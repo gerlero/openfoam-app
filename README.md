@@ -11,8 +11,9 @@
 
 * An Intel or Apple silicon Mac
 * A recent version of macOS
-    * Intel: macOS 10.15 or later (older macOS versions might work, but are not tested)
-    * Apple silicon: macOS 12 or later (macOS 11 should also work, but is not tested)
+    * Intel: macOS 11 Big Sur or later
+    * Apple silicon: macOS 13 Ventura
+    * _Running an older version of macOS? [See here](#i-have-an-older-version-of-macos-and-cannot-upgrade-to-a-supported-version-what-can-i-do)_
 
 
 ## 📦 Install
@@ -104,6 +105,22 @@ However, there are a few circumstances where this is not sufficient (e.g. solver
 ### Why do I get a dialog prompting me to install the "command line developer tools"?
 
 You are attempting something that requires development tools (e.g. a compiler), and you do not have such tools installed yet. Just follow the steps to install the necessary tools from Apple and you should be good to go.
+
+### I have an older version of macOS and cannot upgrade to a supported version. What can I do?
+
+If you cannot upgrade to a newer macOS, you still have a few alternatives:
+
+* **Try [installing the latest release](#-install) anyway.** The [required macOS versions](#-prerequisites) are those on which the latest release has been tested and is known to work. It is likely that the app will work too on some previous versions of macOS, but due to limited resources I cannot test with older OS versions
+
+* Download an older release that was tested with your configuration:
+
+    * Apple silicon — last version tested with macOS 12 Monterey: [**OpenFOAM.app** v1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-arm64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-arm64.zip))
+
+    * Intel — last version tested with macOS 10.15 Catalina: [**OpenFOAM.app** v1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-x86_64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-x86_64.zip))
+
+* Or, you can try [building the app from source](#-building-from-source) on the system where you'll be using it
+
+Whatever alternative you choose, please avoid opening an issue if something doesn't work as expected when running an older version of macOS.
 
 ### Can I get an app for a version from the OpenFOAM Foundation ([openfoam.org](openfoam.org), e.g. OpenFOAM 10)?
 
