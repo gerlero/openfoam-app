@@ -113,14 +113,10 @@ jobs:
         with:
           name: build-${{ inputs.openfoam-version }}
           path: build
-      - name: Make standalone app
+      - name: Make apps
         run: |
           touch -c build/*-build.sparsebundle
-          make zip $MAKE_VARS DEPENDENCIES_KIND=standalone
-      - name: Make Homebrew-based app
-        run: |
-          make clean-app $MAKE_VARS
-          make zip $MAKE_VARS DEPENDENCIES_KIND=homebrew
+          make zip $MAKE_VARS DEPENDENCIES_KIND=both
       - name: Upload apps artifact
         uses: actions/upload-artifact@v3
         with:

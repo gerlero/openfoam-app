@@ -25,7 +25,17 @@ app: build/$(APP_NAME).app
 build: build/$(APP_NAME)-build.sparsebundle
 deps: build/$(APP_NAME)-deps.sparsebundle
 fetch-source: $(SOURCE_TARBALL)
+
+ifeq ($(DEPENDENCIES_KIND),both)
+zip:
+	$(MAKE) zip DEPENDENCIES_KIND=standalone
+	$(MAKE) clean-app
+	$(MAKE) zip DEPENDENCIES_KIND=homebrew
+	$(MAKE) clean-app
+else
 zip: build/$(DIST_NAME).zip
+endif
+
 install: $(INSTALL_DIR)/$(APP_NAME).app
 
 
