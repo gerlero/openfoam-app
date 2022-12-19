@@ -31,6 +31,8 @@ cd backwardFacingStep2D
 ! grep 'FOAM Warning' log.simpleFoam
 cd ..
 
+# https://github.com/gerlero/openfoam-app/pull/16
+foamyHexMesh -help
 rm -rf blob
 cp -r "$FOAM_TUTORIALS/mesh/foamyHexMesh/blob" blob
 cd blob
