@@ -49,29 +49,31 @@ jobs:
       - name: Get Make recipes for caching
         run: |
           make deps --dry-run $MAKE_VARS > make_deps.txt
-      - name: Restore cached deps
+          make build --dry-run $MAKE_VARS > make_build.txt
+      - name: Restore cached build
         if: inputs.use-cached
+        id: cache_build
+        uses: actions/cache/restore@v3
+        with:
+          path: build/*-deps.sparsebundle
+          key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
+      - name: Restore cached deps
+        if: inputs.use-cached && steps.cache_build.outputs.cache-hit != 'true'
         id: cache_deps
         uses: actions/cache/restore@v3
         with:
           path: build/*-deps.sparsebundle
           key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
       - name: Make deps
-        if: steps.cache_deps.outputs.cache-hit != 'true'
+        if: steps.cache_build.outputs.cache-hit != 'true' && steps.cache_deps.outputs.cache-hit != 'true'
         run: |
           make deps $MAKE_VARS
       - name: Save deps to cache
-        if: steps.cache_deps.outputs.cache-hit != 'true'
+        if: steps.cache_build.outputs.cache-hit != 'true' && steps.cache_deps.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           path: build/*-deps.sparsebundle
           key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
-      - name: Upload deps artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: deps-${{ inputs.openfoam-version }}
-          path: build/*-deps.sparsebundle
-          if-no-files-found: error
   
   build:
     needs: deps
@@ -79,27 +81,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Download deps artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: deps-${{ inputs.openfoam-version }}
-          path: build
-      - name: Use deps
-        run: |
-          touch -c build/*-deps.sparsebundle
       - name: Get Make recipes for caching
         run: |
+          make deps --dry-run $MAKE_VARS > make_deps.txt
           make build --dry-run $MAKE_VARS > make_build.txt
       - name: Restore cached build
         if: inputs.use-cached
         id: cache_build
         uses: actions/cache/restore@v3
         with:
-          path: build/*-build.sparsebundle
-          key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'build/*-deps.sparsebundle', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
-      - name: Use cached build
-        if: steps.cache_build.outputs.cache-hit == 'true'
+          path: build/*-deps.sparsebundle
+          key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
+      - name: Restore cached deps
+        if: inputs.use-cached && steps.cache_build.outputs.cache-hit != 'true'
+        id: cache_deps
+        uses: actions/cache/restore@v3
+        with:
+          path: build/*-deps.sparsebundle
+          key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
+      - name: Reuse cached build or deps
         run: |
+          touch -c build/*-deps.sparsebundle
           touch -c build/*-build.sparsebundle
       - name: Build
         if: steps.cache_build.outputs.cache-hit != 'true'
@@ -110,7 +112,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: build/*-build.sparsebundle
-          key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'build/*-deps.sparsebundle', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
+          key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
       - name: Make apps
         run: |
           make zip $MAKE_VARS DEPENDENCIES_KIND=both
