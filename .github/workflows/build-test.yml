@@ -97,6 +97,10 @@ jobs:
         with:
           path: build/*-build.sparsebundle
           key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'build/*-deps.sparsebundle', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
+      - name: Use cached build
+        if: steps.cache_build.outputs.cache-hit == 'true'
+        run: |
+          touch -c build/*-build.sparsebundle
       - name: Build
         if: steps.cache_build.outputs.cache-hit != 'true'
         run: |
@@ -107,27 +111,8 @@ jobs:
         with:
           path: build/*-build.sparsebundle
           key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'build/*-deps.sparsebundle', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-${{ inputs.openfoam-version }}
-          path: build/*-build.sparsebundle
-          if-no-files-found: error
-
-  apps:
-    needs: build
-    runs-on: macos-11
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: build-${{ inputs.openfoam-version }}
-          path: build
       - name: Make apps
         run: |
-          touch -c build/*-build.sparsebundle
           make zip $MAKE_VARS DEPENDENCIES_KIND=both
       - name: Upload apps artifact
         uses: actions/upload-artifact@v3
@@ -137,7 +122,7 @@ jobs:
           if-no-files-found: error
 
   test:
-    needs: apps
+    needs: build
     strategy:
       matrix:
         os: [macos-11, macos-12]
