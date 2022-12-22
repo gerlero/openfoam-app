@@ -22,6 +22,10 @@ on:
         type: boolean
         default: true
         required: false
+      cache-build:
+        type: boolean
+        default: true
+        required: false
       release:
         type: boolean
         default: false
@@ -98,7 +102,7 @@ jobs:
         run: |
           make build $MAKE_VARS
       - name: Save build to cache
-        if: steps.cache_build.outputs.cache-hit != 'true'
+        if: steps.cache_build.outputs.cache-hit != 'true' && inputs.cache-build
         uses: actions/cache/save@v3
         with:
           path: build/*-build.sparsebundle
