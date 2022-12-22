@@ -48,7 +48,7 @@ echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
 
 
 # Workaround for https://develop.openfoam.com/Community/integration-cfmesh/-/issues/8
-sed -i '' 's|LIB_LIBS =|& $(LINK_OPENMP) |' modules/cfmesh/meshLibrary/Make/options
+[ $(bin/foamEtcFile -show-api) -ge 2212 ] || sed -i '' 's|LIB_LIBS =|& $(LINK_OPENMP) |' modules/cfmesh/meshLibrary/Make/options
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2664
