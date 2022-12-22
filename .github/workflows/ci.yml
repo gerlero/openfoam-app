@@ -11,6 +11,13 @@ on:
     - cron: '0 6 * * 5'
 
 jobs:
+  openfoam2212:
+    name: OpenFOAM-v2212.app
+    uses: ./.github/workflows/build-test.yml
+    with:
+      openfoam-version: 2212
+      use-cached: ${{ github.event_name != 'schedule' }}
+
   openfoam2206:
     name: OpenFOAM-v2206.app
     uses: ./.github/workflows/build-test.yml
