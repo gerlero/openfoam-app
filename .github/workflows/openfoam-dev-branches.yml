@@ -14,6 +14,7 @@ jobs:
       app-version: master
       openfoam-git-branch: master
       use-cached: false
+      cache-build: false
 
   openfoam-develop-branch:
     name: OpenFOAM develop branch
@@ -24,3 +25,4 @@ jobs:
       app-version: develop
       openfoam-git-branch: develop
       use-cached: false
+      cache-build: false
