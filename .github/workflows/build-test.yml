@@ -40,7 +40,7 @@ env:
 
 jobs:
   deps:
-    runs-on: macos-11
+    runs-on: macos-12
     concurrency:
       group: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -63,7 +63,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: build/*-deps.sparsebundle
-          key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
+          key: deps2-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
       - name: Make deps
         if: steps.cache_build.outputs.cache-hit != 'true' && steps.cache_deps.outputs.cache-hit != 'true'
         run: |
@@ -73,11 +73,11 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: build/*-deps.sparsebundle
-          key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
+          key: deps2-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
   
   build:
     needs: deps
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -98,7 +98,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: build/*-deps.sparsebundle
-          key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
+          key: deps2-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}
       - name: Reuse cached build or deps
         run: |
           touch -c build/*-deps.sparsebundle
