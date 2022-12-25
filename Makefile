@@ -1,6 +1,6 @@
 # Build configuration
 SHELL = bash
-OPENFOAM_VERSION = 2206
+OPENFOAM_VERSION = 2212
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
