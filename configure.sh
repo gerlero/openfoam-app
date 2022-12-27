@@ -4,7 +4,7 @@ bin/tools/foamConfigurePaths \
     -system-compiler 'Clang' \
     -adios-path $PWD/usr/opt/adios2 \
     -boost-path $PWD/usr/opt/boost \
-    -cgal-path $PWD/usr/opt/cgal \
+    -cgal-path $PWD/usr/opt/cgal\\\@4 \
     -fftw-path $PWD/usr/opt/fftw \
     -kahip-path $PWD/usr/opt/kahip \
     -metis-path $PWD/usr/opt/metis \
@@ -49,14 +49,6 @@ echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
 
 # Workaround for https://develop.openfoam.com/Community/integration-cfmesh/-/issues/8
 [ $(bin/foamEtcFile -show-api) -ge 2212 ] || sed -i '' 's|LIB_LIBS =|& $(LINK_OPENMP) |' modules/cfmesh/meshLibrary/Make/options
-
-
-# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2664
-rm wmake/rules/darwin64Clang/cgal
-
-# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2665
-[ -e "$PWD/usr/opt/cgal/include/CGAL/Robust_circumcenter_filtered_traits_3.h" ] || \
-    sed -i '' 's|CGAL/Robust_circumcenter_filtered_traits_3.h|CGAL/Robust_weighted_circumcenter_filtered_traits_3.h|' applications/utilities/mesh/generation/foamyMesh/conformalVoronoiMesh/conformalVoronoiMesh/CGALTriangulation3DKernel.H
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2668
