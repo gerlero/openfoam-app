@@ -57,3 +57,7 @@ rm wmake/rules/darwin64Clang/cgal
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2665
 [ -e "$PWD/usr/opt/cgal/include/CGAL/Robust_circumcenter_filtered_traits_3.h" ] || \
     sed -i '' 's|CGAL/Robust_circumcenter_filtered_traits_3.h|CGAL/Robust_weighted_circumcenter_filtered_traits_3.h|' applications/utilities/mesh/generation/foamyMesh/conformalVoronoiMesh/conformalVoronoiMesh/CGALTriangulation3DKernel.H
+
+
+# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2668
+[ $(bin/foamEtcFile -show-api) -lt 2212 ] || sed -i '' '\|/\* \${CGAL_LIBS} \*/|d' applications/utilities/preProcessing/viewFactorsGen/Make/options
