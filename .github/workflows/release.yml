@@ -16,6 +16,15 @@ jobs:
         id: get_version
         uses: battila7/get-version-action@v2
 
+  openfoam2212:
+    needs: get-version
+    name: OpenFOAM-v2212.app
+    uses: ./.github/workflows/build-test.yml
+    with:
+      openfoam-version: 2212
+      app-version: ${{ needs.get-version.outputs.app-version }}
+      release: true
+
   openfoam2206:
     needs: get-version
     name: OpenFOAM-v2206.app
