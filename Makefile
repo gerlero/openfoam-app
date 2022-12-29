@@ -1,6 +1,6 @@
 # Build configuration
 SHELL = bash
-OPENFOAM_VERSION = 2206
+OPENFOAM_VERSION = 2212
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
@@ -25,7 +25,17 @@ app: build/$(APP_NAME).app
 build: build/$(APP_NAME)-build.sparsebundle
 deps: build/$(APP_NAME)-deps.sparsebundle
 fetch-source: $(SOURCE_TARBALL)
+
+ifeq ($(DEPENDENCIES_KIND),both)
+zip:
+	$(MAKE) zip DEPENDENCIES_KIND=standalone
+	$(MAKE) clean-app
+	$(MAKE) zip DEPENDENCIES_KIND=homebrew
+	$(MAKE) clean-app
+else
 zip: build/$(DIST_NAME).zip
+endif
+
 install: $(INSTALL_DIR)/$(APP_NAME).app
 
 
