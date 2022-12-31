@@ -93,7 +93,7 @@ jobs:
           path: build/*-build.sparsebundle
           key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}
       - name: Restore cached deps
-        if: inputs.use-cached && steps.cache_build.outputs.cache-hit != 'true'
+        if: steps.cache_build.outputs.cache-hit != 'true'
         id: cache_deps
         uses: actions/cache/restore@v3
         with:
