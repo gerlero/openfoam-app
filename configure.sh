@@ -52,4 +52,4 @@ echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2668
-[ $(bin/foamEtcFile -show-api) -lt 2212 ] || sed -i '' '\|/\* \${CGAL_LIBS} \*/|d' applications/utilities/preProcessing/viewFactorsGen/Make/options
+[ $(bin/foamEtcFile -show-api) -ne 2212 ] || sed -i '' '\|/\* \${CGAL_LIBS} \*/|d' applications/utilities/preProcessing/viewFactorsGen/Make/options
