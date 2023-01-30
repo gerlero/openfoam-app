@@ -53,3 +53,7 @@ echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2668
 [ $(bin/foamEtcFile -show-api) -ne 2212 ] || sed -i '' '\|/\* \${CGAL_LIBS} \*/|d' applications/utilities/preProcessing/viewFactorsGen/Make/options
+
+
+# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2664
+[ $(bin/foamEtcFile -show-api) -gt 2212 ] || rm -f wmake/rules/darwin64Clang/cgal
