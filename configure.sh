@@ -4,7 +4,7 @@ bin/tools/foamConfigurePaths \
     -system-compiler 'Clang' \
     -adios-path $PWD/usr/opt/adios2 \
     -boost-path $PWD/usr/opt/boost \
-    -cgal-path $PWD/usr/opt/cgal\\\@4 \
+    -cgal-path $PWD/usr/opt/cgal \
     -fftw-path $PWD/usr/opt/fftw \
     -kahip-path $PWD/usr/opt/kahip \
     -metis-path $PWD/usr/opt/metis \
