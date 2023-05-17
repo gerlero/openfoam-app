@@ -43,8 +43,8 @@ echo "setenv LIBRARY_PATH \"$LIBRARY_PATH_EXTRA\`[ \${?LIBRARY_PATH} == 1 ] && e
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/1664
-echo 'export FOAM_DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"' >> etc/bashrc
-echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
+[ $(bin/foamEtcFile -show-api) -ge 2212 ] || echo 'export FOAM_DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"' >> etc/bashrc
+[ $(bin/foamEtcFile -show-api) -ge 2212 ] || echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
 
 
 # Workaround for https://develop.openfoam.com/Community/integration-cfmesh/-/issues/8
