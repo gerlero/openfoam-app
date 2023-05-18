@@ -4,14 +4,16 @@ tap "gerlero/openfoam"
 brew "open-mpi"
 brew "libomp"
 
-# Optional dependencies
-brew "adios2"
+# Optional dependencies (enabled by default)
 brew "boost"
 brew "fftw"
 brew "kahip"
 brew "metis"
 brew "gerlero/openfoam/cgal@4"
 brew "gerlero/openfoam/scotch-no-pthread"
+
+# Optional dependencies (uncomment to enable)
+# brew "adios2"
 
 # Optional tools
 brew "bash"
