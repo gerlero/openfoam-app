@@ -8,7 +8,7 @@ bin/tools/foamConfigurePaths \
     -fftw-path $PWD/usr/opt/fftw \
     -kahip-path $PWD/usr/opt/kahip \
     -metis-path $PWD/usr/opt/metis \
-    -scotch-path $PWD/usr/opt/scotch-no-pthread
+    -scotch-path $PWD/usr/opt/scotch
 
 
 GMP_PATH="$PWD/usr/opt/gmp"
