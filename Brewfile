@@ -9,8 +9,8 @@ brew "boost"
 brew "fftw"
 brew "kahip"
 brew "metis"
+brew "scotch"
 brew "gerlero/openfoam/cgal@4"
-brew "gerlero/openfoam/scotch-no-pthread"
 
 # Optional dependencies (uncomment to enable)
 # brew "adios2"
