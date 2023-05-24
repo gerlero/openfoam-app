@@ -11,12 +11,22 @@ bin/tools/foamConfigurePaths \
     -scotch-path $PWD/usr/opt/scotch-no-pthread
 
 
-OPENMPI_PATH="$PWD/usr/opt/open-mpi"
+GMP_PATH="$PWD/usr/opt/gmp"
+MPFR_PATH="$PWD/usr/opt/mpfr"
+
+sed -i '' "s|\# export GMP_ARCH_PATH=...|export GMP_ARCH_PATH=\"$GMP_PATH\"|" etc/config.sh/CGAL
+sed -i '' "s|\# setenv GMP_ARCH_PATH ...|setenv GMP_ARCH_PATH \"$GMP_PATH\"|" etc/config.csh/CGAL
+
+sed -i '' "s|\# export MPFR_ARCH_PATH=...|export MPFR_ARCH_PATH=\"$MPFR_PATH\"|" etc/config.sh/CGAL
+sed -i '' "s|\# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH \"$MPFR_PATH\"|" etc/config.csh/CGAL
+
+
+MPI_PATH="$PWD/usr/opt/open-mpi"
 BASH_PATH="$PWD/usr/opt/bash"
 
-PATH_EXTRA="$BASH_PATH/bin:$OPENMPI_PATH/bin"
-MANPATH_EXTRA="$BASH_PATH/share/man:$OPENMPI_PATH/share/man"
-INFOPATH_EXTRA="$BASH_PATH/share/info:$OPENMPI_PATH/share/info"
+PATH_EXTRA="$BASH_PATH/bin:$MPI_PATH/bin"
+MANPATH_EXTRA="$BASH_PATH/share/man:$MPI_PATH/share/man"
+INFOPATH_EXTRA="$BASH_PATH/share/info:$MPI_PATH/share/info"
 
 echo "export PATH=\"$PATH_EXTRA\${PATH+:\$PATH}\"" >> etc/prefs.sh
 echo "setenv PATH $PATH_EXTRA:\$PATH" >> etc/prefs.csh
@@ -29,17 +39,18 @@ echo "setenv INFOPATH $INFOPATH_EXTRA\`[ \${?INFOPATH} == 1 ] && echo \":\${INFO
 
 
 LIBOMP_PATH="$PWD/usr/opt/libomp"
-GMP_PATH="$PWD/usr/opt/gmp"
-MPFR_PATH="$PWD/usr/opt/mpfr"
 
-CPATH_EXTRA="$LIBOMP_PATH/include:$GMP_PATH/include:$MPFR_PATH/include"
-LIBRARY_PATH_EXTRA="$LIBOMP_PATH/lib:$GMP_PATH/lib:$MPFR_PATH/lib"
+if [ -f "$LIBOMP_PATH/include/omp.h" ]; then
+    echo "export CPATH=\"$LIBOMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
+    echo "setenv CPATH \"$LIBOMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
 
-echo "export CPATH=\"$CPATH_EXTRA\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
-echo "setenv CPATH \"$CPATH_EXTRA\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
-
-echo "export LIBRARY_PATH=\"$LIBRARY_PATH_EXTRA\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
-echo "setenv LIBRARY_PATH \"$LIBRARY_PATH_EXTRA\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
+    echo "export LIBRARY_PATH=\"$LIBOMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
+    echo "setenv LIBRARY_PATH \"$LIBOMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
+else
+    echo "OpenMP not found at $LIBOMP_PATH. Disabling OpenMP support" >&2
+    echo "export WM_COMPILE_CONTROL=\"\$WM_COMPILE_CONTROL ~openmp\"" >> etc/prefs.sh
+    echo "setenv WM_COMPILE_CONTROL \"\$WM_COMPILE_CONTROL ~openmp\"" >> etc/prefs.csh
+fi
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/1664
