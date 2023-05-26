@@ -6,12 +6,12 @@ brew "libomp"
 brew "boost"
 brew "cgal"
 brew "fftw"
-brew "kahip"
-brew "metis"
 brew "scotch"
 
 # Optional dependencies (uncomment to enable)
 # brew "adios2"
+# brew "kahip"
+# brew "metis"
 
 # Optional tools
 brew "bash"
