@@ -6,10 +6,10 @@ brew "open-mpi"
 # Optional dependencies (enabled by default)
 brew "libomp"
 brew "boost"
+brew "cgal"
 brew "fftw"
 brew "kahip"
 brew "metis"
-brew "gerlero/openfoam/cgal@4"
 brew "gerlero/openfoam/scotch-no-pthread"
 
 # Optional dependencies (uncomment to enable)
