@@ -1,7 +1,12 @@
 #!/bin/bash -e
+# -----------------------------------------------------------------------------
+# Configure OpenFOAM for compilation and use within OpenFOAM.app on macOS
+# -----------------------------------------------------------------------------
 
+# Do as much as possible with foamConfigurePaths
 bin/tools/foamConfigurePaths \
     -system-compiler 'Clang' \
+    -openmpi \
     -adios-path $PWD/usr/opt/adios2 \
     -boost-path $PWD/usr/opt/boost \
     -cgal-path $PWD/usr/opt/cgal\\\@4 \
@@ -11,6 +16,14 @@ bin/tools/foamConfigurePaths \
     -scotch-path $PWD/usr/opt/scotch-no-pthread
 
 
+# Set path to the MPI install
+MPI_PATH="$PWD/usr/opt/open-mpi"
+
+echo "export MPI_ARCH_PATH=\"$MPI_PATH\"" >> etc/config.sh/prefs.openmpi
+echo "setenv MPI_ARCH_PATH \"$MPI_PATH\"" >> etc/config.csh/prefs.openmpi
+
+
+# Set paths of GMP and MPFR (dependencies of CGAL)
 GMP_PATH="$PWD/usr/opt/gmp"
 MPFR_PATH="$PWD/usr/opt/mpfr"
 
@@ -21,36 +34,33 @@ sed -i '' "s|\# export MPFR_ARCH_PATH=...|export MPFR_ARCH_PATH=\"$MPFR_PATH\"|"
 sed -i '' "s|\# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH \"$MPFR_PATH\"|" etc/config.csh/CGAL
 
 
-MPI_PATH="$PWD/usr/opt/open-mpi"
-BASH_PATH="$PWD/usr/opt/bash"
+# OpenMP support
+OPENMP_PATH="$PWD/usr/opt/libomp"
 
-PATH_EXTRA="$BASH_PATH/bin:$MPI_PATH/bin"
-MANPATH_EXTRA="$BASH_PATH/share/man:$MPI_PATH/share/man"
-INFOPATH_EXTRA="$BASH_PATH/share/info:$MPI_PATH/share/info"
+if [ -f "$OPENMP_PATH/include/omp.h" ]; then
+    echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
+    echo "setenv CPATH \"$OPENMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
 
-echo "export PATH=\"$PATH_EXTRA\${PATH+:\$PATH}\"" >> etc/prefs.sh
-echo "setenv PATH $PATH_EXTRA:\$PATH" >> etc/prefs.csh
-
-echo "export MANPATH=\"$MANPATH_EXTRA\${MANPATH+:\$MANPATH}:\"" >> etc/prefs.sh
-echo "setenv MANPATH $MANPATH_EXTRA\`[ \${?MANPATH} == 1 ] && echo \":\${MANPATH}\"\`:" >> etc/prefs.csh
-
-echo "export INFOPATH=\"$INFOPATH_EXTRA:\${INFOPATH:-}\"" >> etc/prefs.sh
-echo "setenv INFOPATH $INFOPATH_EXTRA\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
-
-
-LIBOMP_PATH="$PWD/usr/opt/libomp"
-
-if [ -f "$LIBOMP_PATH/include/omp.h" ]; then
-    echo "export CPATH=\"$LIBOMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
-    echo "setenv CPATH \"$LIBOMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
-
-    echo "export LIBRARY_PATH=\"$LIBOMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
-    echo "setenv LIBRARY_PATH \"$LIBOMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
+    echo "export LIBRARY_PATH=\"$OPENMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
+    echo "setenv LIBRARY_PATH \"$OPENMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
 else
-    echo "OpenMP not found at $LIBOMP_PATH. Disabling OpenMP support" >&2
+    echo "OpenMP not found at $OPENMP_PATH. Disabling OpenMP support" >&2
     echo "export WM_COMPILE_CONTROL=\"\$WM_COMPILE_CONTROL ~openmp\"" >> etc/prefs.sh
     echo "setenv WM_COMPILE_CONTROL \"\$WM_COMPILE_CONTROL ~openmp\"" >> etc/prefs.csh
 fi
+
+
+# Use bundled Bash
+BASH_PATH="$PWD/usr/opt/bash"
+
+echo "export PATH=\"$BASH_PATH/bin\${PATH+:\$PATH}\"" >> etc/prefs.sh
+echo "setenv PATH $BASH_PATH/bin:\$PATH" >> etc/prefs.csh
+
+echo "export MANPATH=\"$BASH_PATH/share/man\${MANPATH+:\$MANPATH}:\"" >> etc/prefs.sh
+echo "setenv MANPATH $BASH_PATH/share/man\`[ \${?MANPATH} == 1 ] && echo \":\${MANPATH}\"\`:" >> etc/prefs.csh
+
+echo "export INFOPATH=\"$BASH_PATH/share/info:\${INFOPATH:-}\"" >> etc/prefs.sh
+echo "setenv INFOPATH $BASH_PATH/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/1664
