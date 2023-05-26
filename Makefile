@@ -204,7 +204,7 @@ test-bash:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -rf $(TEST_DIR)/test-bash
 	mkdir -p $(TEST_DIR)/test-bash
-	PATH=$(VOLUME)/usr/bin:$$PATH bash -c \
+	PATH=$(VOLUME)/usr/opt/bash/bin:$$PATH bash -c \
 		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
 		set -ex; \
 		foamInstallationTest; \
