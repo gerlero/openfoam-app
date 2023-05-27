@@ -1,5 +1,5 @@
 # Build configuration
-SHELL = bash
+SHELL = /bin/bash
 OPENFOAM_VERSION = 2212
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
@@ -146,7 +146,7 @@ else ifdef OPENFOAM_GIT_BRANCH
 	git -C $(VOLUME) submodule update --init --recursive
 endif
 	cd $(VOLUME) \
-		&& $(SHELL) -ex "$(CURDIR)/configure.sh" \
+		&& "$(CURDIR)/configure.sh" \
 		&& source etc/bashrc \
 		&& foamSystemCheck \
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
@@ -204,7 +204,7 @@ test-bash:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	rm -rf $(TEST_DIR)/test-bash
 	mkdir -p $(TEST_DIR)/test-bash
-	PATH=$(VOLUME)/usr/bin:$$PATH bash -c \
+	PATH=$(VOLUME)/usr/opt/bash/bin:$$PATH bash -c \
 		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
 		set -ex; \
 		foamInstallationTest; \
@@ -232,7 +232,7 @@ test-dmg:
 	cd $(TEST_DIR)/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
-		&& $(SHELL) -ex "$(CURDIR)/test.sh"
+		&& bash -ex "$(CURDIR)/test.sh"
 	hdiutil detach $(VOLUME)
 
 clean-app:
