@@ -1,4 +1,4 @@
-[<img src="icon.png" width="150">](#)
+[<img src="icon.png" width="175">](#)
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
