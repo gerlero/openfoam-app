@@ -9,11 +9,11 @@ bin/tools/foamConfigurePaths \
     -openmpi \
     -adios-path $PWD/usr/opt/adios2 \
     -boost-path $PWD/usr/opt/boost \
-    -cgal-path $PWD/usr/opt/cgal\\\@4 \
+    -cgal-path $PWD/usr/opt/cgal \
     -fftw-path $PWD/usr/opt/fftw \
     -kahip-path $PWD/usr/opt/kahip \
     -metis-path $PWD/usr/opt/metis \
-    -scotch-path $PWD/usr/opt/scotch-no-pthread
+    -scotch-path $PWD/usr/opt/scotch
 
 
 # Set path to the MPI install
@@ -78,3 +78,6 @@ echo "setenv INFOPATH $BASH_PATH/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2664
 [ $(bin/foamEtcFile -show-api) -gt 2212 ] || rm -f wmake/rules/darwin64Clang/cgal
+
+# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2665
+[ $(bin/foamEtcFile -show-api) -gt 2212 ] || sed -i '' 's|Robust_circumcenter_filtered_traits_3|Robust_weighted_circumcenter_filtered_traits_3|' applications/utilities/mesh/generation/foamyMesh/conformalVoronoiMesh/conformalVoronoiMesh/CGALTriangulation3DKernel.H
