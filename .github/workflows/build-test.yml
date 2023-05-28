@@ -122,10 +122,10 @@ jobs:
         with:
           path: build/*-build.sparsebundle
           key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}
-      - name: Make apps
+      - name: Make app
         run: |
           make zip $MAKE_VARS
-      - name: Upload apps artifact
+      - name: Upload app artifact
         uses: actions/upload-artifact@v3
         with:
           name: app-${{ inputs.openfoam-version }}
