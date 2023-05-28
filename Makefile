@@ -12,7 +12,13 @@ DMG_FORMAT = UDRO
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION =
 TEST_DIR = build/test-v$(OPENFOAM_VERSION)
+
+ifeq ($(DEPENDENCIES_KIND),standalone)
+DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
+else
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(DEPENDENCIES_KIND)-$(shell uname -m)
+endif
+
 INSTALL_DIR = /Applications
 
 ifndef OPENFOAM_GIT_BRANCH
