@@ -1,4 +1,4 @@
-[<img src="icon.png" width="150">](#)
+[<img src="icon.png" width="175">](#)
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
@@ -9,60 +9,48 @@
 
 ## 🍏 Prerequisites
 
-* An Intel or Apple silicon Mac
+* An Apple silicon or Intel Mac
 * A recent version of macOS
-    * Intel: macOS 11 Big Sur or later
     * Apple silicon: macOS 13 Ventura
+    * Intel: macOS 11 Big Sur or later
     * _Running an older version of macOS? [See here](#i-have-an-older-version-of-macos-and-cannot-upgrade-to-a-supported-version-what-can-i-do)_
 
 
 ## 📦 Install
 
-Choose from the available OpenFOAM versions:
+Choose from the available OpenFOAM versions and installation methods:
 
 * **OpenFOAM v2212**
 
-    * Using [Homebrew](https://brew.sh):
+    * Install with [Homebrew](https://brew.sh):
 
         ```sh
         brew install --no-quarantine gerlero/openfoam/openfoam2212
         ```
 
-    * Manual download (standalone app):
-
-        * ⬇️ [Intel (`x86_64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-standalone-x86_64.zip) (latest release)
-
-        * ⬇️ [Apple silicon (`arm64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-standalone-arm64.zip) (latest release)
+    * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-x86_64.zip)
 
 * **OpenFOAM v2206**
 
-    * Using [Homebrew](https://brew.sh):
+    * Install with [Homebrew](https://brew.sh):
 
         ```sh
         brew install --no-quarantine gerlero/openfoam/openfoam2206
         ```
 
-    * Manual download (standalone app):
-
-        * ⬇️ [Intel (`x86_64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-x86_64.zip) (latest release)
-
-        * ⬇️ [Apple silicon (`arm64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-standalone-arm64.zip) (latest release)
+    * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2206-app-x86_64.zip)
 
 * **OpenFOAM v2112**
 
-    * Using [Homebrew](https://brew.sh):
+    * Install with [Homebrew](https://brew.sh):
 
         ```sh
         brew install --no-quarantine gerlero/openfoam/openfoam2112
         ```
 
-    * Manual download (standalone app):
+    * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-x86_64.zip)
 
-        * ⬇️ [Intel (`x86_64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-x86_64.zip) (latest release)
-
-        * ⬇️ [Apple silicon (`arm64`)](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2112-app-standalone-arm64.zip) (latest release)
-
-To install an older release of **OpenFOAM.app**, you can browse the [Releases page](https://github.com/gerlero/openfoam-app/releases) and download the `standalone` app you want.
+Looking for an older release of **OpenFOAM.app**? You can browse the [Releases page](https://github.com/gerlero/openfoam-app/releases) and download the app you need.
 
 ## 🧑‍💻 Use
 
@@ -87,7 +75,7 @@ If you did not install with Homebrew, you can get the same by invoking the follo
 
 ## 🙋 Q&A
 
-### I also need ParaView. Where/how do I get it?
+### I also need ParaView. How can I get that?
 
 Get the native macOS version of ParaView from the [official site](https://www.paraview.org/download/) or [install with Homebrew](https://formulae.brew.sh/cask/paraview) (prefer the latter if you'd like to use OpenFOAM's `paraFoam` command).
 
@@ -127,9 +115,9 @@ If you cannot upgrade to a newer macOS, you still have a few alternatives:
 
 * Download an older release that was tested with your configuration:
 
-    * Apple silicon — last version tested with macOS 12 Monterey: [**OpenFOAM.app** v1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-arm64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-arm64.zip))
+    * Apple silicon — last version tested with macOS 12 Monterey: [**OpenFOAM.app** 1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-arm64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-arm64.zip))
 
-    * Intel — last version tested with macOS 10.15 Catalina: [**OpenFOAM.app** v1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-x86_64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-x86_64.zip))
+    * Intel — last version tested with macOS 10.15 Catalina: [**OpenFOAM.app** 1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-x86_64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-x86_64.zip))
 
 * Or, you can try [building the app from source](#-building-from-source) on the system where you'll be using it
 
@@ -141,9 +129,7 @@ No. The OpenFOAM Foundation's distribution [does not support native compilation 
 
 ### How do I uninstall the app?
 
-If you installed with Homebrew, uninstall with ``brew uninstall``. After that, you can run [```brew autoremove```](https://docs.brew.sh/Manpage#autoremove---dry-run) to also remove installed dependencies that are no longer required.
-
-If you installed manually, just delete the app (for the manual install, the apps are fully self-contained).
+If you installed with Homebrew, uninstall with ``brew uninstall``. If you downloaded manually, delete the app.
 
 
 ## 🔨 Building from source
