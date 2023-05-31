@@ -19,6 +19,9 @@ bin/tools/foamConfigurePaths \
 # Set path to the MPI install
 MPI_PATH="$PWD/usr/opt/open-mpi"
 
+echo 'export FOAM_MPI=openmpi' >> etc/config.sh/prefs.openmpi
+echo 'setenv FOAM_MPI openmpi' >> etc/config.csh/prefs.openmpi
+
 echo "export MPI_ARCH_PATH=\"$MPI_PATH\"" >> etc/config.sh/prefs.openmpi
 echo "setenv MPI_ARCH_PATH \"$MPI_PATH\"" >> etc/config.csh/prefs.openmpi
 
