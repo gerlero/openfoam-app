@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         openfoam-git-branch: [master, develop]
+      fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
       app-name: OpenFOAM-${{ matrix.openfoam-git-branch }}
