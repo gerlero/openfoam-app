@@ -5,7 +5,8 @@ on:
     inputs:
       openfoam-version:
         type: string
-        required: true
+        default: ''
+        required: false
       app-version:
         type: string
         default: ''

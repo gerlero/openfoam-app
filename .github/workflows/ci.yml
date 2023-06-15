@@ -9,25 +9,20 @@ on:
       - main
   schedule:
     - cron: '0 6 * * 5'
+  workflow_dispatch:
+    inputs:
+      use-cached:
+        type: boolean
+        default: false
+        required: false
+        description: Reuse cached build artifacts if available
 
 jobs:
-  openfoam2212:
-    name: OpenFOAM-v2212.app
+  ci:
+    strategy:
+      matrix:
+        openfoam-version: [2212, 2206, 2112]
     uses: ./.github/workflows/build-test.yml
     with:
-      openfoam-version: 2212
-      use-cached: ${{ github.event_name != 'schedule' }}
-
-  openfoam2206:
-    name: OpenFOAM-v2206.app
-    uses: ./.github/workflows/build-test.yml
-    with:
-      openfoam-version: 2206
-      use-cached: ${{ github.event_name != 'schedule' }}
-
-  openfoam2112:
-    name: OpenFOAM-v2112.app
-    uses: ./.github/workflows/build-test.yml
-    with:
-      openfoam-version: 2112
-      use-cached: ${{ github.event_name != 'schedule' }}
+      openfoam-version: ${{ matrix.openfoam-version }}
+      use-cached: ${{ github.event_name  == 'workflow_dispatch' && inputs.use-cached || github.event_name  != 'workflow_dispatch' && github.event_name != 'schedule' }}

@@ -5,24 +5,14 @@ on:
     - cron: '0 6 * * 5'
 
 jobs:
-  openfoam-master-branch:
-    name: OpenFOAM master branch
+  openfoam-dev-branch:
+    strategy:
+      matrix:
+        openfoam-git-branch: [master, develop]
     uses: ./.github/workflows/build-test.yml
     with:
-      openfoam-version: master
-      app-name: OpenFOAM-dev
-      app-version: master
-      openfoam-git-branch: master
-      use-cached: false
-      cache-build: false
-
-  openfoam-develop-branch:
-    name: OpenFOAM develop branch
-    uses: ./.github/workflows/build-test.yml
-    with:
-      openfoam-version: develop
-      app-name: OpenFOAM-dev
-      app-version: develop
-      openfoam-git-branch: develop
+      app-name: OpenFOAM-${{ matrix.openfoam-git-branch }}
+      app-version: ${{ matrix.openfoam-git-branch }}
+      openfoam-git-branch: ${{ matrix.openfoam-git-branch }}
       use-cached: false
       cache-build: false
