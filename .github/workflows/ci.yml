@@ -22,8 +22,12 @@ jobs:
     strategy:
       matrix:
         openfoam-version: [2212, 2206, 2112]
+        include:
+          - openfoam-version: 2112
+            openfoam-tarball-url: https://dl.openfoam.com/source/v2112/OpenFOAM-v2112_220610.tgz
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: ${{ matrix.openfoam-version }}
+      openfoam-tarball-url: ${{ matrix.openfoam-tarball-url }}
       use-cached: ${{ github.event_name  == 'workflow_dispatch' && inputs.use-cached || github.event_name  != 'workflow_dispatch' && github.event_name != 'schedule' }}
