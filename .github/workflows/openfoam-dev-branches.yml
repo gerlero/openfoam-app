@@ -3,6 +3,7 @@ name: OpenFOAM development branches
 on:
   schedule:
     - cron: '0 6 * * 5'
+  workflow_dispatch:
 
 jobs:
   openfoam-dev-branch:
