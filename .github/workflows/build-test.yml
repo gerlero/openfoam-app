@@ -38,6 +38,8 @@ env:
     ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
     ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
+  
+  OPENFOAM: ${{ inputs.openfoam-git-branch || inputs.openfoam-version }}
 
 jobs:
   deps:
@@ -57,7 +59,7 @@ jobs:
           path: build/*-build.sparsebundle
           key: ignore
           restore-keys:
-            build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-
+            build-${{ env.OPENFOAM }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-
           lookup-only: true
       - name: Look up cached deps
         if: inputs.use-cached && steps.cache_build.outputs.cache-matched-key == ''
@@ -67,7 +69,7 @@ jobs:
           path: build/*-deps.sparsebundle
           key: ignore
           restore-keys:
-            deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-
+            deps-${{ env.OPENFOAM }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-
           lookup-only: true
       - name: Make deps
         if: steps.cache_build.outputs.cache-matched-key == '' && steps.cache_deps.outputs.cache-matched-key == ''
@@ -78,7 +80,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: build/*-deps.sparsebundle
-          key: deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ github.run_id }}
+          key: deps-${{ env.OPENFOAM }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-${{ github.run_id }}
   
   build:
     needs: deps
@@ -98,7 +100,7 @@ jobs:
           path: build/*-build.sparsebundle
           key: ignore
           restore-keys:
-            build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-
+            build-${{ env.OPENFOAM }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-
       - name: Restore cached deps
         if: steps.cache_build.outputs.cache-matched-key == ''
         id: cache_deps
@@ -107,7 +109,7 @@ jobs:
           path: build/*-deps.sparsebundle
           key: ignore
           restore-keys:
-            deps-${{ inputs.app-name || inputs.openfoam-version }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-
+            deps-${{ env.OPENFOAM }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-
           fail-on-cache-miss: true
       - name: Reuse cached build or deps
         run: |
@@ -122,14 +124,14 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: build/*-build.sparsebundle
-          key: build-${{ inputs.openfoam-version }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}
+          key: build-${{ env.OPENFOAM }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-${{ github.run_id }}
       - name: Make app
         run: |
           make zip $MAKE_VARS
       - name: Upload app artifact
         uses: actions/upload-artifact@v3
         with:
-          name: app-${{ inputs.openfoam-version }}
+          name: app-${{ env.OPENFOAM }}
           path: build/*-app-*.zip
           if-no-files-found: error
 
@@ -146,7 +148,7 @@ jobs:
       - name: Download app artifact
         uses: actions/download-artifact@v3
         with:
-          name: app-${{ inputs.openfoam-version }}
+          name: app-${{ env.OPENFOAM }}
           path: build
       - name: Unzip app
         run: |
@@ -164,7 +166,7 @@ jobs:
       - name: Download app artifact
         uses: actions/download-artifact@v3
         with:
-          name: app-${{ inputs.openfoam-version }}
+          name: app-${{ env.OPENFOAM }}
       - name: Upload app to release
         uses: svenstaro/upload-release-action@v2
         with:
