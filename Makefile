@@ -2,7 +2,7 @@
 SHELL = /bin/bash
 OPENFOAM_VERSION = 2212
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
-SOURCE_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
+OPENFOAM_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
 OPENFOAM_GIT_BRANCH =
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
@@ -22,7 +22,7 @@ endif
 INSTALL_DIR = /Applications
 
 ifndef OPENFOAM_GIT_BRANCH
-SOURCE_TARBALL = $(shell basename $(SOURCE_TARBALL_URL))
+OPENFOAM_TARBALL = $(shell basename $(OPENFOAM_TARBALL_URL))
 endif
 
 
@@ -30,7 +30,7 @@ endif
 app: build/$(APP_NAME).app
 build: build/$(APP_NAME)-build.sparsebundle
 deps: build/$(APP_NAME)-deps.sparsebundle
-fetch-source: $(SOURCE_TARBALL)
+fetch-source: $(OPENFOAM_TARBALL)
 
 ifeq ($(DEPENDENCIES_KIND),both)
 zip:
@@ -139,12 +139,12 @@ endif
 	hdiutil detach $(VOLUME)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(SOURCE_TARBALL) configure.sh 
+build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(OPENFOAM_TARBALL) configure.sh 
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	mv build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 	hdiutil attach build/$(APP_NAME)-build.sparsebundle
-ifdef SOURCE_TARBALL
-	tar -xzf $(SOURCE_TARBALL) --strip-components 1 -C $(VOLUME)
+ifdef OPENFOAM_TARBALL
+	tar -xzf $(OPENFOAM_TARBALL) --strip-components 1 -C $(VOLUME)
 else ifdef OPENFOAM_GIT_BRANCH
 	git -C $(VOLUME) init -b $(OPENFOAM_GIT_BRANCH)
 	git -C $(VOLUME) remote add origin $(OPENFOAM_GIT_REPO_URL)
@@ -185,9 +185,9 @@ else
 endif
 	hdiutil detach $(VOLUME)
 
-$(SOURCE_TARBALL): $(or $(wildcard $(SOURCE_TARBALL).sha256), \
-					$(warning No checksum file found for $(SOURCE_TARBALL); will skip verification))
-	curl -L -o $(SOURCE_TARBALL) $(SOURCE_TARBALL_URL)
+$(OPENFOAM_TARBALL): $(or $(wildcard $(OPENFOAM_TARBALL).sha256), \
+					$(warning No checksum file found for $(OPENFOAM_TARBALL); will skip verification))
+	curl -L -o $(OPENFOAM_TARBALL) $(OPENFOAM_TARBALL_URL)
 	[ -z $< ] || shasum -a 256 -c $<
 
 Brewfile.lock.json: Brewfile
@@ -252,7 +252,7 @@ clean-build: clean-app
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(SOURCE_TARBALL) Brewfile.lock.json
+	rm -f $(OPENFOAM_TARBALL) Brewfile.lock.json
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
@@ -261,5 +261,5 @@ uninstall:
 # Set special targets
 .PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-app clean-build clean uninstall
 .PRECIOUS: build/$(APP_NAME)-build.sparsebundle
-.SECONDARY: $(SOURCE_TARBALL) Brewfile.lock.json build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
+.SECONDARY: $(OPENFOAM_TARBALL) Brewfile.lock.json build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
 .DELETE_ON_ERROR:
