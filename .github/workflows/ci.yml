@@ -30,4 +30,5 @@ jobs:
     with:
       openfoam-version: ${{ matrix.openfoam-version }}
       openfoam-tarball-url: ${{ matrix.openfoam-tarball-url }}
-      use-cached: ${{ github.event_name  == 'workflow_dispatch' && inputs.use-cached || github.event_name  != 'workflow_dispatch' && github.event_name != 'schedule' }}
+      use-cached: false
+      cache-build: false
