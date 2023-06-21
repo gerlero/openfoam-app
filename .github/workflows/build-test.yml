@@ -15,6 +15,10 @@ on:
         type: string
         default: ''
         required: false
+      openfoam-tarball-url:
+        type: string
+        default: ''
+        required: false
       openfoam-git-branch:
         type: string
         default: ''
@@ -37,6 +41,7 @@ env:
     ${{ inputs.openfoam-version != '' && format('OPENFOAM_VERSION={0}', inputs.openfoam-version) || '' }}
     ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
     ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
+    ${{ inputs.openfoam-tarball-url != '' && format('OPENFOAM_TARBALL_URL={0}', inputs.openfoam-tarball-url) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
   
   OPENFOAM: ${{ inputs.openfoam-git-branch || inputs.openfoam-version }}
