@@ -66,6 +66,13 @@ echo "export INFOPATH=\"$BASH_PATH/share/info:\${INFOPATH:-}\"" >> etc/prefs.sh
 echo "setenv INFOPATH $BASH_PATH/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
 
 
+# Disable floating point exception trapping when on Apple silicon
+# (Prevents confusing output that says it's enabled, as it doesn't work yet)
+# https://develop.openfoam.com/Development/openfoam/-/issues/2240
+[ $(uname -m) != 'arm64' ] || echo 'export FOAM_SIGFPE=false' >> etc/prefs.sh
+[ $(uname -m) != 'arm64' ] || echo 'setenv FOAM_SIGFPE false' >> etc/prefs.csh
+
+
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/1664
 [ $(bin/foamEtcFile -show-api) -ge 2212 ] || echo 'export FOAM_DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"' >> etc/bashrc
 [ $(bin/foamEtcFile -show-api) -ge 2212 ] || echo 'setenv FOAM_DYLD_LIBRARY_PATH "$DYLD_LIBRARY_PATH"' >> etc/cshrc
