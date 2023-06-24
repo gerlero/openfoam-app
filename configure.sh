@@ -5,19 +5,19 @@
 
 # Do as much as possible with foamConfigurePaths
 bin/tools/foamConfigurePaths \
-    -system-compiler 'Clang' \
+    -system-compiler Clang \
     -openmpi \
-    -adios-path $PWD/usr/opt/adios2 \
-    -boost-path $PWD/usr/opt/boost \
-    -cgal-path $PWD/usr/opt/cgal \
-    -fftw-path $PWD/usr/opt/fftw \
-    -kahip-path $PWD/usr/opt/kahip \
-    -metis-path $PWD/usr/opt/metis \
-    -scotch-path $PWD/usr/opt/scotch-no-pthread
+    -adios-path '$WM_PROJECT_DIR/usr/opt/adios2' \
+    -boost-path '$WM_PROJECT_DIR/usr/opt/boost' \
+    -cgal-path '$WM_PROJECT_DIR/usr/opt/cgal' \
+    -fftw-path '$WM_PROJECT_DIR/usr/opt/fftw' \
+    -kahip-path '$WM_PROJECT_DIR/usr/opt/kahip' \
+    -metis-path '$WM_PROJECT_DIR/usr/opt/metis' \
+    -scotch-path '$WM_PROJECT_DIR/usr/opt/scotch-no-pthread'
 
 
 # Set path to the MPI install
-MPI_PATH="$PWD/usr/opt/open-mpi"
+MPI_PATH='$WM_PROJECT_DIR/usr/opt/open-mpi'
 
 echo 'export FOAM_MPI=openmpi' >> etc/config.sh/prefs.openmpi
 echo 'setenv FOAM_MPI openmpi' >> etc/config.csh/prefs.openmpi
@@ -27,8 +27,8 @@ echo "setenv MPI_ARCH_PATH \"$MPI_PATH\"" >> etc/config.csh/prefs.openmpi
 
 
 # Set paths of GMP and MPFR (dependencies of CGAL)
-GMP_PATH="$PWD/usr/opt/gmp"
-MPFR_PATH="$PWD/usr/opt/mpfr"
+GMP_PATH='$WM_PROJECT_DIR/usr/opt/gmp'
+MPFR_PATH='$WM_PROJECT_DIR/usr/opt/mpfr'
 
 sed -i '' "s|\# export GMP_ARCH_PATH=...|export GMP_ARCH_PATH=\"$GMP_PATH\"|" etc/config.sh/CGAL
 sed -i '' "s|\# setenv GMP_ARCH_PATH ...|setenv GMP_ARCH_PATH \"$GMP_PATH\"|" etc/config.csh/CGAL
@@ -38,7 +38,7 @@ sed -i '' "s|\# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH \"$MPFR_PATH\"|"
 
 
 # OpenMP support
-OPENMP_PATH="$PWD/usr/opt/libomp"
+OPENMP_PATH='$WM_PROJECT_DIR/usr/opt/libomp'
 
 if [ -f "$OPENMP_PATH/include/omp.h" ]; then
     echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
@@ -54,7 +54,7 @@ fi
 
 
 # Use bundled Bash
-BASH_PATH="$PWD/usr/opt/bash"
+BASH_PATH='$WM_PROJECT_DIR/usr/opt/bash'
 
 echo "export PATH=\"$BASH_PATH/bin\${PATH+:\$PATH}\"" >> etc/prefs.sh
 echo "setenv PATH $BASH_PATH/bin:\$PATH" >> etc/prefs.csh
