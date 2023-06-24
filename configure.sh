@@ -82,6 +82,22 @@ echo "setenv INFOPATH $BASH_PATH/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\
 [ $(bin/foamEtcFile -show-api) -ge 2212 ] || sed -i '' 's|LIB_LIBS =|& $(LINK_OPENMP) |' modules/cfmesh/meshLibrary/Make/options
 
 
+# Backport of https://develop.openfoam.com/Development/openfoam/-/issues/2555
+[ $(bin/foamEtcFile -show-api) -ge 2212 ] || patch src/meshTools/triSurface/triSurfaceTools/geompack/geompack.C <<EOF
+@@ -6,6 +6,10 @@
+ # include <ctime>
+ # include <cstring>
+ 
++#if defined(__APPLE__) && defined(__clang__)
++#pragma clang fp exceptions(ignore)
++#endif
++
+ using namespace std;
+ 
+ # include "geompack.H"
+EOF
+
+
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2668
 [ $(bin/foamEtcFile -show-api) -ne 2212 ] || sed -i '' '\|/\* \${CGAL_LIBS} \*/|d' applications/utilities/preProcessing/viewFactorsGen/Make/options
 
