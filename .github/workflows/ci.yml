@@ -16,6 +16,16 @@ on:
         default: false
         required: false
         description: Reuse cached build artifacts if available
+      build-os:
+        type: string
+        default: ''
+        required: false
+        description: macOS version to build on
+      cache-build:
+        type: boolean
+        default: true
+        required: false
+        description: Cache build artifacts for reuse
 
 jobs:
   ci:
@@ -30,4 +40,6 @@ jobs:
     with:
       openfoam-version: ${{ matrix.openfoam-version }}
       openfoam-tarball-url: ${{ matrix.openfoam-tarball-url }}
-      use-cached: ${{ github.event_name  == 'workflow_dispatch' && inputs.use-cached || github.event_name  != 'workflow_dispatch' && github.event_name != 'schedule' }}
+      build-os: ${{ inputs.build-os }}
+      use-cached: ${{ github.event_name == 'workflow_dispatch' && inputs.use-cached || github.event_name != 'workflow_dispatch' && github.event_name != 'schedule' }}
+      cache-build: ${{ github.event_name != 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}

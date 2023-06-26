@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 6 * * 5'
   workflow_dispatch:
+    inputs:
+      build-os:
+        type: string
+        default: ''
+        required: false
+        description: macOS version to build on
 
 jobs:
   openfoam-dev-branch:
@@ -16,5 +22,6 @@ jobs:
       app-name: OpenFOAM-${{ matrix.openfoam-git-branch }}
       app-version: ${{ matrix.openfoam-git-branch }}
       openfoam-git-branch: ${{ matrix.openfoam-git-branch }}
+      build-os: ${{ github.event.inputs.build-os }}
       use-cached: false
       cache-build: false
