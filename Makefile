@@ -240,7 +240,7 @@ test-dmg:
 	cd $(TEST_DIR)/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
-		&& bash -ex "$(CURDIR)/test.sh"
+		&& "$(CURDIR)/test.sh"
 	hdiutil detach $(VOLUME)
 
 clean-app:
