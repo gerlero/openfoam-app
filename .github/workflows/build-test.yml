@@ -48,7 +48,7 @@ env:
     ${{ inputs.openfoam-tarball-url != '' && format('OPENFOAM_TARBALL_URL={0}', inputs.openfoam-tarball-url) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
   
-  OPENFOAM: ${{ inputs.openfoam-git-branch || inputs.openfoam-version }}
+  OPENFOAM: ${{ inputs.openfoam-version || inputs.openfoam-git-branch }}
   
   BUILD_OS: ${{ inputs.build-os || 'macos-11' }}
 
