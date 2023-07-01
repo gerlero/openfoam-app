@@ -1,5 +1,5 @@
 # Build configuration
-SHELL = /bin/bash
+SHELL = /bin/zsh
 OPENFOAM_VERSION = 2212
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 OPENFOAM_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
@@ -117,8 +117,8 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	rm -rf $(VOLUME)/homebrew
 	[ ! -L $(VOLUME)/usr ] || rm $(VOLUME)/usr
 	rm -rf $(VOLUME)/build
-	rm -rf $(VOLUME)/**/.git
-	rm -f $(VOLUME)/**/.DS_Store
+	rm -rf -- $(VOLUME)/**/.git(N)
+	rm -f -- $(VOLUME)/**/.DS_Store(N)
 ifeq ($(DEPENDENCIES_KIND),standalone)
 	rm $(VOLUME)/usr/bin/brew
 	rm $(VOLUME)/Brewfile
