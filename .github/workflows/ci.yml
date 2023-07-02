@@ -34,7 +34,7 @@ jobs:
         openfoam-version: [2306, 2212, 2206, 2112]
         include:
           - openfoam-version: 2306
-            openfoam-git-branch: OpenFOAM-v2306
+            openfoam-tarball-url: https://dl.openfoam.com/source/latest/OpenFOAM-v2306.tgz
           - openfoam-version: 2212
             openfoam-tarball-url: https://dl.openfoam.com/source/v2212/OpenFOAM-v2212_230612.tgz
           - openfoam-version: 2112
