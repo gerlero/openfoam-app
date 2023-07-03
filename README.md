@@ -2,6 +2,10 @@
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
+| 🎉  [OpenFOAM v2306 is now available!](#-install) |
+| ---- |
+
+
 **Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml) [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml) [![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)](https://github.com/gerlero/openfoam-app/releases) [![homebrew tap](https://img.shields.io/badge/homebrew%20tap-gerlero%2Fopenfoam-informational)](https://github.com/gerlero/homebrew-openfoam)
@@ -19,6 +23,16 @@
 ## 📦 Install
 
 Choose from the available OpenFOAM versions and installation methods:
+
+* **OpenFOAM v2306**
+
+    * Install with [Homebrew](https://brew.sh):
+
+        ```sh
+        brew install --no-quarantine gerlero/openfoam/openfoam2306
+        ```
+
+    * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-x86_64.zip)
 
 * **OpenFOAM v2212**
 
