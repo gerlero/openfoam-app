@@ -74,16 +74,16 @@ Just open the **OpenFOAM** app to start an OpenFOAM session in a new Terminal wi
 
 That's it! When using OpenFOAM, a read-only volume will be loaded and visible in the Finder. The OpenFOAM installation lives inside this virtual disk. When you're not actively using OpenFOAM, it is safe to "eject" the volume from the Finder sidebar.
 
-**💻 From the command line**: when installed with Homebrew, the app includes a terminal command that starts an OpenFOAM session. For example, the **OpenFOAM-v2212** app provides the command:
+**💻 From the command line**: when installed with Homebrew, the app includes a terminal command that starts an OpenFOAM session. For example, the **OpenFOAM-v2306** app provides the command:
 
 ```sh
-openfoam2212
+openfoam2306
 ```
 
 If you did not install with Homebrew, you can get the same by invoking the following command (replace the path and app name as needed):
 
 ```sh
-/Applications/OpenFOAM-v2212.app/Contents/Resources/etc/openfoam
+/Applications/OpenFOAM-v2306.app/Contents/Resources/etc/openfoam
 ```
 
 
