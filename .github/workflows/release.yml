@@ -31,6 +31,5 @@ jobs:
     with:
       openfoam-version: ${{ matrix.openfoam-version }}
       openfoam-tarball-url: ${{ matrix.openfoam-tarball-url }}
-      openfoam-git-branch: ${{ matrix.openfoam-git-branch }}
       app-version: ${{ needs.get-version.outputs.app-version }}
       release: true
