@@ -99,11 +99,11 @@ EOF
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2668
-[ $(bin/foamEtcFile -show-api) -ne 2212 ] || sed -i '' '\|/\* \${CGAL_LIBS} \*/|d' applications/utilities/preProcessing/viewFactorsGen/Make/options
+[ $(bin/foamEtcFile -show-api) -ne 2212 ] || [ $(bin/foamEtcFile -show-patch) -ge 230612 ] || sed -i '' '\|/\* \${CGAL_LIBS} \*/|d' applications/utilities/preProcessing/viewFactorsGen/Make/options
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2664
-[ $(bin/foamEtcFile -show-api) -gt 2212 ] || rm -f wmake/rules/darwin64Clang/cgal
+[ $(bin/foamEtcFile -show-api) -gt 2212 ] || [ $(bin/foamEtcFile -show-patch) -ge 230612 ] || rm -f wmake/rules/darwin64Clang/cgal
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2665
-[ $(bin/foamEtcFile -show-api) -gt 2212 ] || sed -i '' 's|Robust_circumcenter_filtered_traits_3|Robust_weighted_circumcenter_filtered_traits_3|' applications/utilities/mesh/generation/foamyMesh/conformalVoronoiMesh/conformalVoronoiMesh/CGALTriangulation3DKernel.H
+[ $(bin/foamEtcFile -show-api) -gt 2212 ] || [ $(bin/foamEtcFile -show-patch) -ge 230612 ] || sed -i '' 's|Robust_circumcenter_filtered_traits_3|Robust_weighted_circumcenter_filtered_traits_3|' applications/utilities/mesh/generation/foamyMesh/conformalVoronoiMesh/conformalVoronoiMesh/CGALTriangulation3DKernel.H
