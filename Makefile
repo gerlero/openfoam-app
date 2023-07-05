@@ -1,6 +1,6 @@
 # Build configuration
 SHELL = /bin/zsh
-OPENFOAM_VERSION = 2212
+OPENFOAM_VERSION = 2306
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 OPENFOAM_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
