@@ -9,11 +9,12 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     outputs:
-      app-version: ${{ steps.get_version.outputs.version-without-v }}
+      app-version: ${{ steps.get_version.outputs.VERSION_WITHOUT_V }}
     steps:
-      - name: Extract version from release tag
+      - name: Extract version from tag
         id: get_version
-        uses: battila7/get-version-action@v2
+        run:
+          echo "VERSION_WITHOUT_V=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
   release:
     needs: get-version
