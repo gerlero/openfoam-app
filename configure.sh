@@ -40,17 +40,11 @@ sed -i '' "s|\# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH \"$MPFR_PATH\"|"
 # OpenMP support
 OPENMP_PATH='$WM_PROJECT_DIR/usr/opt/libomp'
 
-if [ -f "$OPENMP_PATH/include/omp.h" ]; then
-    echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
-    echo "setenv CPATH \"$OPENMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
+echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
+echo "setenv CPATH \"$OPENMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
 
-    echo "export LIBRARY_PATH=\"$OPENMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
-    echo "setenv LIBRARY_PATH \"$OPENMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
-else
-    echo "OpenMP not found at $OPENMP_PATH. Disabling OpenMP support" >&2
-    echo "export WM_COMPILE_CONTROL=\"\$WM_COMPILE_CONTROL ~openmp\"" >> etc/prefs.sh
-    echo "setenv WM_COMPILE_CONTROL \"\$WM_COMPILE_CONTROL ~openmp\"" >> etc/prefs.csh
-fi
+echo "export LIBRARY_PATH=\"$OPENMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
+echo "setenv LIBRARY_PATH \"$OPENMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
 
 
 # Use bundled Bash

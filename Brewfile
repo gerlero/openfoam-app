@@ -2,9 +2,9 @@ tap "gerlero/openfoam"
 
 # Required dependencies
 brew "open-mpi"
+brew "libomp"
 
 # Optional dependencies (enabled by default)
-brew "libomp"
 brew "boost"
 brew "cgal"
 brew "fftw"
