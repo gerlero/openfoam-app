@@ -34,11 +34,15 @@ ifndef OPENFOAM_GIT_BRANCH
 OPENFOAM_TARBALL = $(shell basename $(OPENFOAM_TARBALL_URL))
 endif
 
+VOLUME = /Volumes/$(APP_NAME)
+
 
 # Build targets
 app: build/$(APP_NAME).app
-build: build/$(APP_NAME)-build.sparsebundle
-deps: build/$(APP_NAME)-deps.sparsebundle
+build: $(VOLUME)/build/log.txt
+	hdiutil detach $(VOLUME)
+deps: $(VOLUME)/Brewfile.lock.json
+	hdiutil detach $(VOLUME)
 fetch-source: $(OPENFOAM_TARBALL)
 
 ifeq ($(DEPENDENCIES_KIND),both)
@@ -55,7 +59,6 @@ install: $(INSTALL_DIR)/$(APP_NAME).app
 
 
 # Build rules
-VOLUME = /Volumes/$(APP_NAME)
 VOLUME_ID_FILE = $(VOLUME)/.vol_id
 
 APP_CONTENTS = \
@@ -111,7 +114,7 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp -a $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns relativize_install_names.py
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/build/log.txt build/$(APP_NAME).app/Contents/Resources/icon.icns relativize_install_names.py
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
@@ -138,7 +141,7 @@ else ifeq ($(DEPENDENCIES_KIND),homebrew)
 else
 	$(error Invalid value for DEPENDENCIES_KIND)
 endif
-	rm -rf $(VOLUME)/.fseventsd || true
+	rm -rf $(VOLUME)/.fseventsd
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	hdiutil create \
 		-format $(DMG_FORMAT) \
@@ -150,10 +153,15 @@ endif
 	hdiutil detach $(VOLUME)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-build/$(APP_NAME)-build.sparsebundle: build/$(APP_NAME)-deps.sparsebundle $(OPENFOAM_TARBALL) configure.sh 
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	mv build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
-	hdiutil attach build/$(APP_NAME)-build.sparsebundle
+$(VOLUME)/build/log.txt: $(VOLUME)/Brewfile.lock.json $(VOLUME)/etc/prefs.sh
+	cd $(VOLUME) \
+		&& source etc/bashrc \
+		&& foamSystemCheck \
+		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
+		&& ./Allwmake -j $(WMAKE_NJOBS) -s -log=build/log.txt
+
+$(VOLUME)/etc/prefs.sh: $(OPENFOAM_TARBALL) configure.sh | $(VOLUME)
+	setopt extendedglob && rm -rf -- $(VOLUME)/^(usr|homebrew|Brewfile*)(N)
 ifdef OPENFOAM_TARBALL
 	tar -xzf $(OPENFOAM_TARBALL) --strip-components 1 -C $(VOLUME)
 else ifdef OPENFOAM_GIT_BRANCH
@@ -162,47 +170,50 @@ else ifdef OPENFOAM_GIT_BRANCH
 	git -C $(VOLUME) pull origin $(OPENFOAM_GIT_BRANCH)
 	git -C $(VOLUME) submodule update --init --recursive
 endif
-	cd $(VOLUME) \
-		&& "$(CURDIR)/configure.sh" \
-		&& source etc/bashrc \
-		&& foamSystemCheck \
-		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
-		&& ./Allwmake -j $(WMAKE_NJOBS) -s
-	hdiutil detach $(VOLUME)
+	cd $(VOLUME) && "$(CURDIR)/configure.sh"
 
-build/$(APP_NAME)-deps.sparsebundle: Brewfile $(if $(filter homebrew,$(DEPENDENCIES_KIND)),Brewfile.lock.json)
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+$(VOLUME)/Brewfile.lock.json: $(VOLUME)/Brewfile | $(VOLUME)/usr
+ifeq ($(DEPENDENCIES_KIND),standalone)
+	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --cleanup --verbose
+	$(VOLUME)/usr/bin/brew list --versions
+else ifeq ($(DEPENDENCIES_KIND),homebrew)
+	brew bundle --file $(VOLUME)/Brewfile --no-upgrade
+else
+	$(error Invalid value for DEPENDENCIES_KIND)
+endif
+
+$(VOLUME)/usr: | $(VOLUME)
+ifeq ($(DEPENDENCIES_KIND),standalone)
+	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
+	mkdir -p $(VOLUME)/usr/bin
+	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
+else ifeq ($(DEPENDENCIES_KIND),homebrew)
+	ln -s $(shell brew --prefix) $(VOLUME)/usr
+else
+	$(error Invalid value for DEPENDENCIES_KIND)
+endif
+
+$(VOLUME)/Brewfile: Brewfile | $(VOLUME)
+	cp Brewfile $(VOLUME)/
+
+$(VOLUME): | build/$(APP_NAME)-build.sparsebundle
+	hdiutil attach build/$(APP_NAME)-build.sparsebundle
+
+build/$(APP_NAME)-build.sparsebundle:
 	mkdir -p build
 	hdiutil create \
 		-size 50g \
 		-fs $(VOLUME_FILESYSTEM) \
 		-volname $(APP_NAME) \
-		build/$(APP_NAME)-deps.sparsebundle \
-		-ov -attach
-	cp Brewfile $(VOLUME)/
-ifeq ($(DEPENDENCIES_KIND),standalone)
-	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
-	mkdir -p $(VOLUME)/usr/bin
-	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
-	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --verbose
-	$(VOLUME)/usr/bin/brew autoremove
-	$(VOLUME)/usr/bin/brew list --versions
-else ifeq ($(DEPENDENCIES_KIND),homebrew)
-	brew bundle check --verbose --no-upgrade
-	cp Brewfile.lock.json $(VOLUME)/
-	ln -s $(shell brew --prefix) $(VOLUME)/usr
-else
-	$(error Invalid value for DEPENDENCIES_KIND)
-endif
-	hdiutil detach $(VOLUME)
+		build/$(APP_NAME)-build.sparsebundle \
+		-ov
 
-$(OPENFOAM_TARBALL): $(or $(wildcard $(OPENFOAM_TARBALL).sha256), \
-					$(warning No checksum file found for $(OPENFOAM_TARBALL); will skip verification))
+$(OPENFOAM_TARBALL): | $(OPENFOAM_TARBALL).sha256
 	curl -L -o $(OPENFOAM_TARBALL) $(OPENFOAM_TARBALL_URL)
-	[ -z $< ] || shasum -a 256 -c $<
+	[ ! -f $(OPENFOAM_TARBALL).sha256 ] || shasum -a 256 --check $(OPENFOAM_TARBALL).sha256
 
-Brewfile.lock.json: Brewfile
-	brew bundle
+$(OPENFOAM_TARBALL).sha256:
+	$(warning No checksum file found for $(OPENFOAM_TARBALL); will skip verification)
 
 
 # Non-build targets and rules
@@ -254,11 +265,11 @@ test-dmg:
 
 clean-app:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)	
-	rm -rf build/$(APP_NAME).app
+	rm -rf build/$(APP_NAME).app build/$(APP_NAME)-build.sparsebundle.shadow
 
 clean-build: clean-app
 	rm -f build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME)-deps.sparsebundle $(TEST_DIR)/test-openfoam $(TEST_DIR)/test-bash $(TEST_DIR)/test-zsh $(TEST_DIR)/test-dmg
+	rm -rf build/$(APP_NAME)-build.sparsebundle $(TEST_DIR)/test-openfoam $(TEST_DIR)/test-bash $(TEST_DIR)/test-zsh $(TEST_DIR)/test-dmg
 	rmdir $(TEST_DIR) || true
 	rmdir build || true
 
@@ -268,9 +279,7 @@ clean: clean-build
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
 
-
 # Set special targets
 .PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-app clean-build clean uninstall
-.PRECIOUS: build/$(APP_NAME)-build.sparsebundle
-.SECONDARY: $(OPENFOAM_TARBALL) Brewfile.lock.json build/$(APP_NAME)-deps.sparsebundle build/$(APP_NAME)-build.sparsebundle
+.SECONDARY: $(OPENFOAM_TARBALL)
 .DELETE_ON_ERROR:
