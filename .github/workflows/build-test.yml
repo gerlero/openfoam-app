@@ -61,12 +61,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Get Make recipes for caching
+        run: |
+          make deps --dry-run ${{ env.MAKE_VARS }} > make_deps.txt
+          make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
       - name: Generate cache restore keys
         id: caching
         run: |
-          make deps --dry-run ${{ env.MAKE_VARS }} > make_deps.txt
           DEPS_RESTORE_KEY="deps-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-"
-          make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
           BUILD_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-"
           echo "DEPS_RESTORE_KEY=$DEPS_RESTORE_KEY" >> "$GITHUB_OUTPUT"
           echo "BUILD_RESTORE_KEY=$BUILD_RESTORE_KEY" >> "$GITHUB_OUTPUT"
