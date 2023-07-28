@@ -9,7 +9,7 @@ on:
         type: string
         default: ''
         required: false
-        description: macOS version to build on
+        description: Build using this macOS image
 
 jobs:
   openfoam-dev-branch:

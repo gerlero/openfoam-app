@@ -20,12 +20,12 @@ on:
         type: string
         default: ''
         required: false
-        description: macOS version to build on
+        description: Build using this macOS image
       cache-build:
         type: boolean
         default: true
         required: false
-        description: Cache build artifacts for reuse
+        description: Cache build artifacts for later reuse
 
 jobs:
   ci:
