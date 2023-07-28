@@ -15,10 +15,6 @@ on:
         type: string
         default: ''
         required: false
-      openfoam-tarball-url:
-        type: string
-        default: ''
-        required: false
       openfoam-git-branch:
         type: string
         default: ''
@@ -39,13 +35,44 @@ on:
         type: boolean
         default: false
         required: false
+  workflow_dispatch:
+    inputs:
+      openfoam-version:
+        type: string
+        default: ''
+        required: false
+        description: Build this OpenFOAM version
+      app-name:
+        type: string
+        default: ''
+        required: false
+        description: Override app name
+      openfoam-git-branch:
+        type: string
+        default: ''
+        required: false
+        description: Build this OpenFOAM Git branch
+      build-os:
+        type: string
+        default: ''
+        required: false
+        description: Build using this macOS image
+      use-cached:
+        type: boolean
+        default: true
+        required: false
+        description: Reuse cached build artifacts if available
+      cache-build:
+        type: boolean
+        default: true
+        required: false
+        description: Cache build artifacts for later reuse
 
 env:
   MAKE_VARS: >
     ${{ inputs.openfoam-version != '' && format('OPENFOAM_VERSION={0}', inputs.openfoam-version) || '' }}
     ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
     ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
-    ${{ inputs.openfoam-tarball-url != '' && format('OPENFOAM_TARBALL_URL={0}', inputs.openfoam-tarball-url) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
   
   OPENFOAM: ${{ inputs.openfoam-version || inputs.openfoam-git-branch }}
