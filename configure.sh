@@ -40,11 +40,22 @@ sed -i '' "s|\# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH \"$MPFR_PATH\"|"
 # OpenMP support
 OPENMP_PATH='$WM_PROJECT_DIR/usr/opt/libomp'
 
-echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
-echo "setenv CPATH \"$OPENMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
+if [ $(bin/foamEtcFile -show-api) -lt 2212 ]; then
+    echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
+    echo "setenv CPATH \"$OPENMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
 
-echo "export LIBRARY_PATH=\"$OPENMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
-echo "setenv LIBRARY_PATH \"$OPENMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
+    echo "export LIBRARY_PATH=\"$OPENMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
+    echo "setenv LIBRARY_PATH \"$OPENMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
+else
+    echo "export FOAM_EXTRA_CFLAGS=\"-I$OPENMP_PATH/include \$FOAM_EXTRA_CFLAGS\"" >> etc/prefs.sh
+    echo "setenv FOAM_EXTRA_CFLAGS \"-I$OPENMP_PATH/include \$FOAM_EXTRA_CFLAGS\"" >> etc/prefs.csh
+
+    echo "export FOAM_EXTRA_CXXFLAGS=\"-I$OPENMP_PATH/include \$FOAM_EXTRA_CXXFLAGS\"" >> etc/prefs.sh
+    echo "setenv FOAM_EXTRA_CXXFLAGS \"-I$OPENMP_PATH/include \$FOAM_EXTRA_CXXFLAGS\"" >> etc/prefs.csh
+
+    echo "export FOAM_EXTRA_LDFLAGS=\"-L$OPENMP_PATH/lib \$FOAM_EXTRA_LDFLAGS\"" >> etc/prefs.sh
+    echo "setenv FOAM_EXTRA_LDFLAGS \"-L$OPENMP_PATH/lib \$FOAM_EXTRA_LDFLAGS\"" >> etc/prefs.csh
+fi
 
 
 # Use bundled Bash
