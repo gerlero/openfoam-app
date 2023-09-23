@@ -112,3 +112,8 @@ EOF
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2665
 [ $(bin/foamEtcFile -show-api) -gt 2212 ] || [ $(bin/foamEtcFile -show-patch) -ge 230612 ] || sed -i '' 's|Robust_circumcenter_filtered_traits_3|Robust_weighted_circumcenter_filtered_traits_3|' applications/utilities/mesh/generation/foamyMesh/conformalVoronoiMesh/conformalVoronoiMesh/CGALTriangulation3DKernel.H
+
+
+# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2958
+[ $(uname -m) != 'arm64' ] || sed -i '' 's|-ftrapping-math|-ftrapping-math -ffp-contract=off|' wmake/rules/darwin64Clang/c
+[ $(uname -m) != 'arm64' ] || sed -i '' 's|-ftrapping-math|-ftrapping-math -ffp-contract=off|' wmake/rules/darwin64Clang/c++
