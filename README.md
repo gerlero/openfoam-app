@@ -11,7 +11,7 @@
 
 * An Apple silicon or Intel Mac
 * A recent version of macOS
-    * Apple silicon: macOS 13 Ventura
+    * Apple silicon: macOS 13 Ventura or later
     * Intel: macOS 11 Big Sur or later
     * _Running an older version of macOS? [See here](#i-have-an-older-version-of-macos-and-cannot-upgrade-to-a-supported-version-what-can-i-do)_
 
