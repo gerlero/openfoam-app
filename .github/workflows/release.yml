@@ -20,7 +20,7 @@ jobs:
     needs: get-version
     strategy:
       matrix:
-        openfoam-version: [2306, 2212, 2206, 2112]
+        openfoam-version: [2306, 2212]
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
