@@ -19,7 +19,6 @@ WMAKE_NJOBS =
 DEPENDENCIES_KIND = standalone
 DMG_FORMAT = UDRO
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
-APP_IDENTIFIER = io.github.gerlero.openfoam-app
 APP_VERSION =
 TEST_DIR = build/test-v$(OPENFOAM_VERSION)
 
@@ -84,7 +83,6 @@ build/$(APP_NAME).app: $(APP_CONTENTS)
 build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAME).app/Contents/MacOS/launch build/$(APP_NAME).app/Contents/Resources/icon.icns
 	mkdir -p build/$(APP_NAME).app/Contents
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
-	sed -i '' "s|{{APP_IDENTIFIER}}|$(APP_IDENTIFIER)|g" build/$(APP_NAME).app/Contents/Info.plist
 	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
 	sed -i '' "s|{{DEPENDENCIES_KIND}}|$(DEPENDENCIES_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
 	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist

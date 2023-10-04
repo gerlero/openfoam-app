@@ -6,8 +6,6 @@
 	<string>launch</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>{{APP_IDENTIFIER}}</string>
 	<key>CFBundleVersion</key>
 	<string>{{APP_VERSION}}-{{DEPENDENCIES_KIND}}-{{ARCH}}</string>
 	<key>CFBundleShortVersionString</key>
