@@ -4,20 +4,25 @@ APP_NAME="{{APP_NAME}}"
 
 APP_BUNDLE="${0:A:h:h:h:h}"
 
-echo "---------------------------------------------------------------------------" 1>&2
-echo "             |                                                             " 1>&2
-echo "   ( )       |                 °°° $APP_NAME.app °°°                  " 1>&2
-echo "  ( )    ( ) |                                                             " 1>&2
-echo "      ( )    | Native OpenFOAM for macOS                             " 1>&2
-echo "             | {{APP_HOMEPAGE}}                 " 1>&2
-echo "---------------------------------------------------------------------------" 1>&2
+if [ $# -eq 0 ]; then
+    echo "---------------------------------------------------------------------------" 1>&2
+    echo "             |                                                             " 1>&2
+    echo "   ( )       |                 °°° $APP_NAME.app °°°                  " 1>&2
+    echo "  ( )    ( ) |                                                             " 1>&2
+    echo "      ( )    | Native OpenFOAM for macOS                             " 1>&2
+    echo "             | {{APP_HOMEPAGE}}                 " 1>&2
+    echo "---------------------------------------------------------------------------" 1>&2
 
-"$APP_BUNDLE/Contents/Resources/volume" mount 1>&2
+    "$APP_BUNDLE/Contents/Resources/volume" mount 1>&2
+
+    echo "Activating the OpenFOAM environment..." 1>&2
+else
+    "$APP_BUNDLE/Contents/Resources/volume" -quiet mount 1>&2
+fi
 
 VOLUME=$("$APP_BUNDLE/Contents/Resources/volume" -show-prefix)
 
 # Keep the volume directory open in this process (prevents accidental ejection)
 exec {fd}<"$VOLUME"
 
-echo "Activating the OpenFOAM environment..." 1>&2
 PATH="$VOLUME/usr/opt/bash/bin${PATH+:$PATH}" exec bash "$VOLUME/etc/openfoam" "$@"
