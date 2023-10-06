@@ -18,29 +18,35 @@
 
 ## 📦 Install
 
-Choose from the available OpenFOAM versions and installation methods:
+* ✨ Install the latest OpenFOAM version with [Homebrew](https://brew.sh) (recommended):
 
-* **OpenFOAM v2306**
+    ```sh
+    brew install --no-quarantine gerlero/openfoam/openfoam
+    ```
 
-    * Install with [Homebrew](https://brew.sh):
+* Or, pick the OpenFOAM version you need:
 
-        ```sh
-        brew install --no-quarantine gerlero/openfoam/openfoam2306
-        ```
+    * **OpenFOAM v2306**
 
-    * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-x86_64.zip)
+        * Install with [Homebrew](https://brew.sh):
 
-* **OpenFOAM v2212**
+            ```sh
+            brew install --no-quarantine gerlero/openfoam/openfoam2306
+            ```
 
-    * Install with [Homebrew](https://brew.sh):
+        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-x86_64.zip)
 
-        ```sh
-        brew install --no-quarantine gerlero/openfoam/openfoam2212
-        ```
+    * **OpenFOAM v2212**
 
-    * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-x86_64.zip)
+        * Install with [Homebrew](https://brew.sh):
 
-Looking for an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam).
+            ```sh
+            brew install --no-quarantine gerlero/openfoam/openfoam2212
+            ```
+
+        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-x86_64.zip)
+
+* _Need an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam)_
 
 ## 🧑‍💻 Use
 
@@ -50,10 +56,10 @@ Just open the **OpenFOAM** app to start an OpenFOAM session in a new Terminal wi
 
 That's it! When using OpenFOAM, a read-only volume will be loaded and visible in the Finder. The OpenFOAM installation lives inside this virtual disk. When you're not actively using OpenFOAM, it is safe to "eject" the volume from the Finder sidebar.
 
-**💻 From the command line**: when installed with Homebrew, the app includes a terminal command that starts an OpenFOAM session. For example, the **OpenFOAM-v2306** app provides the command:
+**💻 From the command line**: when installed with Homebrew, the app includes a terminal command that starts an OpenFOAM session:
 
 ```sh
-openfoam2306
+openfoam
 ```
 
 If you did not install with Homebrew, you can get the same by invoking the following command (replace the path and app name as needed):
