@@ -21,13 +21,13 @@
 
 ## 📦 Install
 
-* ✨ Install the latest OpenFOAM version with [Homebrew](https://brew.sh) (recommended):
+* ✨ Get the latest OpenFOAM version with [Homebrew](https://brew.sh) (recommended):
 
     ```sh
     brew install --no-quarantine gerlero/openfoam/openfoam
     ```
 
-* Or, pick the OpenFOAM version you need:
+* Or, choose the OpenFOAM version(s) you want:
 
     * **OpenFOAM v2306**
 
