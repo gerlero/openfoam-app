@@ -184,7 +184,7 @@ ifeq ($(DEPENDENCIES_KIND),standalone)
 	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
 	mkdir -p $(VOLUME)/usr/bin
 	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
-	$(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --verbose
+	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --verbose
 	$(VOLUME)/usr/bin/brew autoremove
 	$(VOLUME)/usr/bin/brew list --versions
 else ifeq ($(DEPENDENCIES_KIND),homebrew)
