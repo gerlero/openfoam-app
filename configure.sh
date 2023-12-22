@@ -74,8 +74,8 @@ echo "setenv INFOPATH $BASH_PATH/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\
 # Disable floating point exception trapping when on Apple silicon
 # (Prevents confusing output that says it's enabled, as it doesn't work yet)
 # https://develop.openfoam.com/Development/openfoam/-/issues/2240
-[ $(uname -m) != 'arm64' ] || echo 'export FOAM_SIGFPE=false' >> etc/prefs.sh
-[ $(uname -m) != 'arm64' ] || echo 'setenv FOAM_SIGFPE false' >> etc/prefs.csh
+[ $(uname -m) != 'arm64' ] || [ $(bin/foamEtcFile -show-api) -ge 2312 ] || echo 'export FOAM_SIGFPE=false' >> etc/prefs.sh
+[ $(uname -m) != 'arm64' ] || [ $(bin/foamEtcFile -show-api) -ge 2312 ] || echo 'setenv FOAM_SIGFPE false' >> etc/prefs.csh
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/1664
@@ -112,6 +112,10 @@ EOF
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2665
 [ $(bin/foamEtcFile -show-api) -gt 2212 ] || [ $(bin/foamEtcFile -show-patch) -ge 230612 ] || sed -i '' 's|Robust_circumcenter_filtered_traits_3|Robust_weighted_circumcenter_filtered_traits_3|' applications/utilities/mesh/generation/foamyMesh/conformalVoronoiMesh/conformalVoronoiMesh/CGALTriangulation3DKernel.H
+
+
+# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/3066
+[ $(bin/foamEtcFile -show-api) -lt 2312 ] || sed -i '' 's|max(len,|max(label(len),|' src/OpenFOAM/db/IOstreams/memory/memoryStreamBuffer.H
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2958
