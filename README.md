@@ -2,6 +2,9 @@
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
+| 🎉  [OpenFOAM v2312 is now available!](#-install) |
+| ---- |
+
 **Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
@@ -15,7 +18,7 @@
 * An Apple silicon or Intel Mac
 * A recent version of macOS
     * Apple silicon: macOS 14 Sonoma
-    * Intel: macOS 11 Big Sur or later
+    * Intel: macOS 12 Monterey or later
     * _Running an older version of macOS? [See here](#i-have-an-older-version-of-macos-and-cannot-upgrade-to-a-supported-version-what-can-i-do)_
 
 
@@ -29,6 +32,16 @@
 
 * Or, choose the OpenFOAM version(s) you want:
 
+    * **OpenFOAM v2312**
+
+        * Install with [Homebrew](https://brew.sh):
+
+            ```sh
+            brew install --no-quarantine gerlero/openfoam/openfoam2312
+            ```
+
+        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2312-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2312-app-x86_64.zip)
+
     * **OpenFOAM v2306**
 
         * Install with [Homebrew](https://brew.sh):
@@ -38,16 +51,6 @@
             ```
 
         * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-x86_64.zip)
-
-    * **OpenFOAM v2212**
-
-        * Install with [Homebrew](https://brew.sh):
-
-            ```sh
-            brew install --no-quarantine gerlero/openfoam/openfoam2212
-            ```
-
-        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2212-app-x86_64.zip)
 
 * _Need an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam)_
 
@@ -68,7 +71,7 @@ openfoam
 If you did not install with Homebrew, you can get the same by invoking the following command (replace the path and app name as needed):
 
 ```sh
-/Applications/OpenFOAM-v2306.app/Contents/Resources/etc/openfoam
+/Applications/OpenFOAM-v2312.app/Contents/Resources/etc/openfoam
 ```
 
 
@@ -118,6 +121,8 @@ If you cannot upgrade to a newer macOS, you still have a few alternatives:
 
     * Apple silicon — last release tested with macOS 12 Monterey: [**OpenFOAM.app** 1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-arm64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-arm64.zip))
 
+    * Intel — last release tested with macOS 11 Big Sur: [**OpenFOAM.app** 1.11.1](https://github.com/gerlero/openfoam-app/releases/tag/v1.11.1) ([⬇️ OpenFOAM v2306](https://github.com/gerlero/openfoam-app/releases/download/v1.11.1/openfoam2306-app-x86_64.zip), [⬇️ OpenFOAM v2212](https://github.com/gerlero/openfoam-app/releases/download/v1.11.1/openfoam2212-app-x86_64.zip))
+
     * Intel — last release tested with macOS 10.15 Catalina: [**OpenFOAM.app** 1.8.5](https://github.com/gerlero/openfoam-app/releases/tag/v1.8.5) ([⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2206-app-standalone-x86_64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.8.5/openfoam2112-app-standalone-x86_64.zip))
 
 * Or, you can try [building the app from source](#-building-from-source) on the system where you'll be using it
@@ -130,11 +135,18 @@ If you need an older version of OpenFOAM, you can:
 
 * Use an older release of **OpenFOAM.app** (note that these apps are no longer updated):
 
+    * [**OpenFOAM-v2212.app** 1.11.1](https://github.com/gerlero/openfoam-app/releases/tag/v1.11.1)
+        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam2212`
+        * [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/download/v1.11.1/openfoam2212-app-arm64.zip): tested with macOS 14 Sonoma
+        * [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/download/v1.11.1/openfoam2212-app-x86_64.zip): tested with macOS 11 Big Sur through macOS 13 Ventura
+
     * [**OpenFOAM-v2206.app** 1.10.2](https://github.com/gerlero/openfoam-app/releases/tag/v1.10.2)
+        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam2206`
         * [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2206-app-standalone-arm64.zip): tested with macOS 13 Ventura and macOS 14 Sonoma
         * [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2206-app-standalone-x86_64.zip): tested with macOS 11 Big Sur through macOS 13 Ventura
 
     * [**OpenFOAM-v2112.app** 1.10.2](https://github.com/gerlero/openfoam-app/releases/tag/v1.10.2)
+        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam2112`
         * [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2112-app-standalone-arm64.zip): tested with macOS 13 Ventura and macOS 14 Sonoma
         * [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2112-app-standalone-x86_64.zip): tested with macOS 11 Big Sur through macOS 13 Ventura
 
