@@ -111,13 +111,13 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp -a $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns fix_install_names.sh
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns relativize_install_names.py
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
 		-shadow
 	cd $(VOLUME) \
-		&& "$(CURDIR)/fix_install_names.sh"
+		&& "$(CURDIR)/relativize_install_names.py"
 	cp build/$(APP_NAME).app/Contents/Resources/icon.icns $(VOLUME)/.VolumeIcon.icns
 	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
 	SetFile -a C $(VOLUME)
