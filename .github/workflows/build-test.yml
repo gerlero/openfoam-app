@@ -95,40 +95,30 @@ jobs:
       - name: Generate cache restore keys
         id: caching
         run: |
-          DEPS_RESTORE_KEY="deps-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}-"
-          BUILD_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ hashFiles('make_build.txt', 'Brewfile', format('OpenFOAM-v${0}.tgz.sha256', inputs.openfoam-version), 'configure.sh') }}-"
+          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}"
+          BUILD_RESTORE_KEY="$DEPS_RESTORE_KEY-${{ hashFiles('make_build.txt', 'configure.sh') }}"
           echo "DEPS_RESTORE_KEY=$DEPS_RESTORE_KEY" >> "$GITHUB_OUTPUT"
           echo "BUILD_RESTORE_KEY=$BUILD_RESTORE_KEY" >> "$GITHUB_OUTPUT"
-      - name: Look up cached build
-        if: inputs.use-cached
-        id: cache_build
-        uses: actions/cache/restore@v3
-        with:
-          path: build/*-build.sparsebundle
-          key: ignore
-          restore-keys:
-            ${{ steps.caching.outputs.BUILD_RESTORE_KEY }}
-          lookup-only: true
       - name: Look up cached deps
-        if: inputs.use-cached && steps.cache_build.outputs.cache-matched-key == ''
         id: cache_deps
+        if: inputs.use-cached
         uses: actions/cache/restore@v3
         with:
-          path: build/*-deps.sparsebundle
+          path: build/*.sparsebundle
           key: ignore
-          restore-keys:
+          restore-keys: |
             ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}
           lookup-only: true
       - name: Make deps
-        if: steps.cache_build.outputs.cache-matched-key == '' && steps.cache_deps.outputs.cache-matched-key == ''
+        if: steps.cache_deps.outputs.cache-matched-key == ''
         run: |
           make deps ${{ env.MAKE_VARS }}
       - name: Save deps to cache
-        if: steps.cache_build.outputs.cache-matched-key == '' && steps.cache_deps.outputs.cache-matched-key == ''
+        if: steps.cache_deps.outputs.cache-matched-key == ''
         uses: actions/cache/save@v3
         with:
-          path: build/*-deps.sparsebundle
-          key: ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}${{ github.run_id }}
+          path: build/*.sparsebundle
+          key: ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}-${{ github.run_id }}
   
   build:
     needs: deps
@@ -141,36 +131,36 @@ jobs:
         id: cache_build
         uses: actions/cache/restore@v3
         with:
-          path: build/*-build.sparsebundle
+          path: build/*.sparsebundle
           key: ignore
-          restore-keys:
+          restore-keys: |
             ${{ needs.deps.outputs.build-restore-key }}
       - name: Restore cached deps
         if: steps.cache_build.outputs.cache-matched-key == ''
         id: cache_deps
         uses: actions/cache/restore@v3
         with:
-          path: build/*-deps.sparsebundle
+          path: build/*.sparsebundle
           key: ignore
-          restore-keys:
+          restore-keys: |
             ${{ needs.deps.outputs.deps-restore-key }}
           fail-on-cache-miss: true
-      - name: Reuse cached build or deps
-        run: |
-          touch -c build/*-deps.sparsebundle
-          touch -c build/*-build.sparsebundle
       - name: Build
         if: steps.cache_build.outputs.cache-matched-key == ''
         run: |
+          hdiutil attach build/*.sparsebundle
+          make --touch deps ${{ env.MAKE_VARS }}
           make build ${{ env.MAKE_VARS }}
       - name: Save build to cache
         if: steps.cache_build.outputs.cache-matched-key == '' && inputs.cache-build
         uses: actions/cache/save@v3
         with:
-          path: build/*-build.sparsebundle
-          key: ${{ needs.deps.outputs.build-restore-key }}${{ github.run_id }}
+          path: build/*.sparsebundle
+          key: ${{ needs.deps.outputs.build-restore-key }}-${{ github.run_id }}
       - name: Make app
         run: |
+          hdiutil attach build/*.sparsebundle
+          make --touch build ${{ env.MAKE_VARS }}
           make zip ${{ env.MAKE_VARS }}
       - name: Upload app artifact
         uses: actions/upload-artifact@v4
