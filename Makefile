@@ -42,7 +42,7 @@ app: | $(VOLUME)
 	$(MAKE) build/$(APP_NAME).app
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 build: | $(VOLUME)
-	$(MAKE) $(VOLUME)/build
+	$(MAKE) $(VOLUME)/platforms
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 deps: | $(VOLUME)
 	$(MAKE) $(VOLUME)/Brewfile.lock.json
@@ -120,7 +120,7 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp -a $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/build Contents/Resources/icon.icns
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/platforms Contents/Resources/icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
@@ -157,20 +157,20 @@ endif
 	hdiutil detach $(VOLUME)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-$(VOLUME)/build: $(VOLUME)/etc/prefs.sh $(VOLUME)/Brewfile.lock.json relativize_install_names.py
+$(VOLUME)/platforms: $(VOLUME)/etc/prefs.sh $(VOLUME)/Brewfile.lock.json relativize_install_names.py
 	cd $(VOLUME) \
 		&& source etc/bashrc \
 		&& foamSystemCheck \
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	cd $(VOLUME) && "$(CURDIR)/relativize_install_names.py"
-	touch $(VOLUME)/build
 
 $(VOLUME)/etc/prefs.sh: $(OPENFOAM_TARBALL) configure.sh | $(VOLUME)
-	shopt -s extglob; rm -rf $(VOLUME)/!(usr|homebrew|Brewfile*)
+	rm -rf $(VOLUME)/etc
 ifdef OPENFOAM_TARBALL
 	tar -xzf $(OPENFOAM_TARBALL) --strip-components 1 -C $(VOLUME)
 else ifdef OPENFOAM_GIT_BRANCH
+	rm -rf $(VOLUME)/.git
 	git -C $(VOLUME) init -b $(OPENFOAM_GIT_BRANCH)
 	git -C $(VOLUME) remote add origin $(OPENFOAM_GIT_REPO_URL)
 	git -C $(VOLUME) pull origin $(OPENFOAM_GIT_BRANCH)
