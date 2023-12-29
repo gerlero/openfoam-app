@@ -1,5 +1,5 @@
 # Build configuration
-SHELL = /bin/zsh
+SHELL = /bin/bash
 OPENFOAM_VERSION = 2312
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 
@@ -38,11 +38,15 @@ VOLUME = /Volumes/$(APP_NAME)
 
 
 # Build targets
-app: build/$(APP_NAME).app
-build: $(VOLUME)/build/log.txt
-	hdiutil detach $(VOLUME)
-deps: $(VOLUME)/Brewfile.lock.json
-	hdiutil detach $(VOLUME)
+app: | $(VOLUME)
+	$(MAKE) build/$(APP_NAME).app
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+build: | $(VOLUME)
+	$(MAKE) $(VOLUME)/build
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+deps: | $(VOLUME)
+	$(MAKE) $(VOLUME)/Brewfile.lock.json
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 fetch-source: $(OPENFOAM_TARBALL)
 
 ifeq ($(DEPENDENCIES_KIND),both)
@@ -50,12 +54,15 @@ zip:
 	$(MAKE) zip DEPENDENCIES_KIND=standalone
 	$(MAKE) clean-app
 	$(MAKE) zip DEPENDENCIES_KIND=homebrew
-	$(MAKE) clean-app
-else
-zip: build/$(DIST_NAME).zip
+	$(MAKE) clean-app	
 endif
+zip: | $(VOLUME)
+	$(MAKE) build/$(DIST_NAME).zip
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 
-install: $(INSTALL_DIR)/$(APP_NAME).app
+install: | $(VOLUME)
+	$(MAKE) $(INSTALL_DIR)/$(APP_NAME).app
+	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 
 
 # Build rules
@@ -72,7 +79,6 @@ APP_CONTENTS = \
 	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
 	build/$(APP_NAME).app/Contents/MacOS/openfoam \
 	build/$(APP_NAME).app/Contents/MacOS/bashrc
-
 
 $(INSTALL_DIR)/$(APP_NAME).app: build/$(APP_NAME).app
 	cp -r build/$(APP_NAME).app $(INSTALL_DIR)/
@@ -114,14 +120,12 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp -a $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/build/log.txt build/$(APP_NAME).app/Contents/Resources/icon.icns relativize_install_names.py
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/build Contents/Resources/icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
 		-shadow
-	cd $(VOLUME) \
-		&& "$(CURDIR)/relativize_install_names.py"
-	cp build/$(APP_NAME).app/Contents/Resources/icon.icns $(VOLUME)/.VolumeIcon.icns
+	cp Contents/Resources/icon.icns $(VOLUME)/.VolumeIcon.icns
 	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
 	SetFile -a C $(VOLUME)
 	uuidgen > $(VOLUME_ID_FILE)
@@ -129,8 +133,8 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/build/log.tx
 	rm -rf $(VOLUME)/homebrew
 	[ ! -L $(VOLUME)/usr ] || rm $(VOLUME)/usr
 	rm -rf $(VOLUME)/build
-	rm -rf -- $(VOLUME)/**/.git(N)
-	rm -f -- $(VOLUME)/**/.DS_Store(N)
+	rm -rf -- $(VOLUME)/**/.git
+	rm -f -- $(VOLUME)/**/.DS_Store
 ifeq ($(DEPENDENCIES_KIND),standalone)
 	rm $(VOLUME)/usr/bin/brew
 	rm $(VOLUME)/Brewfile
@@ -153,15 +157,17 @@ endif
 	hdiutil detach $(VOLUME)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-$(VOLUME)/build/log.txt: $(VOLUME)/Brewfile.lock.json $(VOLUME)/etc/prefs.sh
+$(VOLUME)/build: $(VOLUME)/etc/prefs.sh $(VOLUME)/Brewfile.lock.json relativize_install_names.py
 	cd $(VOLUME) \
 		&& source etc/bashrc \
 		&& foamSystemCheck \
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
-		&& ./Allwmake -j $(WMAKE_NJOBS) -s -log=build/log.txt
+		&& ./Allwmake -j $(WMAKE_NJOBS) -s
+	cd $(VOLUME) && "$(CURDIR)/relativize_install_names.py"
+	touch $(VOLUME)/build
 
 $(VOLUME)/etc/prefs.sh: $(OPENFOAM_TARBALL) configure.sh | $(VOLUME)
-	setopt extendedglob && rm -rf -- $(VOLUME)/^(usr|homebrew|Brewfile*)(N)
+	shopt -s extglob; rm -rf $(VOLUME)/!(usr|homebrew|Brewfile*)
 ifdef OPENFOAM_TARBALL
 	tar -xzf $(OPENFOAM_TARBALL) --strip-components 1 -C $(VOLUME)
 else ifdef OPENFOAM_GIT_BRANCH
@@ -281,5 +287,5 @@ uninstall:
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-app clean-build clean uninstall
-.SECONDARY: $(OPENFOAM_TARBALL)
+.SECONDARY: $(VOLUME) $(OPENFOAM_TARBALL)
 .DELETE_ON_ERROR:
