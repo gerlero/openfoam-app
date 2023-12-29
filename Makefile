@@ -16,16 +16,16 @@ OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
 OPENFOAM_GIT_BRANCH =
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
 WMAKE_NJOBS =
-DEPENDENCIES_KIND = standalone
+DEPS_KIND = standalone
 DMG_FORMAT = UDRO
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION =
 TEST_DIR = build/test-v$(OPENFOAM_VERSION)
 
-ifeq ($(DEPENDENCIES_KIND),standalone)
+ifeq ($(DEPS_KIND),standalone)
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 else
-DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(DEPENDENCIES_KIND)-$(shell uname -m)
+DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(DEPS_KIND)-$(shell uname -m)
 endif
 
 INSTALL_DIR = /Applications
@@ -49,11 +49,11 @@ deps: | $(VOLUME)
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 fetch-source: $(OPENFOAM_TARBALL)
 
-ifeq ($(DEPENDENCIES_KIND),both)
+ifeq ($(DEPS_KIND),both)
 zip:
-	$(MAKE) zip DEPENDENCIES_KIND=standalone
+	$(MAKE) zip DEPS_KIND=standalone
 	$(MAKE) clean-app
-	$(MAKE) zip DEPENDENCIES_KIND=homebrew
+	$(MAKE) zip DEPS_KIND=homebrew
 	$(MAKE) clean-app	
 endif
 zip: | $(VOLUME)
@@ -93,7 +93,7 @@ build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAM
 	mkdir -p build/$(APP_NAME).app/Contents
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
 	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
-	sed -i '' "s|{{DEPENDENCIES_KIND}}|$(DEPENDENCIES_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{DEPS_KIND}}|$(DEPS_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
 	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
 
 build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Resources/volume
@@ -135,15 +135,15 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/platforms Co
 	rm -rf $(VOLUME)/build
 	rm -rf -- $(VOLUME)/**/.git
 	rm -f -- $(VOLUME)/**/.DS_Store
-ifeq ($(DEPENDENCIES_KIND),standalone)
+ifeq ($(DEPS_KIND),standalone)
 	rm $(VOLUME)/usr/bin/brew
 	rm $(VOLUME)/Brewfile
 	rm $(VOLUME)/Brewfile.lock.json
-else ifeq ($(DEPENDENCIES_KIND),homebrew)
+else ifeq ($(DEPS_KIND),homebrew)
 	rm -rf $(VOLUME)/usr
 	ln -s $(shell brew --prefix) $(VOLUME)/usr
 else
-	$(error Invalid value for DEPENDENCIES_KIND)
+	$(error Invalid value for DEPS_KIND)
 endif
 	rm -rf $(VOLUME)/.fseventsd
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
@@ -179,24 +179,24 @@ endif
 	cd $(VOLUME) && "$(CURDIR)/configure.sh"
 
 $(VOLUME)/Brewfile.lock.json: $(VOLUME)/Brewfile | $(VOLUME)/usr
-ifeq ($(DEPENDENCIES_KIND),standalone)
+ifeq ($(DEPS_KIND),standalone)
 	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --cleanup --verbose
 	$(VOLUME)/usr/bin/brew list --versions
-else ifeq ($(DEPENDENCIES_KIND),homebrew)
+else ifeq ($(DEPS_KIND),homebrew)
 	brew bundle --file $(VOLUME)/Brewfile --no-upgrade
 else
-	$(error Invalid value for DEPENDENCIES_KIND)
+	$(error Invalid value for DEPS_KIND)
 endif
 
 $(VOLUME)/usr: | $(VOLUME)
-ifeq ($(DEPENDENCIES_KIND),standalone)
+ifeq ($(DEPS_KIND),standalone)
 	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
 	mkdir -p $(VOLUME)/usr/bin
 	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
-else ifeq ($(DEPENDENCIES_KIND),homebrew)
+else ifeq ($(DEPS_KIND),homebrew)
 	ln -s $(shell brew --prefix) $(VOLUME)/usr
 else
-	$(error Invalid value for DEPENDENCIES_KIND)
+	$(error Invalid value for DEPS_KIND)
 endif
 
 $(VOLUME)/Brewfile: Brewfile | $(VOLUME)
