@@ -74,7 +74,7 @@ env:
     ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
     ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
-  
+
   OPENFOAM: ${{ inputs.openfoam-version || inputs.openfoam-git-branch }}
 
 jobs:
@@ -96,7 +96,7 @@ jobs:
         id: caching
         run: |
           DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}"
-          BUILD_RESTORE_KEY="$DEPS_RESTORE_KEY-${{ hashFiles('make_build.txt', 'configure.sh', 'relativize_install_names.py') }}"
+          BUILD_RESTORE_KEY="$DEPS_RESTORE_KEY-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
           echo "DEPS_RESTORE_KEY=$DEPS_RESTORE_KEY" >> "$GITHUB_OUTPUT"
           echo "BUILD_RESTORE_KEY=$BUILD_RESTORE_KEY" >> "$GITHUB_OUTPUT"
       - name: Look up cached deps

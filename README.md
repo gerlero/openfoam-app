@@ -1,4 +1,4 @@
-[<img src="icon.png" width="175">](#)
+[<img src="images/icon.png" width="175">](#)
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
@@ -58,7 +58,7 @@
 
 Just open the **OpenFOAM** app to start an OpenFOAM session in a new Terminal window.
 
-<img src="screenshot.png" width="650">
+<img src="images/screenshot.png" width="650">
 
 That's it! When using OpenFOAM, a read-only volume will be loaded and visible in the Finder. The OpenFOAM installation lives inside this virtual disk. When you're not actively using OpenFOAM, it is safe to "eject" the volume from the Finder sidebar.
 
