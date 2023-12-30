@@ -31,7 +31,7 @@ endif
 INSTALL_DIR = /Applications
 
 ifndef OPENFOAM_GIT_BRANCH
-OPENFOAM_TARBALL = $(shell basename $(OPENFOAM_TARBALL_URL))
+OPENFOAM_TARBALL = sources/$(shell basename $(OPENFOAM_TARBALL_URL))
 endif
 
 VOLUME = /Volumes/$(APP_NAME)
@@ -157,15 +157,15 @@ endif
 	hdiutil detach $(VOLUME)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-$(VOLUME)/platforms: $(VOLUME)/etc/prefs.sh $(VOLUME)/Brewfile.lock.json relativize_install_names.py
+$(VOLUME)/platforms: $(VOLUME)/etc/prefs.sh $(VOLUME)/Brewfile.lock.json scripts/relativize_install_names.py
 	cd $(VOLUME) \
 		&& source etc/bashrc \
 		&& foamSystemCheck \
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
-	cd $(VOLUME) && "$(CURDIR)/relativize_install_names.py"
+	cd $(VOLUME) && "$(CURDIR)/scripts/relativize_install_names.py"
 
-$(VOLUME)/etc/prefs.sh: $(OPENFOAM_TARBALL) configure.sh | $(VOLUME)
+$(VOLUME)/etc/prefs.sh: $(OPENFOAM_TARBALL) scripts/configure.sh | $(VOLUME)
 	rm -rf $(VOLUME)/etc
 ifdef OPENFOAM_TARBALL
 	tar -xzf $(OPENFOAM_TARBALL) --strip-components 1 -C $(VOLUME)
@@ -176,7 +176,7 @@ else ifdef OPENFOAM_GIT_BRANCH
 	git -C $(VOLUME) pull origin $(OPENFOAM_GIT_BRANCH)
 	git -C $(VOLUME) submodule update --init --recursive
 endif
-	cd $(VOLUME) && "$(CURDIR)/configure.sh"
+	cd $(VOLUME) && "$(CURDIR)/scripts/configure.sh"
 
 $(VOLUME)/Brewfile.lock.json: $(VOLUME)/Brewfile | $(VOLUME)/usr
 ifeq ($(DEPS_KIND),standalone)
@@ -231,7 +231,7 @@ test-openfoam:
 	mkdir -p $(TEST_DIR)/test-openfoam
 	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c foamInstallationTest
 	cd $(TEST_DIR)/test-openfoam \
-		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/Resources/etc/openfoam" < "$(CURDIR)/test.sh"
+		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/Resources/etc/openfoam" < "$(CURDIR)/scripts/test.sh"
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-bash:
@@ -243,7 +243,7 @@ test-bash:
 		set -ex; \
 		foamInstallationTest; \
 		cd $(TEST_DIR)/test-bash; \
-		source "$(CURDIR)/test.sh"'
+		source "$(CURDIR)/scripts/test.sh"'
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-zsh:
@@ -255,7 +255,7 @@ test-zsh:
 		set -ex; \
 		foamInstallationTest; \
 		cd $(TEST_DIR)/test-zsh; \
-		source "$(CURDIR)/test.sh"'
+		source "$(CURDIR)/scripts/test.sh"'
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
 test-dmg:
@@ -266,7 +266,7 @@ test-dmg:
 	cd $(TEST_DIR)/test-dmg \
 		&& source $(VOLUME)/etc/bashrc \
 		&& foamInstallationTest \
-		&& "$(CURDIR)/test.sh"
+		&& "$(CURDIR)/scripts/test.sh"
 	hdiutil detach $(VOLUME)
 
 clean-app:
