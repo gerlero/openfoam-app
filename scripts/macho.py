@@ -10,6 +10,11 @@ from pathlib import Path
 def _codesign(file):
     subprocess.run(["codesign", "--sign", "-", "--force", "--preserve-metadata=entitlements,requirements,flags,runtime", file], check=True)
 
+def change_dylib_id(lib, id):
+    subprocess.run(["install_name_tool", "-id", id, lib], check=True)
+    if platform.machine() == "arm64":
+        _codesign(lib)
+
 def get_install_names(file):
     otool_stdout = subprocess.run(["otool", "-L", file], stdout=subprocess.PIPE, check=True).stdout.decode()
     install_names = [Path(line.rpartition(" (compatibility version ")[0].strip()) for line in otool_stdout.splitlines()[1:]]

@@ -19,6 +19,10 @@ on:
         type: string
         default: ''
         required: false
+      deps-kind:
+        type: string
+        default: ''
+        required: false
       build-os:
         type: string
         default: ''
@@ -52,6 +56,14 @@ on:
         default: ''
         required: false
         description: Build this OpenFOAM Git branch
+      deps-kind:
+        type: choice
+        required: false
+        description: Bundle dependencies in this manner
+        options:
+          - standalone
+          - bundled
+          - homebrew
       build-os:
         type: string
         default: ''
@@ -74,6 +86,7 @@ env:
     ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
     ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
+    ${{ inputs.deps-kind != '' && format('DEPS_KIND={0}', inputs.deps-kind) || '' }}
 
   OPENFOAM: ${{ inputs.openfoam-version || inputs.openfoam-git-branch }}
 
@@ -179,6 +192,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Homebrew dependencies
+        if: inputs.deps-kind == 'homebrew'
+        run: |
+          brew bundle
       - name: Download app artifact
         uses: actions/download-artifact@v4
         with:

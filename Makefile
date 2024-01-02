@@ -21,13 +21,7 @@ DMG_FORMAT = UDRO
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION =
 TEST_DIR = build/test-v$(OPENFOAM_VERSION)
-
-ifeq ($(DEPS_KIND),standalone)
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
-else
-DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(DEPS_KIND)-$(shell uname -m)
-endif
-
 INSTALL_DIR = /Applications
 
 ifndef OPENFOAM_GIT_BRANCH
@@ -48,14 +42,6 @@ deps: | $(VOLUME)
 	$(MAKE) $(VOLUME)/Brewfile.lock.json
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
 fetch-source: $(OPENFOAM_TARBALL)
-
-ifeq ($(DEPS_KIND),both)
-zip:
-	$(MAKE) zip DEPS_KIND=standalone
-	$(MAKE) clean-app
-	$(MAKE) zip DEPS_KIND=homebrew
-	$(MAKE) clean-app	
-endif
 zip: | $(VOLUME)
 	$(MAKE) build/$(DIST_NAME).zip
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
@@ -135,15 +121,13 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/platforms Co
 	rm -rf $(VOLUME)/build
 	rm -rf -- $(VOLUME)/**/.git
 	rm -f -- $(VOLUME)/**/.DS_Store
-ifeq ($(DEPS_KIND),standalone)
-	rm $(VOLUME)/usr/bin/brew
-	rm $(VOLUME)/Brewfile
-	rm $(VOLUME)/Brewfile.lock.json
-else ifeq ($(DEPS_KIND),homebrew)
+ifeq ($(DEPS_KIND),homebrew)
 	rm -rf $(VOLUME)/usr
 	ln -s $(shell brew --prefix) $(VOLUME)/usr
 else
-	$(error Invalid value for DEPS_KIND)
+	rm -f $(VOLUME)/usr/bin/brew
+	rm $(VOLUME)/Brewfile
+	rm $(VOLUME)/Brewfile.lock.json
 endif
 	rm -rf $(VOLUME)/.fseventsd
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
@@ -182,10 +166,12 @@ $(VOLUME)/Brewfile.lock.json: $(VOLUME)/Brewfile | $(VOLUME)/usr
 ifeq ($(DEPS_KIND),standalone)
 	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --cleanup --verbose
 	$(VOLUME)/usr/bin/brew list --versions
-else ifeq ($(DEPS_KIND),homebrew)
-	brew bundle --file $(VOLUME)/Brewfile --no-upgrade
 else
-	$(error Invalid value for DEPS_KIND)
+	brew bundle --file $(VOLUME)/Brewfile --no-upgrade
+endif
+ifeq ($(DEPS_KIND),bundled)
+	rm -rf $(VOLUME)/usr
+	cd $(VOLUME) && "$(CURDIR)/scripts/bundle_deps.py"
 endif
 
 $(VOLUME)/usr: | $(VOLUME)
@@ -195,6 +181,8 @@ ifeq ($(DEPS_KIND),standalone)
 	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
 else ifeq ($(DEPS_KIND),homebrew)
 	ln -s $(shell brew --prefix) $(VOLUME)/usr
+else ifeq ($(DEPS_KIND),bundled)
+	mkdir $(VOLUME)/usr
 else
 	$(error Invalid value for DEPS_KIND)
 endif

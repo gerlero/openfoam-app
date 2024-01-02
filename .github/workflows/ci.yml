@@ -21,6 +21,14 @@ on:
         default: ''
         required: false
         description: Build using this macOS image
+      deps-kind:
+          type: choice
+          required: false
+          description: Bundle dependencies in this manner
+          options:
+            - standalone
+            - bundled
+            - homebrew
       cache-build:
         type: boolean
         default: true
@@ -37,5 +45,6 @@ jobs:
     with:
       openfoam-version: ${{ matrix.openfoam-version }}
       build-os: ${{ inputs.build-os }}
+      deps-kind: ${{ inputs.deps-kind }}
       use-cached: ${{ github.event_name == 'workflow_dispatch' && inputs.use-cached || github.event_name != 'workflow_dispatch' && github.event_name != 'schedule' }}
       cache-build: ${{ github.event_name != 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}
