@@ -15,6 +15,7 @@ on:
         required: false
         description: Bundle dependencies in this manner
         options:
+          - ''
           - standalone
           - bundled
           - homebrew

@@ -61,6 +61,7 @@ on:
         required: false
         description: Bundle dependencies in this manner
         options:
+          - ''
           - standalone
           - bundled
           - homebrew
@@ -108,7 +109,7 @@ jobs:
       - name: Generate cache restore keys
         id: caching
         run: |
-          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ hashFiles('make_deps.txt', 'Brewfile') }}"
+          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ inputs.deps-kind }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py') }}"
           BUILD_RESTORE_KEY="$DEPS_RESTORE_KEY-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
           echo "DEPS_RESTORE_KEY=$DEPS_RESTORE_KEY" >> "$GITHUB_OUTPUT"
           echo "BUILD_RESTORE_KEY=$BUILD_RESTORE_KEY" >> "$GITHUB_OUTPUT"
