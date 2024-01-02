@@ -117,18 +117,12 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/platforms Co
 	uuidgen > $(VOLUME_ID_FILE)
 	cat $(VOLUME_ID_FILE)
 	rm -rf $(VOLUME)/homebrew
-	[ ! -L $(VOLUME)/usr ] || rm $(VOLUME)/usr
-	rm -rf $(VOLUME)/build
-	rm -rf -- $(VOLUME)/**/.git
-	rm -f -- $(VOLUME)/**/.DS_Store
-ifeq ($(DEPS_KIND),homebrew)
-	rm -rf $(VOLUME)/usr
-	ln -s $(shell brew --prefix) $(VOLUME)/usr
-else
 	rm -f $(VOLUME)/usr/bin/brew
 	rm $(VOLUME)/Brewfile
 	rm $(VOLUME)/Brewfile.lock.json
-endif
+	rm -rf $(VOLUME)/build
+	rm -rf $(VOLUME)/**/.git
+	rm -f $(VOLUME)/**/.DS_Store
 	rm -rf $(VOLUME)/.fseventsd
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	hdiutil create \
