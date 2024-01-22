@@ -116,7 +116,7 @@ jobs:
       - name: Look up cached deps
         id: cache_deps
         if: inputs.use-cached
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: build/*.sparsebundle
           key: ignore
@@ -129,7 +129,7 @@ jobs:
           make deps ${{ env.MAKE_VARS }}
       - name: Save deps to cache
         if: steps.cache_deps.outputs.cache-matched-key == ''
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: build/*.sparsebundle
           key: ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}-${{ github.run_id }}
@@ -143,7 +143,7 @@ jobs:
       - name: Restore cached build if available
         if: inputs.use-cached
         id: cache_build
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: build/*.sparsebundle
           key: ignore
@@ -152,7 +152,7 @@ jobs:
       - name: Restore cached deps
         if: steps.cache_build.outputs.cache-matched-key == ''
         id: cache_deps
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: build/*.sparsebundle
           key: ignore
@@ -167,7 +167,7 @@ jobs:
           make build ${{ env.MAKE_VARS }}
       - name: Save build to cache
         if: steps.cache_build.outputs.cache-matched-key == '' && inputs.cache-build
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: build/*.sparsebundle
           key: ${{ needs.deps.outputs.build-restore-key }}-${{ github.run_id }}
