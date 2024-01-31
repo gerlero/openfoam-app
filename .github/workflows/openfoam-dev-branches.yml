@@ -4,34 +4,31 @@ on:
   schedule:
     - cron: '0 6 * * 5'
   workflow_dispatch:
-    inputs:
-      build-os:
-        type: string
-        default: ''
-        required: false
-        description: Build using this macOS image
-      deps-kind:
-        type: choice
-        required: false
-        description: Bundle dependencies in this manner
-        options:
-          - ''
-          - standalone
-          - bundled
-          - homebrew
 
 jobs:
   openfoam-dev-branch:
     strategy:
       matrix:
-        openfoam-git-branch: [master, develop]
+        include:
+          - build-os: macos-14
+            openfoam-git-branch: master
+            deps-kind: bundled
+          - build-os: macos-12
+            openfoam-git-branch: master
+            deps-kind: standalone
+          - build-os: macos-14
+            openfoam-git-branch: develop
+            deps-kind: bundled
+          - build-os: macos-12
+            openfoam-git-branch: develop
+            deps-kind: standalone
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
+      build-os: ${{ matrix.build-os }}
       app-name: OpenFOAM-${{ matrix.openfoam-git-branch }}
       app-version: ${{ matrix.openfoam-git-branch }}
       openfoam-git-branch: ${{ matrix.openfoam-git-branch }}
-      build-os: ${{ inputs.build-os }}
-      deps-kind: ${{ inputs.deps-kind }}
+      deps-kind: ${{ matrix.deps-kind }}
       use-cached: false
       cache-build: false

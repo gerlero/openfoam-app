@@ -9,6 +9,16 @@ on:
       - main
   schedule:
     - cron: '0 6 * * 5'
+  workflow_call:
+    inputs:
+      app-version:
+        type: string
+        default: ''
+        required: false
+      release:
+        type: boolean
+        default: false
+        required: false
   workflow_dispatch:
     inputs:
       use-cached:
@@ -16,11 +26,6 @@ on:
         default: false
         required: false
         description: Reuse cached build artifacts if available
-      build-os:
-        type: string
-        default: ''
-        required: false
-        description: Build using this macOS image
       deps-kind:
           type: choice
           required: false
@@ -40,12 +45,14 @@ jobs:
   ci:
     strategy:
       matrix:
+        build-os: [macos-14, macos-12]
         openfoam-version: [2312, 2306]
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
       openfoam-version: ${{ matrix.openfoam-version }}
-      build-os: ${{ inputs.build-os }}
+      build-os: ${{ matrix.build-os }}
       deps-kind: ${{ inputs.deps-kind }}
+      app-version: ${{ github.event_name == 'workflow_call' && inputs.app-version || '' }}
       use-cached: ${{ github.event_name == 'workflow_dispatch' && inputs.use-cached || github.event_name != 'workflow_dispatch' && github.event_name != 'schedule' }}
       cache-build: ${{ github.event_name != 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}
