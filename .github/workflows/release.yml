@@ -18,12 +18,7 @@ jobs:
 
   release:
     needs: get-version
-    strategy:
-      matrix:
-        openfoam-version: [2312, 2306]
-      fail-fast: false
-    uses: ./.github/workflows/build-test.yml
+    uses: ./.github/workflows/ci.yml
     with:
-      openfoam-version: ${{ matrix.openfoam-version }}
       app-version: ${{ needs.get-version.outputs.app-version }}
       release: true

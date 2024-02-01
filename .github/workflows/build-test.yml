@@ -41,6 +41,10 @@ on:
         required: false
   workflow_dispatch:
     inputs:
+      build-os:
+        type: string
+        required: true
+        description: Build using this macOS image
       openfoam-version:
         type: string
         default: ''
@@ -65,11 +69,6 @@ on:
           - standalone
           - bundled
           - homebrew
-      build-os:
-        type: string
-        default: ''
-        required: false
-        description: Build using this macOS image
       use-cached:
         type: boolean
         default: true
@@ -93,9 +92,7 @@ env:
 
 jobs:
   deps:
-    runs-on: ${{ inputs.build-os || 'macos-12' }}
-    env:
-      BUILD_OS: ${{ inputs.build-os || 'macos-12' }}
+    runs-on: ${{ inputs.build-os }}
     outputs:
       deps-restore-key: ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}
       build-restore-key: ${{ steps.caching.outputs.BUILD_RESTORE_KEY }}
@@ -109,7 +106,7 @@ jobs:
       - name: Generate cache restore keys
         id: caching
         run: |
-          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ env.BUILD_OS }}-${{ inputs.deps-kind }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py') }}"
+          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ inputs.deps-kind }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py') }}"
           BUILD_RESTORE_KEY="$DEPS_RESTORE_KEY-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
           echo "DEPS_RESTORE_KEY=$DEPS_RESTORE_KEY" >> "$GITHUB_OUTPUT"
           echo "BUILD_RESTORE_KEY=$BUILD_RESTORE_KEY" >> "$GITHUB_OUTPUT"
@@ -136,7 +133,9 @@ jobs:
   
   build:
     needs: deps
-    runs-on: ${{ inputs.build-os || 'macos-12' }}
+    runs-on: ${{ inputs.build-os }}
+    outputs:
+      arch: ${{ runner.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -187,7 +186,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [macos-12, macos-13]
+        os: [macos-12, macos-13, macos-14]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -207,6 +206,7 @@ jobs:
           unzip *-app-*.zip
         working-directory: build
       - name: Test
+        if: needs.build.outputs.arch == runner.arch
         run: |
           make test ${{ env.MAKE_VARS }}
 
