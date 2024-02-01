@@ -13,7 +13,7 @@ bin/tools/foamConfigurePaths \
     -fftw-path '$WM_PROJECT_DIR/usr/opt/fftw' \
     -kahip-path '$WM_PROJECT_DIR/usr/opt/kahip' \
     -metis-path '$WM_PROJECT_DIR/usr/opt/metis' \
-    -scotch-path '$WM_PROJECT_DIR/usr/opt/scotch-no-pthread'
+    -scotch-path '$WM_PROJECT_DIR/usr/opt/scotch'
 
 
 # Set path to the MPI install
