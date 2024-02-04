@@ -3,6 +3,9 @@ name: Build and test
 on:
   workflow_call:
     inputs:
+      build-os:
+        type: string
+        required: true
       openfoam-version:
         type: string
         default: ''
@@ -23,10 +26,6 @@ on:
         type: string
         default: ''
         required: false
-      build-os:
-        type: string
-        default: ''
-        required: false
       use-cached:
         type: boolean
         default: true
@@ -42,9 +41,14 @@ on:
   workflow_dispatch:
     inputs:
       build-os:
-        type: string
+        type: choice
         required: true
         description: Build using this macOS image
+        options:
+          - macos-14
+          - macos-13
+          - macos-12
+          - macos-11
       openfoam-version:
         type: string
         default: ''
@@ -97,6 +101,8 @@ jobs:
       deps-restore-key: ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}
       build-restore-key: ${{ steps.caching.outputs.BUILD_RESTORE_KEY }}
     steps:
+      - name: Use Xcode Command Line Tools
+        run: sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Checkout
         uses: actions/checkout@v4
       - name: Get Make recipes for caching
@@ -106,7 +112,7 @@ jobs:
       - name: Generate cache restore keys
         id: caching
         run: |
-          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ inputs.deps-kind }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py') }}"
+          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py') }}"
           BUILD_RESTORE_KEY="$DEPS_RESTORE_KEY-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
           echo "DEPS_RESTORE_KEY=$DEPS_RESTORE_KEY" >> "$GITHUB_OUTPUT"
           echo "BUILD_RESTORE_KEY=$BUILD_RESTORE_KEY" >> "$GITHUB_OUTPUT"
@@ -137,6 +143,8 @@ jobs:
     outputs:
       arch: ${{ runner.arch }}
     steps:
+      - name: Use Xcode Command Line Tools
+        run: sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Checkout
         uses: actions/checkout@v4
       - name: Restore cached build if available
@@ -190,6 +198,8 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Use Xcode Command Line Tools
+        run: sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Homebrew dependencies
