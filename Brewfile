@@ -1,3 +1,5 @@
+tap "gerlero/openfoam"
+
 # Required dependencies
 brew "open-mpi"
 brew "libomp"
@@ -8,7 +10,7 @@ brew "cgal"
 brew "fftw"
 brew "kahip"
 brew "metis"
-brew "scotch"
+brew "gerlero/openfoam/scotch-no-pthread"
 
 # Optional dependencies (uncomment to enable)
 # brew "adios2"
