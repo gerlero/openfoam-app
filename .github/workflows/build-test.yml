@@ -140,8 +140,6 @@ jobs:
   build:
     needs: deps
     runs-on: ${{ inputs.build-os }}
-    outputs:
-      arch: ${{ runner.arch }}
     steps:
       - name: Use Xcode Command Line Tools
         run: sudo xcode-select --switch /Library/Developer/CommandLineTools
@@ -195,11 +193,13 @@ jobs:
     strategy:
       matrix:
         os: [macos-12, macos-13, macos-14]
+        exclude:
+          - os: ${{ inputs.build-os == 'macos-14' && 'macos-12' || ''}}
+          - os: ${{ inputs.build-os == 'macos-14' && 'macos-13' || ''}}
+          - os: ${{ inputs.build-os != 'macos-14' && 'macos-14' || ''}}
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Use Xcode Command Line Tools
-        run: sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Homebrew dependencies
@@ -209,14 +209,13 @@ jobs:
       - name: Download app artifact
         uses: actions/download-artifact@v4
         with:
-          name: app-${{ env.OPENFOAM }}-${{ needs.build.outputs.arch }}
+          name: app-${{ env.OPENFOAM }}-${{ runner.arch }}
           path: build
       - name: Unzip app
         run: |
           unzip *-app-*.zip
         working-directory: build
       - name: Test
-        if: needs.build.outputs.arch == runner.arch
         run: |
           make test ${{ env.MAKE_VARS }}
 
