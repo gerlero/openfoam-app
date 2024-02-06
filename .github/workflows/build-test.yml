@@ -218,6 +218,18 @@ jobs:
       - name: Test
         run: |
           make test ${{ env.MAKE_VARS }}
+      - name: Archive test results
+        if: ${{ !cancelled() }}
+        run: |
+          tar -cvf test-results.tar test-*
+        working-directory: build
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ env.OPENFOAM }}-${{ inputs.build-os }}
+          path: build/test-results.tar
+          if-no-files-found: error
 
   release:
     needs: test
