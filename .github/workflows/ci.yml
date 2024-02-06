@@ -9,16 +9,6 @@ on:
       - main
   schedule:
     - cron: '0 6 * * 5'
-  workflow_call:
-    inputs:
-      app-version:
-        type: string
-        default: ''
-        required: false
-      release:
-        type: boolean
-        default: false
-        required: false
   workflow_dispatch:
     inputs:
       use-cached:
@@ -53,7 +43,5 @@ jobs:
       openfoam-version: ${{ matrix.openfoam-version }}
       build-os: ${{ matrix.build-os }}
       deps-kind: ${{ inputs.deps-kind }}
-      app-version: ${{ github.event_name == 'workflow_call' && inputs.app-version || '' }}
-      release: ${{ github.event_name == 'workflow_call' && inputs.release }}
       use-cached: ${{ github.event_name == 'workflow_dispatch' && inputs.use-cached || github.event_name != 'workflow_dispatch' && github.event_name != 'schedule' }}
       cache-build: ${{ github.event_name != 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}
