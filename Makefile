@@ -108,6 +108,7 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 
 build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/platforms Contents/Resources/icon.icns
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
 		-shadow
