@@ -115,7 +115,7 @@ EOF
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/3066
-[ $(bin/foamEtcFile -show-api) -lt 2312 ] || sed -i '' 's|max(len,|max(label(len),|' src/OpenFOAM/db/IOstreams/memory/memoryStreamBuffer.H
+[ $(bin/foamEtcFile -show-api) -ne 2312 ] || sed -i '' 's|max(len,|max(label(len),|' src/OpenFOAM/db/IOstreams/memory/memoryStreamBuffer.H
 
 
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2958
