@@ -10,7 +10,7 @@ cd ..
 rm -rf flange
 cp -r "$FOAM_TUTORIALS/basic/laplacianFoam/flange" flange
 cd flange
-OMPI_MCA_rmaps_base_oversubscribe=1 ./Allrun-parallel
+PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe ./Allrun-parallel
 reconstructPar
 cd ..
 
