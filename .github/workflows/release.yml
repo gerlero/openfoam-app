@@ -33,7 +33,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        arch: [ARM64, x64]
+        arch: [ARM64, X64]
         openfoam-version: [2312, 2306]
     runs-on: ubuntu-latest
     steps:
