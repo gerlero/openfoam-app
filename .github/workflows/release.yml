@@ -16,7 +16,7 @@ jobs:
         run:
           echo "VERSION_WITHOUT_V=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
-  release:
+  build:
     needs: get-version
     strategy:
       matrix:
@@ -28,4 +28,24 @@ jobs:
       openfoam-version: ${{ matrix.openfoam-version }}
       build-os: ${{ matrix.build-os }}
       app-version: ${{ needs.get-version.outputs.app-version }}
-      release: true
+
+  release:
+    needs: build
+    strategy:
+      matrix:
+        arch: [ARM64, x64]
+        openfoam-version: [2312, 2306]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-${{ matrix.openfoam-version }}-${{ matrix.arch }}
+      - name: Upload app to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: '*-app-*.zip'
+          tag: ${{ github.ref }}
+          file_glob: true
+          overwrite: false
