@@ -34,10 +34,6 @@ on:
         type: boolean
         default: true
         required: false
-      release:
-        type: boolean
-        default: false
-        required: false
   workflow_dispatch:
     inputs:
       build-os:
@@ -218,21 +214,3 @@ jobs:
       - name: Test
         run: |
           make test ${{ env.MAKE_VARS }}
-
-  release:
-    needs: test
-    if: inputs.release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download app artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: app-${{ env.OPENFOAM }}
-      - name: Upload app to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: '*-app-*.zip'
-          tag: ${{ github.ref }}
-          file_glob: true
-          overwrite: false
