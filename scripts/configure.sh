@@ -121,3 +121,8 @@ EOF
 # Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2958
 [ $(uname -m) != 'arm64' ] || sed -i '' 's|-ftrapping-math|-ftrapping-math -ffp-contract=off|' wmake/rules/darwin64Clang/c
 [ $(uname -m) != 'arm64' ] || sed -i '' 's|-ftrapping-math|-ftrapping-math -ffp-contract=off|' wmake/rules/darwin64Clang/c++
+
+
+# Backport of https://develop.openfoam.com/Development/openfoam/-/issues/3098
+[ $(bin/foamEtcFile -show-api) -gt 2312 ] || sed -i '' 's|_foamAddLib  "$FOAM_USER_LIBBIN:$FOAM_SITE_LIBBIN"|_foamAddLib  "$FOAM_SITE_LIBBIN"\n_foamAddLib  "$FOAM_USER_LIBBIN"|' etc/config.sh/setup
+[ $(bin/foamEtcFile -show-api) -gt 2312 ] || sed -i '' 's|_foamAddLib  "$FOAM_USER_LIBBIN:$FOAM_SITE_LIBBIN"|_foamAddLib  "$FOAM_SITE_LIBBIN"\n_foamAddLib  "$FOAM_USER_LIBBIN"|' etc/config.csh/setup
