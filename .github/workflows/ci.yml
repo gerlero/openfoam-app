@@ -9,6 +9,11 @@ on:
       - main
   schedule:
     - cron: '0 6 * * 5'
+  workflow_call:
+    inputs:
+      app-version:
+        type: string
+        required: true
   workflow_dispatch:
     inputs:
       use-cached:
@@ -40,8 +45,9 @@ jobs:
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
-      openfoam-version: ${{ matrix.openfoam-version }}
       build-os: ${{ matrix.build-os }}
+      openfoam-version: ${{ matrix.openfoam-version }}
+      app-version: ${{ github.event_name == 'workflow_call' && inputs.app-version || '' }}
       deps-kind: ${{ inputs.deps-kind }}
       use-cached: ${{ github.event_name == 'workflow_dispatch' && inputs.use-cached || github.event_name != 'workflow_dispatch' && github.event_name != 'schedule' }}
       cache-build: ${{ github.event_name != 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}
