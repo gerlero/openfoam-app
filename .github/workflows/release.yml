@@ -31,17 +31,14 @@ jobs:
 
   release:
     needs: build
-    strategy:
-      matrix:
-        arch: [ARM64, X64]
-        openfoam-version: [2312, 2306]
     runs-on: ubuntu-latest
     steps:
-      - name: Download app artifact
+      - name: Download app artifacts
         uses: actions/download-artifact@v4
         with:
-          name: app-${{ matrix.openfoam-version }}-${{ matrix.arch }}
-      - name: Upload app to release
+          pattern: app-*
+          merge-multiple: true
+      - name: Upload apps to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
