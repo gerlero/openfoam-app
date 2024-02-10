@@ -47,7 +47,7 @@ jobs:
     with:
       build-os: ${{ matrix.build-os }}
       openfoam-version: ${{ matrix.openfoam-version }}
-      app-version: ${{ github.event_name == 'workflow_call' && inputs.app-version || '' }}
+      app-version: ${{ inputs.app-version }}
       deps-kind: ${{ inputs.deps-kind }}
       use-cached: ${{ github.event_name == 'workflow_dispatch' && inputs.use-cached || github.event_name != 'workflow_dispatch' && github.event_name != 'schedule' }}
       cache-build: ${{ github.event_name != 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}
