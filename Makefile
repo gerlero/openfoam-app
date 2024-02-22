@@ -20,7 +20,6 @@ DEPS_KIND = standalone
 DMG_FORMAT = UDRO
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION =
-TEST_DIR = build/test-v$(OPENFOAM_VERSION)
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = /Applications
 
@@ -206,51 +205,13 @@ $(OPENFOAM_TARBALL).sha256:
 
 
 # Non-build targets and rules
-test: test-dmg test-openfoam test-bash test-zsh
-
-test-openfoam:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -rf $(TEST_DIR)/test-openfoam
-	mkdir -p $(TEST_DIR)/test-openfoam
-	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c foamInstallationTest
-	cd $(TEST_DIR)/test-openfoam \
-		&& "$(CURDIR)/build/$(APP_NAME).app/Contents/Resources/etc/openfoam" < "$(CURDIR)/scripts/test.sh"
+test: | tests/venv
+	tests/venv/bin/pip install -r tests/requirements.txt
+	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c tests/venv/bin/pytest
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
 
-test-bash:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -rf $(TEST_DIR)/test-bash
-	mkdir -p $(TEST_DIR)/test-bash
-	PATH=$(VOLUME)/usr/opt/bash/bin:$$PATH bash -c \
-		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
-		set -ex; \
-		foamInstallationTest; \
-		cd $(TEST_DIR)/test-bash; \
-		source "$(CURDIR)/scripts/test.sh"'
-	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
-
-test-zsh:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	rm -rf $(TEST_DIR)/test-zsh
-	mkdir -p $(TEST_DIR)/test-zsh
-	zsh -c \
-		'source build/$(APP_NAME).app/Contents/Resources/etc/bashrc; \
-		set -ex; \
-		foamInstallationTest; \
-		cd $(TEST_DIR)/test-zsh; \
-		source "$(CURDIR)/scripts/test.sh"'
-	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
-
-test-dmg:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
-	rm -rf $(TEST_DIR)/test-dmg
-	mkdir -p $(TEST_DIR)/test-dmg
-	cd $(TEST_DIR)/test-dmg \
-		&& source $(VOLUME)/etc/bashrc \
-		&& foamInstallationTest \
-		&& "$(CURDIR)/scripts/test.sh"
-	hdiutil detach $(VOLUME)
+tests/venv:
+	python3 -m venv tests/venv
 
 clean-app:
 	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)	
@@ -258,17 +219,17 @@ clean-app:
 
 clean-build: clean-app
 	rm -f build/$(DIST_NAME).zip
-	rm -rf build/$(APP_NAME)-build.sparsebundle $(TEST_DIR)/test-openfoam $(TEST_DIR)/test-bash $(TEST_DIR)/test-zsh $(TEST_DIR)/test-dmg
-	rmdir $(TEST_DIR) || true
+	rm -rf build/$(APP_NAME)-build.sparsebundle
 	rmdir build || true
 
 clean: clean-build
 	rm -f $(OPENFOAM_TARBALL) Brewfile.lock.json
+	rm -rf tests/venv
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
 
 # Set special targets
-.PHONY: app build deps fetch-source zip install test test-openfoam test-bash test-zsh test-dmg clean-app clean-build clean uninstall
+.PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
 .SECONDARY: $(VOLUME) $(OPENFOAM_TARBALL)
 .DELETE_ON_ERROR:
