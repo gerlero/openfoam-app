@@ -214,3 +214,5 @@ jobs:
       - name: Test
         run: |
           make test ${{ env.MAKE_VARS }}
+        env:
+          PRTE_MCA_rmaps_default_mapping_policy: ':oversubscribe'
