@@ -24,7 +24,7 @@ def get_install_names(file):
     return install_names
 
 def change_install_name(file, old_install_name, new_install_name, *, relative=False):
-    file = Path(file)
+    file = Path(file).absolute()
     if relative:
         new_install_name = Path(new_install_name)
         assert new_install_name.is_absolute()
