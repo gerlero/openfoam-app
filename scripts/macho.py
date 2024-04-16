@@ -3,7 +3,10 @@ Utility functions for working with macOS Mach-O files.
 """
 import subprocess
 import platform
-import os
+import sys
+
+if sys.version_info < (3, 12):
+    import os
 
 from pathlib import Path
 
@@ -25,7 +28,11 @@ def change_install_name(file, old_install_name, new_install_name, *, relative=Fa
     if relative:
         new_install_name = Path(new_install_name)
         assert new_install_name.is_absolute()
-        new_install_name = Path("@loader_path") / os.path.relpath(new_install_name, start=file.parent)
+        if sys.version_info >= (3, 12):
+            new_install_name = new_install_name.relative_to(file.parent, walk_up=True)
+        else: # No walk_up parameter in Python < 3.12
+            new_install_name = Path(os.path.relpath(new_install_name, start=file.parent))
+        new_install_name = "@loader_path" / new_install_name
     subprocess.run(["install_name_tool", "-change", old_install_name, new_install_name, file], check=True)
     if platform.machine() == "arm64":
         _codesign(file)
