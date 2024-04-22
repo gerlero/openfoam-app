@@ -23,7 +23,7 @@ def relativize_install_names(file, lib_dirs):
 lib_dirs = {Path("usr").resolve(): Path("usr")} # In case "usr" is a symlink
 
 # Replace references to OpenFOAM libraries if necessary
-OPENFOAM_VERSION = int(subprocess.run(["bin/foamEtcFile", "-show-api"], stdout=subprocess.PIPE, check=True).stdout)
+OPENFOAM_VERSION = int(subprocess.run(["bin/foamEtcFile", "-show-api"], stdout=subprocess.PIPE, text=True, check=True).stdout)
 if OPENFOAM_VERSION < 2312:
     # References are already relative in OpenFOAM >= 2312
     # See https://develop.openfoam.com/Development/openfoam/-/issues/2948

@@ -19,7 +19,7 @@ def change_dylib_id(lib, id):
         _codesign(lib)
 
 def get_install_names(file):
-    otool_stdout = subprocess.run(["otool", "-L", file], stdout=subprocess.PIPE, check=True).stdout.decode()
+    otool_stdout = subprocess.run(["otool", "-L", file], stdout=subprocess.PIPE, text=True, check=True).stdout
     install_names = [Path(line.rpartition(" (compatibility version ")[0].strip()) for line in otool_stdout.splitlines()[1:]]
     return install_names
 
