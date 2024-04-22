@@ -9,16 +9,16 @@ from pathlib import Path
 
 import macho
 
-SRC_PREFIX = Path(subprocess.run(["brew", "--prefix"], stdout=subprocess.PIPE, check=True).stdout.decode().strip())
+SRC_PREFIX = Path(subprocess.run(["brew", "--prefix"], stdout=subprocess.PIPE, text=True, check=True).stdout.strip())
 
 def bundle_list():
-    return subprocess.run(["brew", "bundle", "list"], stdout=subprocess.PIPE, check=True).stdout.decode().splitlines()
+    return subprocess.run(["brew", "bundle", "list"], stdout=subprocess.PIPE, text=True, check=True).stdout.splitlines()
 
 def deps(*formulae, union=False):
     cmd = ["brew", "deps"]
     if union:
         cmd.append("--union")
-    return subprocess.run([*cmd, *formulae], stdout=subprocess.PIPE, check=True).stdout.decode().splitlines()
+    return subprocess.run([*cmd, *formulae], stdout=subprocess.PIPE, text=True, check=True).stdout.splitlines()
 
 def copy_installed_formula(formula, dst_prefix, *, relative_install_names=False):
     dst_prefix = Path(dst_prefix)
