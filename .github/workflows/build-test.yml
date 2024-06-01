@@ -137,8 +137,6 @@ jobs:
     needs: deps
     runs-on: ${{ inputs.build-os }}
     steps:
-      - name: Use Xcode Command Line Tools
-        run: sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Checkout
         uses: actions/checkout@v4
       - name: Restore cached build if available
