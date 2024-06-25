@@ -16,5 +16,6 @@ async def test_step(step):
     await step.run()
     assert "FOAM Warning" not in (step.path / "log.simpleFoam").read_text()
 
+@pytest.mark.skipif(int(os.environ["FOAM_API"]) > 2312, reason="cartesianMesh removed from default installation")
 def test_cartesian(): # https://github.com/gerlero/openfoam-app/issues/88
     subprocess.run(["cartesianMesh", "-help"], check=True)

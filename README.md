@@ -29,6 +29,16 @@
 
 * Or, choose the OpenFOAM version(s) you want:
 
+    * **OpenFOAM v2406**
+
+        * Install with [Homebrew](https://brew.sh):
+
+            ```sh
+            brew install --no-quarantine gerlero/openfoam/openfoam@2406
+            ```
+
+        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2406-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2406-app-x86_64.zip)
+
     * **OpenFOAM v2312**
 
         * Install with [Homebrew](https://brew.sh):
@@ -38,16 +48,6 @@
             ```
 
         * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2312-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2312-app-x86_64.zip)
-
-    * **OpenFOAM v2306**
-
-        * Install with [Homebrew](https://brew.sh):
-
-            ```sh
-            brew install --no-quarantine gerlero/openfoam/openfoam@2306
-            ```
-
-        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2306-app-x86_64.zip)
 
 * _Need an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam)_
 
@@ -131,6 +131,11 @@ Whatever alternative you choose, please avoid opening an issue if something does
 If you need an older version of OpenFOAM, you can:
 
 * Use an older release of **OpenFOAM.app** (note that these apps are no longer updated):
+
+    * [**OpenFOAM-v2306.app** 1.13.1](https://github.com/gerlero/openfoam-app/releases/tag/v1.13.1)
+        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2212`
+        * [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/download/v1.13.1/openfoam2306-app-arm64.zip): tested with macOS 14 Sonoma
+        * [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/download/v1.13.1/openfoam2306-app-x86_64.zip): tested with macOS 12 Monterey through macOS 14 Sonoma
 
     * [**OpenFOAM-v2212.app** 1.11.1](https://github.com/gerlero/openfoam-app/releases/tag/v1.11.1)
         * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2212`
