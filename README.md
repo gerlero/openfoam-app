@@ -2,6 +2,9 @@
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
+| 🎉  [OpenFOAM v2406 is now available!](#-install) |
+| ---- |
+
 **Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
@@ -133,7 +136,7 @@ If you need an older version of OpenFOAM, you can:
 * Use an older release of **OpenFOAM.app** (note that these apps are no longer updated):
 
     * [**OpenFOAM-v2306.app** 1.13.1](https://github.com/gerlero/openfoam-app/releases/tag/v1.13.1)
-        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2212`
+        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2306`
         * [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/download/v1.13.1/openfoam2306-app-arm64.zip): tested with macOS 14 Sonoma
         * [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/download/v1.13.1/openfoam2306-app-x86_64.zip): tested with macOS 12 Monterey through macOS 14 Sonoma
 
