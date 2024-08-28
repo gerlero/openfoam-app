@@ -2,9 +2,6 @@
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
-| 🎉  [OpenFOAM v2406 is now available!](#-install) |
-| ---- |
-
 **Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
@@ -71,7 +68,7 @@ openfoam
 If you did not install with Homebrew, you can get the same by invoking the following command (replace the path and app name as needed):
 
 ```sh
-/Applications/OpenFOAM-v2312.app/Contents/Resources/etc/openfoam
+/Applications/OpenFOAM-v2406.app/Contents/Resources/etc/openfoam
 ```
 
 
