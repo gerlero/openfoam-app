@@ -9,12 +9,12 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     outputs:
-      app-version: ${{ steps.get_version.outputs.VERSION_WITHOUT_V }}
+      app-version: ${{ steps.get_version.outputs.version-without-v }}
     steps:
       - name: Extract version from tag
         id: get_version
         run:
-          echo "VERSION_WITHOUT_V=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
+          echo "version-without-v=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
   build:
     needs: get-version

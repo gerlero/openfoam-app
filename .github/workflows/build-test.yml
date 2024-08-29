@@ -26,10 +26,6 @@ on:
         type: string
         default: ''
         required: false
-      use-cached:
-        type: boolean
-        default: true
-        required: false
       cache-build:
         type: boolean
         default: true
@@ -69,11 +65,6 @@ on:
           - standalone
           - bundled
           - homebrew
-      use-cached:
-        type: boolean
-        default: true
-        required: false
-        description: Reuse cached build artifacts if available
       cache-build:
         type: boolean
         default: true
@@ -94,44 +85,46 @@ jobs:
   deps:
     runs-on: ${{ inputs.build-os }}
     outputs:
-      deps-restore-key: ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}
-      build-restore-key: ${{ steps.caching.outputs.BUILD_RESTORE_KEY }}
+      deps-key: ${{ steps.keys.outputs.deps-key }}
+      build-key: ${{ steps.keys.outputs.build-key }}
     steps:
       - name: Use Xcode Command Line Tools
         run: sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Get Make recipes for caching
+      - name: Prepare caching
         run: |
           make deps --dry-run ${{ env.MAKE_VARS }} > make_deps.txt
           make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
-      - name: Generate cache restore keys
-        id: caching
+          brew bundle list | xargs -I {} sh -c 'brew info {} | head -n 1' > brew_versions.txt
+          brew deps --union $(brew bundle list) | xargs -I {} sh -c 'brew info {} | head -n 1' >> brew_versions.txt
+          sort -u -o brew_versions.txt brew_versions.txt
+          cat brew_versions.txt
+      - name: Generate caching keys
+        id: keys
         run: |
-          DEPS_RESTORE_KEY="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py') }}"
-          BUILD_RESTORE_KEY="$DEPS_RESTORE_KEY-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
-          echo "DEPS_RESTORE_KEY=$DEPS_RESTORE_KEY" >> "$GITHUB_OUTPUT"
-          echo "BUILD_RESTORE_KEY=$BUILD_RESTORE_KEY" >> "$GITHUB_OUTPUT"
+          DEPS_KEY="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py', 'brew_versions.txt') }}"
+          BUILD_KEY="$DEPS_KEY-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
+          echo "deps-key=$DEPS_KEY" >> "$GITHUB_OUTPUT"
+          echo "build-key=$BUILD_KEY" >> "$GITHUB_OUTPUT"
       - name: Look up cached deps
-        id: cache_deps
-        if: inputs.use-cached
+        id: cache
         uses: actions/cache/restore@v4
         with:
           path: build/*.sparsebundle
-          key: ignore
-          restore-keys: |
-            ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}
+          key: ${{ steps.keys.outputs.build-key }}
+          restore-keys: ${{ steps.keys.outputs.deps-key }}
           lookup-only: true
       - name: Make deps
-        if: steps.cache_deps.outputs.cache-matched-key == ''
+        if: steps.cache.outputs.cache-matched-key == ''
         run: |
           make deps ${{ env.MAKE_VARS }}
       - name: Save deps to cache
-        if: steps.cache_deps.outputs.cache-matched-key == ''
+        if: steps.cache.outputs.cache-matched-key == ''
         uses: actions/cache/save@v4
         with:
           path: build/*.sparsebundle
-          key: ${{ steps.caching.outputs.DEPS_RESTORE_KEY }}-${{ github.run_id }}
+          key: ${{ steps.keys.outputs.deps-key }}
   
   build:
     needs: deps
@@ -139,37 +132,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Restore cached build if available
-        if: inputs.use-cached
-        id: cache_build
+      - name: Restore cached build or deps
+        id: cache
         uses: actions/cache/restore@v4
         with:
           path: build/*.sparsebundle
-          key: ignore
+          key: ${{ needs.deps.outputs.build-key }}
           restore-keys: |
-            ${{ needs.deps.outputs.build-restore-key }}
-      - name: Restore cached deps
-        if: steps.cache_build.outputs.cache-matched-key == ''
-        id: cache_deps
-        uses: actions/cache/restore@v4
-        with:
-          path: build/*.sparsebundle
-          key: ignore
-          restore-keys: |
-            ${{ needs.deps.outputs.deps-restore-key }}
+            ${{ needs.deps.outputs.deps-key }}
           fail-on-cache-miss: true
       - name: Build
-        if: steps.cache_build.outputs.cache-matched-key == ''
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           hdiutil attach build/*.sparsebundle
           make --touch deps ${{ env.MAKE_VARS }}
           make build ${{ env.MAKE_VARS }}
       - name: Save build to cache
-        if: steps.cache_build.outputs.cache-matched-key == '' && inputs.cache-build
+        if: steps.cache.outputs.cache-hit != 'true' && inputs.cache-build
         uses: actions/cache/save@v4
         with:
           path: build/*.sparsebundle
-          key: ${{ needs.deps.outputs.build-restore-key }}-${{ github.run_id }}
+          key: ${{ needs.deps.outputs.build-key }}
       - name: Make app
         run: |
           hdiutil attach build/*.sparsebundle
@@ -196,6 +179,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          cache: pip
       - name: Install Homebrew dependencies
         if: inputs.deps-kind == 'homebrew'
         run: |
