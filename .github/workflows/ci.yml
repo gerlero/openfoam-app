@@ -16,11 +16,6 @@ on:
         required: true
   workflow_dispatch:
     inputs:
-      use-cached:
-        type: boolean
-        default: false
-        required: false
-        description: Reuse cached build artifacts if available
       deps-kind:
           type: choice
           required: false
@@ -49,5 +44,4 @@ jobs:
       openfoam-version: ${{ matrix.openfoam-version }}
       app-version: ${{ inputs.app-version }}
       deps-kind: ${{ inputs.deps-kind }}
-      use-cached: ${{ github.event_name == 'workflow_dispatch' && inputs.use-cached || github.event_name != 'workflow_dispatch' && github.event_name != 'schedule' }}
-      cache-build: ${{ github.event_name != 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}
+      cache-build: ${{ github.event_name == 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}

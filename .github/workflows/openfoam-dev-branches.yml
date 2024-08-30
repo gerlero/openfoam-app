@@ -29,5 +29,4 @@ jobs:
       app-version: ${{ matrix.openfoam-git-branch }}
       openfoam-git-branch: ${{ matrix.openfoam-git-branch }}
       deps-kind: ${{ inputs.deps-kind }}
-      use-cached: false
       cache-build: false
