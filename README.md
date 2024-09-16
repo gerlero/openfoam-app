@@ -14,7 +14,7 @@
 
 * An Apple silicon or Intel Mac
 * A recent version of macOS
-    * Apple silicon: macOS 14 Sonoma
+    * Apple silicon: macOS 14 Sonoma or later
     * Intel: macOS 12 Monterey or later
     * _Running an older version of macOS? [See here](#i-have-an-older-version-of-macos-and-cannot-upgrade-to-a-supported-version-what-can-i-do)_
 
