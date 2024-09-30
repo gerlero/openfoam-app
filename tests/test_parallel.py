@@ -1,7 +1,6 @@
 import pytest
 
 import os
-import shutil
 from pathlib import Path
 
 from foamlib import AsyncFoamCase
@@ -18,15 +17,15 @@ async def test_serial(flange):
 @pytest.mark.asyncio_cooperative
 async def test_parallel(flange):
     await flange.run(parallel=True)
-    await flange.run(["reconstructPar"])
+    await flange.reconstruct_par()
 
 @pytest.mark.asyncio_cooperative
 async def test_parallel_manual(flange):
-    shutil.copytree(flange.path / "0.orig", flange.path / "0")
+    await flange.restore_0_dir()
     await flange.run(["ansysToFoam", Path(os.environ["FOAM_TUTORIALS"]) / "resources" / "geometry" / "flange.ans", "-scale", "0.001"])
-    await flange.run(["decomposePar"])
+    await flange.decompose_par()
     await flange.run([flange.application], parallel=True)
-    await flange.run(["reconstructPar"])
+    await flange.reconstruct_par()
 
 @pytest.mark.asyncio_cooperative
 async def test_parallel_manual_shell(flange):
