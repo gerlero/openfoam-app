@@ -24,7 +24,8 @@ async def test_parallel(flange):
 async def test_parallel_manual(flange):
     shutil.copytree(flange.path / "0.orig", flange.path / "0")
     await flange.run(["ansysToFoam", Path(os.environ["FOAM_TUTORIALS"]) / "resources" / "geometry" / "flange.ans", "-scale", "0.001"])
-    await flange.run(script=False, parallel=True)
+    await flange.run(["decomposePar"])
+    await flange.run([flange.application], parallel=True)
     await flange.run(["reconstructPar"])
 
 @pytest.mark.asyncio_cooperative
