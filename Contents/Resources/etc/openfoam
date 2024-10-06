@@ -1,28 +1,28 @@
 #!/bin/zsh -e
 
-APP_NAME="{{APP_NAME}}"
+app_name="{{app_name}}"
 
-APP_BUNDLE="${0:A:h:h:h:h}"
+app_bundle="${0:A:h:h:h:h}"
 
 if [ $# -eq 0 ]; then
     echo "---------------------------------------------------------------------------" 1>&2
     echo "             |                                                             " 1>&2
-    echo "   ( )       |                 °°° $APP_NAME.app °°°                  " 1>&2
+    echo "   ( )       |                 °°° $app_name.app °°°                  " 1>&2
     echo "  ( )    ( ) |                                                             " 1>&2
     echo "      ( )    | Native OpenFOAM for macOS                             " 1>&2
     echo "             | {{APP_HOMEPAGE}}                 " 1>&2
     echo "---------------------------------------------------------------------------" 1>&2
 
-    "$APP_BUNDLE/Contents/Resources/volume" mount 1>&2
+    "$app_bundle/Contents/Resources/volume" mount 1>&2
 
     echo "Activating the OpenFOAM environment..." 1>&2
 else
-    "$APP_BUNDLE/Contents/Resources/volume" -quiet mount 1>&2
+    "$app_bundle/Contents/Resources/volume" -quiet mount 1>&2
 fi
 
-VOLUME=$("$APP_BUNDLE/Contents/Resources/volume" -show-prefix)
+volume=$("$app_bundle/Contents/Resources/volume" -show-prefix)
 
 # Keep the volume directory open in this process (prevents accidental ejection)
-exec {fd}<"$VOLUME"
+exec {fd}<"$volume"
 
-PATH="$VOLUME/usr/opt/bash/bin${PATH+:$PATH}" exec bash "$VOLUME/etc/openfoam" "$@"
+PATH="$volume/usr/opt/bash/bin${PATH+:$PATH}" exec bash "$volume/etc/openfoam" "$@"
