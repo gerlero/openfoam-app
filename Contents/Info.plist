@@ -7,8 +7,8 @@
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleVersion</key>
-	<string>{{APP_VERSION}}-{{DEPS_KIND}}-{{ARCH}}</string>
+	<string>{{app_version}}-{{deps_kind}}-{{arch}}</string>
 	<key>CFBundleShortVersionString</key>
-	<string>{{APP_VERSION}}</string>
+	<string>{{app_version}}</string>
 </dict>
 </plist>

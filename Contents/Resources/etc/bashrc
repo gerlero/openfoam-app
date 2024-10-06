@@ -1,12 +1,12 @@
-SCRIPT_DIR="$(\cd $(dirname ${BASH_SOURCE:-${ZSH_NAME:+$0}}) && \pwd -L)"
+script_dir="$(\cd $(dirname ${BASH_SOURCE:-${ZSH_NAME:+$0}}) && \pwd -L)"
 
-"$SCRIPT_DIR/../volume" -quiet mount
+"$script_dir/../volume" -quiet mount
 
-VOLUME=`"$SCRIPT_DIR/../volume" -show-prefix`
+volume=`"$script_dir/../volume" -show-prefix`
 
 if [ ${BASH_VERSINFO:-4} -ge 4 ]; then
     # Keep the volume directory open in this process (prevents accidental ejection)
-    exec {fd}<"$VOLUME"
+    exec {fd}<"$volume"
 fi
 
-. "$VOLUME/etc/bashrc"
+. "$volume/etc/bashrc"

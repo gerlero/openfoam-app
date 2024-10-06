@@ -1,22 +1,22 @@
 #!/bin/zsh -e
 
-APP_NAME="{{APP_NAME}}"
-VOLUME_ID="{{VOLUME_ID}}"
+app_name="{{app_name}}"
+volume_id="{{volume_id}}"
 
-APP_BUNDLE="${0:A:h:h:h}"
-DMG_FILE="$APP_BUNDLE/Contents/Resources/$APP_NAME.dmg"
-VOLUME="/Volumes/$APP_NAME"
-VOLUME_ID_FILE="$VOLUME/.vol_id"
+app_bundle="${0:A:h:h:h}"
+dmg_file="$app_bundle/Contents/Resources/$app_name.dmg"
+volume="/Volumes/$app_name"
+volume_id_file="$volume/.vol_id"
 
-printHelp() {
+print_help() {
     cat<<HELP_USAGE
 
 Usage: ${0##*/} [OPTION] <command>
 
 commands:
-  mount             Mount the $APP_NAME volume. Does nothing if the volume is
+  mount             Mount the $app_name volume. Does nothing if the volume is
                     already mounted
-  eject             Eject the $APP_NAME volume
+  eject             Eject the $app_name volume
 
 options:
   -quiet            Do not print status messages to stdout
@@ -25,32 +25,32 @@ options:
   -show-prefix      Print the volume mount point and exit
   -help             Print this message and exit
 
-Manage the $APP_NAME mountable volume (virtual disk) that contains the OpenFOAM
+Manage the $app_name mountable volume (virtual disk) that contains the OpenFOAM
 installation
 
 HELP_USAGE
 }
 
-QUIET=false
-FORCE=false
+quiet=false
+force=false
 
 while [ "$#" -gt 0 ]
 do
     case "$1" in
         -quiet)
-            QUIET=true
+            quiet=true
             shift
             ;;
         -force)
-            FORCE=true
+            force=true
             shift
             ;;
         -show-prefix)
-            echo "$VOLUME"
+            echo "$volume"
             exit 0
             ;;
         -h | -help)
-            printHelp
+            print_help
             exit 0
             ;;
         -*)
@@ -71,60 +71,60 @@ fi
 
 case "$1" in
     mount)
-        if [ -d "$VOLUME" ]; then
-            if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]; then
-                if $FORCE; then
-                    $QUIET || echo "Ejecting different volume already mounted at $VOLUME..."
-                    if ! hdiutil detach -quiet "$VOLUME" -force; then
-                        echo "ERROR: Failed to force eject a different volume at $VOLUME" 1>&2
+        if [ -d "$volume" ]; then
+            if [ ! -f "$volume_id_file" ] || [ "$volume_id" != "$(< "$volume_id_file")" ]; then
+                if $force; then
+                    $quiet || echo "Ejecting different volume already mounted at $volume..."
+                    if ! hdiutil detach -quiet "$volume" -force; then
+                        echo "ERROR: Failed to force eject a different volume at $volume" 1>&2
                         exit 1
                     fi
                 else
-                    echo "ERROR: A different volume is already mounted at $VOLUME" 1>&2
+                    echo "ERROR: A different volume is already mounted at $volume" 1>&2
                     echo "Eject the volume and try again?" 1>&2
                     exit 1
                 fi
             fi
-            $QUIET || echo "The $APP_NAME volume is already mounted."
+            $quiet || echo "The $app_name volume is already mounted."
         else
-            $QUIET || echo "Mounting the $APP_NAME volume..."
-            if ! hdiutil attach -quiet -noverify "$DMG_FILE"; then
-                echo "ERROR: Failed to mount the $APP_NAME volume" 1>&2
+            $quiet || echo "Mounting the $app_name volume..."
+            if ! hdiutil attach -quiet -noverify "$dmg_file"; then
+                echo "ERROR: Failed to mount the $app_name volume" 1>&2
                 exit 1
             fi
-            if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]; then
-                echo "ERROR: A different volume is mounted at $VOLUME" 1>&2
+            if [ ! -f "$volume_id_file" ] || [ "$volume_id" != "$(< "$volume_id_file")" ]; then
+                echo "ERROR: A different volume is mounted at $volume" 1>&2
                 echo "Eject the volume and try again?" 1>&2
                 exit 1
             fi
         fi
-        $QUIET || echo "You can safely eject the volume from the Finder after use."
+        $quiet || echo "You can safely eject the volume from the Finder after use."
         exit 0
         ;;
     eject)
-        if [ ! -d "$VOLUME" ]; then
-            $QUIET || echo "The $APP_NAME volume is not mounted."
+        if [ ! -d "$volume" ]; then
+            $quiet || echo "The $app_name volume is not mounted."
             exit 0
         fi
-        if $FORCE; then
-            $QUIET || echo "Ejecting the volume at $VOLUME..."
-            if ! hdiutil detach -quiet "$VOLUME" -force; then
-                echo "ERROR: Failed to force eject the volume at $VOLUME" 1>&2
+        if $force; then
+            $quiet || echo "Ejecting the volume at $volume..."
+            if ! hdiutil detach -quiet "$volume" -force; then
+                echo "ERROR: Failed to force eject the volume at $volume" 1>&2
                 exit 1
             fi
         else
-            if [ ! -f "$VOLUME_ID_FILE" ] || [ "$VOLUME_ID" != "$(< "$VOLUME_ID_FILE")" ]; then
-                $QUIET || echo "A different volume is mounted at $VOLUME (use -force to eject it anyway)."
+            if [ ! -f "$volume_id_file" ] || [ "$volume_id" != "$(< "$volume_id_file")" ]; then
+                $quiet || echo "A different volume is mounted at $volume (use -force to eject it anyway)."
                 exit 0
             fi
-            $QUIET || echo "Ejecting the $APP_NAME volume..."
-            if ! hdiutil detach -quiet "$VOLUME"; then
-                echo "ERROR: Failed to eject the $APP_NAME volume" 1>&2
+            $quiet || echo "Ejecting the $app_name volume..."
+            if ! hdiutil detach -quiet "$volume"; then
+                echo "ERROR: Failed to eject the $app_name volume" 1>&2
                 echo "The volume is probably in use (use -force to override)" 1>&2
                 exit 1
             fi
         fi
-        $QUIET || echo "Done."
+        $quiet || echo "Done."
         exit 0
         ;;
     *)

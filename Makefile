@@ -24,36 +24,36 @@ DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = /Applications
 
 ifndef OPENFOAM_GIT_BRANCH
-OPENFOAM_TARBALL = sources/$(shell basename $(OPENFOAM_TARBALL_URL))
+openfoam_tarball = sources/$(shell basename $(OPENFOAM_TARBALL_URL))
 endif
 
-VOLUME = /Volumes/$(APP_NAME)
+volume = /Volumes/$(APP_NAME)
 
 
 # Build targets
-app: | $(VOLUME)
+app: | $(volume)
 	$(MAKE) build/$(APP_NAME).app
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-build: | $(VOLUME)
-	$(MAKE) $(VOLUME)/platforms
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-deps: | $(VOLUME)
-	$(MAKE) $(VOLUME)/Brewfile.lock.json
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
-fetch-source: $(OPENFOAM_TARBALL)
-zip: | $(VOLUME)
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
+build: | $(volume)
+	$(MAKE) $(volume)/platforms
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
+deps: | $(volume)
+	$(MAKE) $(volume)/Brewfile.lock.json
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
+fetch-source: $(openfoam_tarball)
+zip: | $(volume)
 	$(MAKE) build/$(DIST_NAME).zip
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
 
-install: | $(VOLUME)
+install: | $(volume)
 	$(MAKE) $(INSTALL_DIR)/$(APP_NAME).app
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
 
 
 # Build rules
-VOLUME_ID_FILE = $(VOLUME)/.vol_id
+volume_id_file = $(volume)/.vol_id
 
-APP_CONTENTS = \
+app_contents = \
 	build/$(APP_NAME).app/Contents/Info.plist \
 	build/$(APP_NAME).app/Contents/MacOS/launch \
 	build/$(APP_NAME).app/Contents/Resources/etc/openfoam \
@@ -72,30 +72,30 @@ build/$(DIST_NAME).zip: build/$(APP_NAME).app
 	cd build && zip -r --symlinks $(DIST_NAME).zip $(APP_NAME).app
 	shasum -a 256 build/$(DIST_NAME).zip
 
-build/$(APP_NAME).app: $(APP_CONTENTS)
+build/$(APP_NAME).app: $(app_contents)
 
 build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAME).app/Contents/MacOS/launch build/$(APP_NAME).app/Contents/Resources/icon.icns
 	mkdir -p build/$(APP_NAME).app/Contents
 	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
-	sed -i '' "s|{{APP_VERSION}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
-	sed -i '' "s|{{DEPS_KIND}}|$(DEPS_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
-	sed -i '' "s|{{ARCH}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{app_version}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{deps_kind}}|$(DEPS_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
+	sed -i '' "s|{{arch}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
 
 build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Resources/volume
 	mkdir -p build/$(APP_NAME).app/Contents/Resources/etc
 	cp Contents/Resources/etc/openfoam build/$(APP_NAME).app/Contents/Resources/etc/
-	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
-	sed -i '' "s|{{APP_HOMEPAGE}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
+	sed -i '' "s|{{app_name}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
+	sed -i '' "s|{{app_homepage}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 
 build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
 	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
-	cat $(VOLUME_ID_FILE)
-	sed -i '' "s|{{APP_NAME}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/volume
-	sed -i '' "s|{{VOLUME_ID}}|$$(cat $(VOLUME_ID_FILE))|g" build/$(APP_NAME).app/Contents/Resources/volume
-	hdiutil detach $(VOLUME)
+	cat $(volume_id_file)
+	sed -i '' "s|{{app_name}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/volume
+	sed -i '' "s|{{volume_id}}|$$(cat $(volume_id_file))|g" build/$(APP_NAME).app/Contents/Resources/volume
+	hdiutil detach $(volume)
 
 build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
@@ -105,86 +105,86 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp -a $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(VOLUME)/platforms Contents/Resources/icon.icns
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(volume)/platforms Contents/Resources/icon.icns
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
 	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
 		-shadow
-	cp Contents/Resources/icon.icns $(VOLUME)/.VolumeIcon.icns
-	SetFile -c icnC $(VOLUME)/.VolumeIcon.icns
-	SetFile -a C $(VOLUME)
-	uuidgen > $(VOLUME_ID_FILE)
-	cat $(VOLUME_ID_FILE)
-	rm -rf $(VOLUME)/homebrew
-	rm -f $(VOLUME)/usr/bin/brew
-	rm $(VOLUME)/Brewfile
-	rm $(VOLUME)/Brewfile.lock.json
-	rm -rf $(VOLUME)/build
-	rm -rf $(VOLUME)/**/.git
-	rm -f $(VOLUME)/**/.DS_Store
-	rm -rf $(VOLUME)/.fseventsd
+	cp Contents/Resources/icon.icns $(volume)/.VolumeIcon.icns
+	SetFile -c icnC $(volume)/.VolumeIcon.icns
+	SetFile -a C $(volume)
+	uuidgen > $(volume_id_file)
+	cat $(volume_id_file)
+	rm -rf $(volume)/homebrew
+	rm -f $(volume)/usr/bin/brew
+	rm $(volume)/Brewfile
+	rm $(volume)/Brewfile.lock.json
+	rm -rf $(volume)/build
+	rm -rf $(volume)/**/.git
+	rm -f $(volume)/**/.DS_Store
+	rm -rf $(volume)/.fseventsd
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	hdiutil create \
 		-format $(DMG_FORMAT) \
 		-fs $(VOLUME_FILESYSTEM) \
-		-srcfolder $(VOLUME) \
+		-srcfolder $(volume) \
 		-nocrossdev \
 		build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
 		-ov
-	hdiutil detach $(VOLUME)
+	hdiutil detach $(volume)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-$(VOLUME)/platforms: $(VOLUME)/etc/prefs.sh $(VOLUME)/Brewfile.lock.json scripts/relativize_install_names.py
-	cd $(VOLUME) \
+$(volume)/platforms: $(volume)/etc/prefs.sh $(volume)/Brewfile.lock.json scripts/relativize_install_names.py
+	cd $(volume) \
 		&& source etc/bashrc \
 		&& foamSystemCheck \
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
-	cd $(VOLUME) && "$(CURDIR)/scripts/relativize_install_names.py"
+	cd $(volume) && "$(CURDIR)/scripts/relativize_install_names.py"
 
-$(VOLUME)/etc/prefs.sh: $(OPENFOAM_TARBALL) scripts/configure.sh | $(VOLUME)
-	rm -rf $(VOLUME)/etc
-ifdef OPENFOAM_TARBALL
-	tar -xzf $(OPENFOAM_TARBALL) --strip-components 1 -C $(VOLUME)
+$(volume)/etc/prefs.sh: $(openfoam_tarball) scripts/configure.sh | $(volume)
+	rm -rf $(volume)/etc
+ifdef openfoam_tarball
+	tar -xzf $(openfoam_tarball) --strip-components 1 -C $(volume)
 else ifdef OPENFOAM_GIT_BRANCH
-	rm -rf $(VOLUME)/.git
-	git -C $(VOLUME) init -b $(OPENFOAM_GIT_BRANCH)
-	git -C $(VOLUME) remote add origin $(OPENFOAM_GIT_REPO_URL)
-	git -C $(VOLUME) pull origin $(OPENFOAM_GIT_BRANCH)
-	git -C $(VOLUME) submodule update --init --recursive
+	rm -rf $(volume)/.git
+	git -C $(volume) init -b $(OPENFOAM_GIT_BRANCH)
+	git -C $(volume) remote add origin $(OPENFOAM_GIT_REPO_URL)
+	git -C $(volume) pull origin $(OPENFOAM_GIT_BRANCH)
+	git -C $(volume) submodule update --init --recursive
 endif
-	cd $(VOLUME) && "$(CURDIR)/scripts/configure.sh"
+	cd $(volume) && "$(CURDIR)/scripts/configure.sh"
 
-$(VOLUME)/Brewfile.lock.json: $(VOLUME)/Brewfile | $(VOLUME)/usr
+$(volume)/Brewfile.lock.json: $(volume)/Brewfile | $(volume)/usr
 ifeq ($(DEPS_KIND),standalone)
-	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(VOLUME)/usr/bin/brew bundle --file $(VOLUME)/Brewfile --cleanup --verbose
-	$(VOLUME)/usr/bin/brew list --versions
+	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(volume)/usr/bin/brew bundle --file $(volume)/Brewfile --cleanup --verbose
+	$(volume)/usr/bin/brew list --versions
 else
-	brew bundle --file $(VOLUME)/Brewfile --no-upgrade
+	brew bundle --file $(volume)/Brewfile --no-upgrade
 endif
 ifeq ($(DEPS_KIND),bundled)
-	rm -rf $(VOLUME)/usr
-	cd $(VOLUME) && "$(CURDIR)/scripts/bundle_deps.py"
+	rm -rf $(volume)/usr
+	cd $(volume) && "$(CURDIR)/scripts/bundle_deps.py"
 endif
 
-$(VOLUME)/usr: | $(VOLUME)
+$(volume)/usr: | $(volume)
 ifeq ($(DEPS_KIND),standalone)
-	git clone https://github.com/Homebrew/brew $(VOLUME)/homebrew
-	mkdir -p $(VOLUME)/usr/bin
-	ln -s ../../homebrew/bin/brew $(VOLUME)/usr/bin/
+	git clone https://github.com/Homebrew/brew $(volume)/homebrew
+	mkdir -p $(volume)/usr/bin
+	ln -s ../../homebrew/bin/brew $(volume)/usr/bin/
 else ifeq ($(DEPS_KIND),homebrew)
-	ln -s $(shell brew --prefix) $(VOLUME)/usr
+	ln -s $(shell brew --prefix) $(volume)/usr
 else ifeq ($(DEPS_KIND),bundled)
-	mkdir $(VOLUME)/usr
+	mkdir $(volume)/usr
 else
 	$(error Invalid value for DEPS_KIND)
 endif
 
-$(VOLUME)/Brewfile: Brewfile | $(VOLUME)
-	cp Brewfile $(VOLUME)/
+$(volume)/Brewfile: Brewfile | $(volume)
+	cp Brewfile $(volume)/
 
-$(VOLUME): | build/$(APP_NAME)-build.sparsebundle
+$(volume): | build/$(APP_NAME)-build.sparsebundle
 	hdiutil attach build/$(APP_NAME)-build.sparsebundle
 
 build/$(APP_NAME)-build.sparsebundle:
@@ -196,25 +196,25 @@ build/$(APP_NAME)-build.sparsebundle:
 		build/$(APP_NAME)-build.sparsebundle \
 		-ov
 
-$(OPENFOAM_TARBALL): | $(OPENFOAM_TARBALL).sha256
-	curl -L -o $(OPENFOAM_TARBALL) $(OPENFOAM_TARBALL_URL)
-	[ ! -f $(OPENFOAM_TARBALL).sha256 ] || shasum -a 256 --check $(OPENFOAM_TARBALL).sha256
+$(openfoam_tarball): | $(openfoam_tarball).sha256
+	curl -L -o $(openfoam_tarball) $(OPENFOAM_TARBALL_URL)
+	[ ! -f $(openfoam_tarball).sha256 ] || shasum -a 256 --check $(openfoam_tarball).sha256
 
-$(OPENFOAM_TARBALL).sha256:
-	$(warning No checksum file found for $(OPENFOAM_TARBALL); will skip verification)
+$(openfoam_tarball).sha256:
+	$(warning No checksum file found for $(openfoam_tarball); will skip verification)
 
 
 # Non-build targets and rules
 test: | tests/venv
 	tests/venv/bin/pip install -r tests/requirements.txt
 	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c tests/venv/bin/pytest
-	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(VOLUME) ]
+	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(volume) ]
 
 tests/venv:
 	python3 -m venv tests/venv
 
 clean-app:
-	[ ! -d $(VOLUME) ] || hdiutil detach $(VOLUME)	
+	[ ! -d $(volume) ] || hdiutil detach $(volume)	
 	rm -rf build/$(APP_NAME).app build/$(APP_NAME)-build.sparsebundle.shadow
 
 clean-build: clean-app
@@ -223,7 +223,7 @@ clean-build: clean-app
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(OPENFOAM_TARBALL) Brewfile.lock.json
+	rm -f $(openfoam_tarball) Brewfile.lock.json
 	rm -rf tests/venv
 
 uninstall:
@@ -231,5 +231,5 @@ uninstall:
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
-.SECONDARY: $(VOLUME) $(OPENFOAM_TARBALL)
+.SECONDARY: $(volume) $(openfoam_tarball)
 .DELETE_ON_ERROR:
