@@ -117,7 +117,7 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(volume)/platforms Co
 	uuidgen > $(volume_id_file)
 	cat $(volume_id_file)
 	rm -rf $(volume)/homebrew
-	rm -f $(volume)/usr/bin/brew
+	[ -L $(volume)/usr ] || rm -f $(volume)/usr/bin/brew
 	rm $(volume)/Brewfile
 	rm $(volume)/Brewfile.lock.json
 	rm -rf $(volume)/build
