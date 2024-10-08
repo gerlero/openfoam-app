@@ -104,10 +104,10 @@ jobs:
       - name: Generate caching keys
         id: keys
         run: |
-          DEPS_KEY="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py', 'brew_versions.txt') }}"
-          BUILD_KEY="$DEPS_KEY-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
-          echo "deps-key=$DEPS_KEY" >> "$GITHUB_OUTPUT"
-          echo "build-key=$BUILD_KEY" >> "$GITHUB_OUTPUT"
+          deps_key="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py', 'brew_versions.txt') }}"
+          build_key="$deps_key-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
+          echo "deps-key=$deps_key" >> "$GITHUB_OUTPUT"
+          echo "build-key=$build_key" >> "$GITHUB_OUTPUT"
       - name: Look up cached deps
         id: cache
         uses: actions/cache/restore@v4
