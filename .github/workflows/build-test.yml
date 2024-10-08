@@ -96,6 +96,7 @@ jobs:
         run: |
           make deps --dry-run ${{ env.MAKE_VARS }} > make_deps.txt
           make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
+          brew update
           brew bundle list | xargs -I {} sh -c 'brew info {} | head -n 1' > brew_versions.txt
           brew deps --union $(brew bundle list) | xargs -I {} sh -c 'brew info {} | head -n 1' >> brew_versions.txt
           sort -u -o brew_versions.txt brew_versions.txt
