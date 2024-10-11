@@ -22,10 +22,6 @@ on:
         type: string
         default: ''
         required: false
-      deps-kind:
-        type: string
-        default: ''
-        required: false
       cache-build:
         type: boolean
         default: true
@@ -56,15 +52,6 @@ on:
         default: ''
         required: false
         description: Build this OpenFOAM Git branch
-      deps-kind:
-        type: choice
-        required: false
-        description: Bundle dependencies in this manner
-        options:
-          - ''
-          - standalone
-          - bundled
-          - homebrew
       cache-build:
         type: boolean
         default: true
@@ -77,88 +64,40 @@ env:
     ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
     ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
-    ${{ inputs.deps-kind != '' && format('DEPS_KIND={0}', inputs.deps-kind) || '' }}
 
   OPENFOAM: ${{ inputs.openfoam-version || inputs.openfoam-git-branch }}
 
 jobs:
-  deps:
+  build:
     runs-on: ${{ inputs.build-os }}
-    outputs:
-      deps-key: ${{ steps.keys.outputs.deps-key }}
-      build-key: ${{ steps.keys.outputs.build-key }}
     steps:
-      - name: Use Xcode Command Line Tools
-        run: sudo xcode-select --switch /Library/Developer/CommandLineTools
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
       - name: Prepare caching
         run: |
-          make deps --dry-run ${{ env.MAKE_VARS }} > make_deps.txt
-          make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
-          brew update
-          brew bundle list | xargs -I {} sh -c 'brew info {} | head -n 1' > brew_versions.txt
-          brew deps --union $(brew bundle list) | xargs -I {} sh -c 'brew info {} | head -n 1' >> brew_versions.txt
-          sort -u -o brew_versions.txt brew_versions.txt
-          cat brew_versions.txt
-      - name: Generate caching keys
-        id: keys
-        run: |
-          deps_key="build-${{ env.OPENFOAM }}-${{ inputs.build-os }}-${{ hashFiles('make_deps.txt', 'Brewfile', 'scripts/bundle_deps.py', 'brew_versions.txt') }}"
-          build_key="$deps_key-${{ hashFiles('make_build.txt', 'scripts/configure.sh', 'scripts/relativize_install_names.py') }}"
-          echo "deps-key=$deps_key" >> "$GITHUB_OUTPUT"
-          echo "build-key=$build_key" >> "$GITHUB_OUTPUT"
-      - name: Look up cached deps
-        id: cache
-        uses: actions/cache/restore@v4
-        with:
-          path: build/*.sparsebundle
-          key: ${{ steps.keys.outputs.build-key }}
-          restore-keys: ${{ steps.keys.outputs.deps-key }}
-          lookup-only: true
-      - name: Make deps
-        if: steps.cache.outputs.cache-matched-key == ''
-        run: |
-          make deps ${{ env.MAKE_VARS }}
-      - name: Save deps to cache
-        if: steps.cache.outputs.cache-matched-key == ''
-        uses: actions/cache/save@v4
-        with:
-          path: build/*.sparsebundle
-          key: ${{ steps.keys.outputs.deps-key }}
-  
-  build:
-    needs: deps
-    runs-on: ${{ inputs.build-os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+          pixi run make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
       - name: Restore cached build or deps
         id: cache
         uses: actions/cache/restore@v4
         with:
           path: build/*.sparsebundle
-          key: ${{ needs.deps.outputs.build-key }}
-          restore-keys: |
-            ${{ needs.deps.outputs.deps-key }}
-          fail-on-cache-miss: true
+          key: build-${{ env.OPENFOAM }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'pixi.lock', 'configure.sh') }}
       - name: Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          hdiutil attach build/*.sparsebundle
-          make --touch deps ${{ env.MAKE_VARS }}
-          make build ${{ env.MAKE_VARS }}
+          pixi run make build ${{ env.MAKE_VARS }}
       - name: Save build to cache
         if: steps.cache.outputs.cache-hit != 'true' && inputs.cache-build
         uses: actions/cache/save@v4
         with:
           path: build/*.sparsebundle
-          key: ${{ needs.deps.outputs.build-key }}
+          key: ${{ steps.cache.outputs.cache-primary-key }}
       - name: Make app
         run: |
-          hdiutil attach build/*.sparsebundle
-          make --touch build ${{ env.MAKE_VARS }}
-          make zip ${{ env.MAKE_VARS }}
+          touch -c build/*.sparsebundle
+          pixi run make zip ${{ env.MAKE_VARS }}
       - name: Upload app artifact
         uses: actions/upload-artifact@v4
         with:
@@ -181,15 +120,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-          cache: pip
-      - name: Install Homebrew dependencies
-        if: inputs.deps-kind == 'homebrew'
-        run: |
-          brew bundle
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
       - name: Download app artifact
         uses: actions/download-artifact@v4
         with:
@@ -201,6 +133,6 @@ jobs:
         working-directory: build
       - name: Test
         run: |
-          make test ${{ env.MAKE_VARS }}
+          pixi run make test ${{ env.MAKE_VARS }}
         env:
           PRTE_MCA_rmaps_default_mapping_policy: ':oversubscribe'

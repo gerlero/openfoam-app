@@ -1,5 +1,6 @@
 /build
-Brewfile.lock.json
 *.tgz
+.pixi
+/environment.tar
+__pycache__
 .DS_Store
-venv

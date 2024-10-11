@@ -7,8 +7,6 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: '0 6 * * 5'
   workflow_call:
     inputs:
       app-version:
@@ -16,15 +14,6 @@ on:
         required: true
   workflow_dispatch:
     inputs:
-      deps-kind:
-          type: choice
-          required: false
-          description: Bundle dependencies in this manner
-          options:
-            - ''
-            - standalone
-            - bundled
-            - homebrew
       cache-build:
         type: boolean
         default: true
@@ -43,5 +32,4 @@ jobs:
       build-os: ${{ matrix.build-os }}
       openfoam-version: ${{ matrix.openfoam-version }}
       app-version: ${{ inputs.app-version }}
-      deps-kind: ${{ inputs.deps-kind }}
       cache-build: ${{ github.event_name == 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}

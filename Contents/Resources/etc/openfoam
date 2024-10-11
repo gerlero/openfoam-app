@@ -25,4 +25,4 @@ volume=$("$app_bundle/Contents/Resources/volume" -show-prefix)
 # Keep the volume directory open in this process (prevents accidental ejection)
 exec {fd}<"$volume"
 
-PATH="$volume/usr/opt/bash/bin${PATH+:$PATH}" exec bash "$volume/etc/openfoam" "$@"
+PATH="$volume/env/bin${PATH+:$PATH}" exec bash "$volume/etc/openfoam" "$@"

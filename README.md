@@ -172,10 +172,10 @@ If you need to, building an **OpenFOAM.app** entirely from source is easy as clo
 ```sh
 git clone https://github.com/gerlero/openfoam-app.git
 cd openfoam-app
-make
+pixi run make
 ```
 
-The Xcode Command Line Tools are required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM and the necessary dependencies from source may take a while.
+[Pixi](https://pixi.sh/) and the Xcode Command Line Tools are required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
 
 
 ## 📄 Legal notices
