@@ -130,26 +130,3 @@ EOF
 # Backport of https://develop.openfoam.com/Development/openfoam/-/issues/3098
 [ $(bin/foamEtcFile -show-api) -gt 2312 ] || sed -i '' 's|_foamAddLib  "$FOAM_USER_LIBBIN:$FOAM_SITE_LIBBIN"|_foamAddLib  "$FOAM_SITE_LIBBIN"\n_foamAddLib  "$FOAM_USER_LIBBIN"|' etc/config.sh/setup
 [ $(bin/foamEtcFile -show-api) -gt 2312 ] || sed -i '' 's|_foamAddLib  "$FOAM_USER_LIBBIN:$FOAM_SITE_LIBBIN"|_foamAddLib  "$FOAM_SITE_LIBBIN"\n_foamAddLib  "$FOAM_USER_LIBBIN"|' etc/config.csh/setup
-
-
-# Compatibility with CGAL 6 (https://develop.openfoam.com/Development/openfoam/-/issues/3234)
-sed -i '' 's|c++14|c++17|' wmake/rules/General/Clang/c++
-patch src/OpenFOAM/db/IOstreams/memory/ISpanStream.H <<EOF
-@@ -119,10 +119,10 @@ public:
-         #if __cplusplus >= 201703L
-         //- Construct (shallow copy) from std::string_view content
-         explicit ispanstream(std::string_view s)
--        {
-+        :
-             buffer_type(const_cast<char*>(s.data()), s.size()),
--            stream_type(static_cast<buffer_type*>(this));
--        }
-+            stream_type(static_cast<buffer_type*>(this))
-+        {}
-         #endif
- 
-         //- Construct (shallow copy) from span character content
-EOF
-sed -i '' 's|boost::optional|std::optional|' applications/utilities/preProcessing/viewFactorsGen/viewFactorsGen.C
-sed -i '' 's|boost::optional|std::optional|' applications/utilities/surface/surfaceBooleanFeatures/surfaceBooleanFeatures.C
-sed -i '' 's|boost::get|std::get_if|' applications/utilities/surface/surfaceBooleanFeatures/surfaceBooleanFeatures.C
