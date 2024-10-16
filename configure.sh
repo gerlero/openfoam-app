@@ -7,17 +7,17 @@
 bin/tools/foamConfigurePaths \
     -system-compiler Clang \
     -openmpi \
-    -adios-path '$WM_PROJECT_DIR/usr/opt/adios2' \
-    -boost-path '$WM_PROJECT_DIR/usr/opt/boost' \
-    -cgal-path '$WM_PROJECT_DIR/usr/opt/cgal' \
-    -fftw-path '$WM_PROJECT_DIR/usr/opt/fftw' \
-    -kahip-path '$WM_PROJECT_DIR/usr/opt/kahip' \
-    -metis-path '$WM_PROJECT_DIR/usr/opt/metis' \
-    -scotch-path '$WM_PROJECT_DIR/usr/opt/scotch'
+    -adios-path '$WM_PROJECT_DIR/env' \
+    -boost-path '$WM_PROJECT_DIR/env' \
+    -cgal-path '$WM_PROJECT_DIR/env' \
+    -fftw-path '$WM_PROJECT_DIR/env' \
+    -kahip-path '$WM_PROJECT_DIR/env' \
+    -metis-path '$WM_PROJECT_DIR/env' \
+    -scotch-path '$WM_PROJECT_DIR/env'
 
 
 # Set path to the MPI install
-MPI_PATH='$WM_PROJECT_DIR/usr/opt/open-mpi'
+MPI_PATH='$WM_PROJECT_DIR/env'
 
 echo 'export FOAM_MPI=openmpi' >> etc/config.sh/prefs.openmpi
 echo 'setenv FOAM_MPI openmpi' >> etc/config.csh/prefs.openmpi
@@ -27,8 +27,8 @@ echo "setenv MPI_ARCH_PATH \"$MPI_PATH\"" >> etc/config.csh/prefs.openmpi
 
 
 # Set paths of GMP and MPFR (dependencies of CGAL)
-GMP_PATH='$WM_PROJECT_DIR/usr/opt/gmp'
-MPFR_PATH='$WM_PROJECT_DIR/usr/opt/mpfr'
+GMP_PATH='$WM_PROJECT_DIR/env'
+MPFR_PATH='$WM_PROJECT_DIR/env'
 
 sed -i '' "s|\# export GMP_ARCH_PATH=...|export GMP_ARCH_PATH=\"$GMP_PATH\"|" etc/config.sh/CGAL
 sed -i '' "s|\# setenv GMP_ARCH_PATH ...|setenv GMP_ARCH_PATH \"$GMP_PATH\"|" etc/config.csh/CGAL
@@ -38,7 +38,7 @@ sed -i '' "s|\# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH \"$MPFR_PATH\"|"
 
 
 # OpenMP support
-OPENMP_PATH='$WM_PROJECT_DIR/usr/opt/libomp'
+OPENMP_PATH='$WM_PROJECT_DIR/env'
 
 if [ $(bin/foamEtcFile -show-api) -lt 2212 ]; then
     echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
@@ -59,7 +59,7 @@ fi
 
 
 # Use bundled Bash
-BASH_PATH='$WM_PROJECT_DIR/usr/opt/bash'
+BASH_PATH='$WM_PROJECT_DIR/env'
 
 echo "export PATH=\"$BASH_PATH/bin\${PATH+:\$PATH}\"" >> etc/prefs.sh
 echo "setenv PATH $BASH_PATH/bin:\$PATH" >> etc/prefs.csh
@@ -69,6 +69,10 @@ echo "setenv MANPATH $BASH_PATH/share/man\`[ \${?MANPATH} == 1 ] && echo \":\${M
 
 echo "export INFOPATH=\"$BASH_PATH/share/info:\${INFOPATH:-}\"" >> etc/prefs.sh
 echo "setenv INFOPATH $BASH_PATH/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
+
+
+# Set RPATH to find bundled libraries
+echo 'PROJECT_RPATH += -rpath @loader_path/../../../env/lib' >> wmake/rules/darwin64Clang/rpath
 
 
 # Disable floating point exception trapping when on Apple silicon

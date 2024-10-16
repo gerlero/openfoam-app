@@ -16,7 +16,6 @@ OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
 OPENFOAM_GIT_BRANCH =
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
 WMAKE_NJOBS =
-DEPS_KIND = standalone
 DMG_FORMAT = UDRO
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION =
@@ -31,23 +30,11 @@ volume = /Volumes/$(APP_NAME)
 
 
 # Build targets
-app: | $(volume)
-	$(MAKE) build/$(APP_NAME).app
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
-build: | $(volume)
-	$(MAKE) $(volume)/platforms
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
-deps: | $(volume)
-	$(MAKE) $(volume)/Brewfile.lock.json
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
+app: build/$(APP_NAME).app
+build: build/$(APP_NAME)-build.sparsebundle
 fetch-source: $(openfoam_tarball)
-zip: | $(volume)
-	$(MAKE) build/$(DIST_NAME).zip
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
-
-install: | $(volume)
-	$(MAKE) $(INSTALL_DIR)/$(APP_NAME).app
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
+zip: build/$(DIST_NAME).zip
+install: $(INSTALL_DIR)/$(APP_NAME).app
 
 
 # Build rules
@@ -105,7 +92,7 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp -a $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(volume)/platforms Contents/Resources/icon.icns
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle Contents/Resources/icon.icns
 	[ ! -d $(volume) ] || hdiutil detach $(volume)
 	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
 	hdiutil attach \
@@ -116,10 +103,6 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(volume)/platforms Co
 	SetFile -a C $(volume)
 	uuidgen > $(volume_id_file)
 	cat $(volume_id_file)
-	rm -rf $(volume)/homebrew
-	[ -L $(volume)/usr ] || rm -f $(volume)/usr/bin/brew
-	rm $(volume)/Brewfile
-	rm $(volume)/Brewfile.lock.json
 	rm -rf $(volume)/build
 	rm -rf $(volume)/**/.git
 	rm -f $(volume)/**/.DS_Store
@@ -135,16 +118,17 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: $(volume)/platforms Co
 	hdiutil detach $(volume)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-$(volume)/platforms: $(volume)/etc/prefs.sh $(volume)/Brewfile.lock.json scripts/relativize_install_names.py
-	cd $(volume) \
-		&& source etc/bashrc \
-		&& foamSystemCheck \
-		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
-		&& ./Allwmake -j $(WMAKE_NJOBS) -s
-	cd $(volume) && "$(CURDIR)/scripts/relativize_install_names.py"
-
-$(volume)/etc/prefs.sh: $(openfoam_tarball) scripts/configure.sh | $(volume)
-	rm -rf $(volume)/etc
+build/$(APP_NAME)-build.sparsebundle: $(openfoam_tarball) environment.tar configure.sh
+	[ ! -d $(volume) ] || hdiutil detach $(volume)
+	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
+	mkdir -p build
+	hdiutil create \
+		-size 50g \
+		-fs $(VOLUME_FILESYSTEM) \
+		-volname $(APP_NAME) \
+		build/$(APP_NAME)-build.sparsebundle \
+		-ov
+	hdiutil attach build/$(APP_NAME)-build.sparsebundle
 ifdef openfoam_tarball
 	tar -xzf $(openfoam_tarball) --strip-components 1 -C $(volume)
 else ifdef OPENFOAM_GIT_BRANCH
@@ -154,47 +138,17 @@ else ifdef OPENFOAM_GIT_BRANCH
 	git -C $(volume) pull origin $(OPENFOAM_GIT_BRANCH)
 	git -C $(volume) submodule update --init --recursive
 endif
-	cd $(volume) && "$(CURDIR)/scripts/configure.sh"
+	pixi-pack unpack --output-directory $(volume) environment.tar
+	rm -f $(volume)/activate.sh
+	cd $(volume) && "$(CURDIR)/configure.sh"
+	cd $(volume) \
+		&& source etc/bashrc \
+		&& foamSystemCheck \
+		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
+		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 
-$(volume)/Brewfile.lock.json: $(volume)/Brewfile | $(volume)/usr
-ifeq ($(DEPS_KIND),standalone)
-	HOMEBREW_RELOCATABLE_INSTALL_NAMES=1 $(volume)/usr/bin/brew bundle --file $(volume)/Brewfile --cleanup --verbose
-	$(volume)/usr/bin/brew list --versions
-else
-	brew bundle --file $(volume)/Brewfile --no-upgrade
-endif
-ifeq ($(DEPS_KIND),bundled)
-	rm -rf $(volume)/usr
-	cd $(volume) && "$(CURDIR)/scripts/bundle_deps.py"
-endif
-
-$(volume)/usr: | $(volume)
-ifeq ($(DEPS_KIND),standalone)
-	git clone https://github.com/Homebrew/brew $(volume)/homebrew
-	mkdir -p $(volume)/usr/bin
-	ln -s ../../homebrew/bin/brew $(volume)/usr/bin/
-else ifeq ($(DEPS_KIND),homebrew)
-	ln -s $(shell brew --prefix) $(volume)/usr
-else ifeq ($(DEPS_KIND),bundled)
-	mkdir $(volume)/usr
-else
-	$(error Invalid value for DEPS_KIND)
-endif
-
-$(volume)/Brewfile: Brewfile | $(volume)
-	cp Brewfile $(volume)/
-
-$(volume): | build/$(APP_NAME)-build.sparsebundle
-	hdiutil attach build/$(APP_NAME)-build.sparsebundle
-
-build/$(APP_NAME)-build.sparsebundle:
-	mkdir -p build
-	hdiutil create \
-		-size 50g \
-		-fs $(VOLUME_FILESYSTEM) \
-		-volname $(APP_NAME) \
-		build/$(APP_NAME)-build.sparsebundle \
-		-ov
+environment.tar: pixi.lock
+	pixi-pack pack --environment openfoam
 
 $(openfoam_tarball): | $(openfoam_tarball).sha256
 	curl -L -o $(openfoam_tarball) $(OPENFOAM_TARBALL_URL)
@@ -205,13 +159,10 @@ $(openfoam_tarball).sha256:
 
 
 # Non-build targets and rules
-test: | tests/venv
-	tests/venv/bin/pip install -r tests/requirements.txt
-	build/$(APP_NAME).app/Contents/Resources/etc/openfoam -c tests/venv/bin/pytest
+test:
+	[ ! -d $(volume) ] || hdiutil detach $(volume)	
+	build/$(APP_NAME).app/Contents/Resources/etc/openfoam pytest
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(volume) ]
-
-tests/venv:
-	python3 -m venv tests/venv
 
 clean-app:
 	[ ! -d $(volume) ] || hdiutil detach $(volume)	
@@ -223,13 +174,12 @@ clean-build: clean-app
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(openfoam_tarball) Brewfile.lock.json
-	rm -rf tests/venv
+	rm -f $(openfoam_tarball) environment.tar
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
-.SECONDARY: $(volume) $(openfoam_tarball)
+.SECONDARY: $(openfoam_tarball)
 .DELETE_ON_ERROR:

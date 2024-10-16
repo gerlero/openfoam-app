@@ -4,8 +4,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-
-  - package-ecosystem: "pip"
-    directory: "/tests"
-    schedule:
-      interval: "weekly"
