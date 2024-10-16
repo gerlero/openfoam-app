@@ -10,7 +10,7 @@ if [ $# -eq 0 ]; then
     echo "   ( )       |                 °°° $app_name.app °°°                  " 1>&2
     echo "  ( )    ( ) |                                                             " 1>&2
     echo "      ( )    | Native OpenFOAM for macOS                             " 1>&2
-    echo "             | {{APP_HOMEPAGE}}                 " 1>&2
+    echo "             | {{app_homepage}}                 " 1>&2
     echo "---------------------------------------------------------------------------" 1>&2
 
     "$app_bundle/Contents/Resources/volume" mount 1>&2
