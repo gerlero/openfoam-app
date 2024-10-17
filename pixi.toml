@@ -11,18 +11,18 @@ macos = "11"
 [tasks]
 
 [dependencies]
-pixi-pack = ">=0.1.8,<0.2"
+pixi-pack = ">=0.1.8"
 pytest = ">=7,<7.3"
-pytest-asyncio-cooperative = ">=0.37.0,<0.38"
-foamlib = ">=0.6.0,<0.7.0"
+pytest-asyncio-cooperative = ">=0.37.0"
+foamlib = ">=0.6.0"
 
 [feature.openfoam.dependencies]
-llvm-openmp = ">=19.1.1,<20"
-openmpi = ">=5.0.5,<6"
-fftw = ">=3.3.10,<4"
-scotch = ">=7.0.5,<8"
+llvm-openmp = ">=19.1.1"
+openmpi = ">=5.0.5"
+fftw = ">=3.3.10"
+scotch = ">=7.0.5"
 cgal-cpp = ">=5.6.1,<6"
-bash = ">=5.2.21,<6"
+bash = ">=5.2.21"
 
 [environments]
 openfoam = {features = ["openfoam"], no-default-feature = true}
