@@ -6,9 +6,10 @@ from pathlib import Path
 from foamlib import AsyncFoamCase
 
 @pytest.fixture
-async def flange(tmp_path):
+async def flange():
     case = AsyncFoamCase(Path(os.environ["FOAM_TUTORIALS"]) / "basic" / "laplacianFoam" / "flange")
-    return await case.clone(tmp_path / case.name)
+    async with case.clone() as clone:
+        yield clone
 
 @pytest.mark.asyncio_cooperative
 async def test_serial(flange):
