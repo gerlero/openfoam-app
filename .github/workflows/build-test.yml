@@ -60,7 +60,7 @@ on:
 
 env:
   MAKE_VARS: >
-    ${{ inputs.openfoam-version != '' && format('OPENFOAM_VERSION={0}', inputs.openfoam-version) || '' }}
+    ${{ inputs.openfoam-version != '' && format('OPENFOAM_VERSION={0} OPENFOAM_TARBALL_URL=https://raw.githubusercontent.com/gerlero/openfoam-tarballs/refs/heads/main/OpenFOAM-v{0}.tgz', inputs.openfoam-version) || '' }}
     ${{ inputs.app-version != '' && format('APP_VERSION={0}', inputs.app-version) || '' }}
     ${{ inputs.app-name != '' && format('APP_NAME={0}', inputs.app-name) || '' }}
     ${{ inputs.openfoam-git-branch != '' && format('OPENFOAM_GIT_BRANCH={0}', inputs.openfoam-git-branch) || '' }}
