@@ -48,9 +48,7 @@ app_contents = \
 	build/$(APP_NAME).app/Contents/Resources/LICENSE \
 	build/$(APP_NAME).app/Contents/Resources/icon.icns \
 	build/$(APP_NAME).app/Contents/Resources/volume \
-	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
-	build/$(APP_NAME).app/Contents/MacOS/openfoam \
-	build/$(APP_NAME).app/Contents/MacOS/bashrc
+	build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 
 $(INSTALL_DIR)/$(APP_NAME).app: build/$(APP_NAME).app
 	cp -r build/$(APP_NAME).app $(INSTALL_DIR)/
