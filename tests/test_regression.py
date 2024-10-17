@@ -7,9 +7,10 @@ from pathlib import Path
 from foamlib import AsyncFoamCase
 
 @pytest.fixture
-async def step(tmp_path):
+async def step():
     case = AsyncFoamCase(Path(os.environ["FOAM_TUTORIALS"]) / "incompressible" / "simpleFoam" / "backwardFacingStep2D")
-    return await case.clone(tmp_path / case.name)
+    async with case.clone() as clone:
+        yield clone
 
 @pytest.mark.asyncio_cooperative
 async def test_step(step):
