@@ -21,7 +21,7 @@ llvm-openmp = ">=19.1.1,<20"
 openmpi = ">=5.0.5,<6"
 fftw = ">=3.3.10,<4"
 scotch = ">=7.0.5,<8"
-cgal-cpp = ">=6.0,<7"
+cgal-cpp = ">=5.6.1,<6"
 bash = ">=5.2.21,<6"
 
 [environments]

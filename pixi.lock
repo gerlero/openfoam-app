@@ -74,7 +74,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/bash-5.2.21-h0f89e9d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/bzip2-1.0.8-hfdf4475_7.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ca-certificates-2024.8.30-h8857fd0_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/cgal-cpp-6.0-h9ef219c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/cgal-cpp-5.6.1-hda30369_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/eigen-3.4.0-h1c7c39f_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/fftw-3.3.10-nompi_h292e606_110.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/gmp-6.3.0-hf036a51_2.conda
@@ -106,7 +106,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bash-5.2.21-h15d410d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bzip2-1.0.8-h99b78c6_7.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ca-certificates-2024.8.30-hf0a4a13_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/cgal-cpp-6.0-h85a193f_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/cgal-cpp-5.6.1-h5f86f28_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/eigen-3.4.0-h1995070_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/fftw-3.3.10-nompi_h6637ab6_110.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gmp-6.3.0-h7bae524_2.conda
@@ -248,40 +248,42 @@ packages:
   timestamp: 1725019034582
 - kind: conda
   name: cgal-cpp
-  version: '6.0'
-  build: h85a193f_0
+  version: 5.6.1
+  build: h5f86f28_2
+  build_number: 2
   subdir: osx-arm64
-  url: https://conda.anaconda.org/conda-forge/osx-arm64/cgal-cpp-6.0-h85a193f_0.conda
-  sha256: 1e9d02cabade5c4eb799e1978256238c15a870c51b3f61ea0a48398e1a914f62
-  md5: e41a1ba00b7ba0190a508327c79a5e96
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/cgal-cpp-5.6.1-h5f86f28_2.conda
+  sha256: 7499a25eadef31d6ffed5f11f757236a26088abeeb7b3ec972ba34335c0fb0a0
+  md5: ab750c243bc955a87a5c3b751bd7632e
   depends:
   - __osx >=11.0
   - eigen
   - libboost >=1.86.0,<1.87.0a0
   - libboost-devel
-  - libcxx >=17
+  - libcxx >=16
   - mpfr >=4.2.1,<5.0a0
   license: GPL3/LGPL3
-  size: 5886423
-  timestamp: 1727684873058
+  size: 5770597
+  timestamp: 1724406149482
 - kind: conda
   name: cgal-cpp
-  version: '6.0'
-  build: h9ef219c_0
+  version: 5.6.1
+  build: hda30369_2
+  build_number: 2
   subdir: osx-64
-  url: https://conda.anaconda.org/conda-forge/osx-64/cgal-cpp-6.0-h9ef219c_0.conda
-  sha256: 2de82cb470634b0c8d2dfbbc0d480c1012071ac08cd42a97a2b86a7bd97e91be
-  md5: f32f7b8e19c1ac058ce78dd0672836e3
+  url: https://conda.anaconda.org/conda-forge/osx-64/cgal-cpp-5.6.1-hda30369_2.conda
+  sha256: 7d71b03c35085fe49bed127afad8a014e83299ca7e45df9f962e939a5833f5a2
+  md5: 6f188e0300be78871bbcb7880013108c
   depends:
   - __osx >=10.13
   - eigen
   - libboost >=1.86.0,<1.87.0a0
   - libboost-devel
-  - libcxx >=17
+  - libcxx >=16
   - mpfr >=4.2.1,<5.0a0
   license: GPL3/LGPL3
-  size: 5876215
-  timestamp: 1727684827310
+  size: 5769810
+  timestamp: 1724406156034
 - kind: conda
   name: colorama
   version: 0.4.6
