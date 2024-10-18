@@ -78,7 +78,7 @@ jobs:
       - name: Prepare caching
         run: |
           pixi run make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
-      - name: Restore cached build or deps
+      - name: Restore cached build
         id: cache
         uses: actions/cache/restore@v4
         with:
