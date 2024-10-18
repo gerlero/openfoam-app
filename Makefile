@@ -181,5 +181,5 @@ uninstall:
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
-.SECONDARY: $(openfoam_tarball)
+.SECONDARY: $(openfoam_tarball) environment.tar
 .DELETE_ON_ERROR:
