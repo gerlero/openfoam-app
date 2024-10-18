@@ -144,6 +144,7 @@ endif
 		&& foamSystemCheck \
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
+	hdiutil detach $(volume)
 
 environment.tar: pixi.lock
 	pixi-pack pack --environment openfoam
