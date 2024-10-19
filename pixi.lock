@@ -20,7 +20,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ncurses-6.5-hf036a51_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.3.2-hd23fc13_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-24.1-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/pixi-pack-0.1.8-hdedf2c9_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/pixi-pack-0.2.0-hab9643a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.5.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.2.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.3-pyhd8ed1ab_0.conda
@@ -50,7 +50,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ncurses-6.5-h7bae524_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.3.2-h8359307_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-24.1-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-pack-0.1.8-heb3966d_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-pack-0.2.0-hbdd4fe4_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.5.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.2.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.3-pyhd8ed1ab_0.conda
@@ -379,6 +379,7 @@ packages:
   - python >=3.7
   - typing_extensions >=4,<5
   license: GPL-3.0-or-later
+  license_family: GPL
   size: 35769
   timestamp: 1729183384650
 - kind: conda
@@ -1172,38 +1173,38 @@ packages:
   timestamp: 1718189540074
 - kind: conda
   name: pixi-pack
-  version: 0.1.8
-  build: hdedf2c9_0
+  version: 0.2.0
+  build: hab9643a_0
   subdir: osx-64
-  url: https://conda.anaconda.org/conda-forge/osx-64/pixi-pack-0.1.8-hdedf2c9_0.conda
-  sha256: 929393aa91457374371760bc545da5646cf3a6b2a34b767a13ee4e6291686e4a
-  md5: 1a22f652e32267e1fc7e2d296ff2844e
+  url: https://conda.anaconda.org/conda-forge/osx-64/pixi-pack-0.2.0-hab9643a_0.conda
+  sha256: ec9731b3fa3b2daef968ca0bbdbbd8eb2b27d3f07790e73e5c9f0d8f8200e5ab
+  md5: d6888128ecaa1bc67ea133876ca97466
   depends:
   - __osx >=10.13
-  - openssl >=3.3.1,<4.0a0
+  - openssl >=3.3.2,<4.0a0
   constrains:
   - __osx >=10.12
   license: BSD-3-Clause
   license_family: BSD
-  size: 3665170
-  timestamp: 1724065443439
+  size: 3701338
+  timestamp: 1729286468170
 - kind: conda
   name: pixi-pack
-  version: 0.1.8
-  build: heb3966d_0
+  version: 0.2.0
+  build: hbdd4fe4_0
   subdir: osx-arm64
-  url: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-pack-0.1.8-heb3966d_0.conda
-  sha256: 629ceb3d73e8679cfecfd01b7829607b2d8cd536a3c7e1d08c7b47b915278754
-  md5: b3b6da20f6f5ee65ebd263add716e6ec
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-pack-0.2.0-hbdd4fe4_0.conda
+  sha256: df6e8fe61b2caccc40d5b8c9e5b1e758c96a38cfe355a520f3186daa09b87810
+  md5: 40035930031dc4f9ef37a2b310c045dd
   depends:
   - __osx >=11.0
-  - openssl >=3.3.1,<4.0a0
+  - openssl >=3.3.2,<4.0a0
   constrains:
   - __osx >=11.0
   license: BSD-3-Clause
   license_family: BSD
-  size: 3494096
-  timestamp: 1724065774693
+  size: 3537077
+  timestamp: 1729286621627
 - kind: conda
   name: pluggy
   version: 1.5.0
