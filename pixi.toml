@@ -8,8 +8,6 @@ platforms = ["osx-arm64", "osx-64"]
 [system-requirements]
 macos = "11"
 
-[tasks]
-
 [dependencies]
 pixi-pack = ">=0.1.8"
 pytest = ">=8.3.3"
