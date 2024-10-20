@@ -17,58 +17,49 @@ bin/tools/foamConfigurePaths \
 
 
 # Set path to the MPI install
-MPI_PATH='$WM_PROJECT_DIR/env'
-
 echo 'export FOAM_MPI=openmpi' >> etc/config.sh/prefs.openmpi
 echo 'setenv FOAM_MPI openmpi' >> etc/config.csh/prefs.openmpi
 
-echo "export MPI_ARCH_PATH=\"$MPI_PATH\"" >> etc/config.sh/prefs.openmpi
-echo "setenv MPI_ARCH_PATH \"$MPI_PATH\"" >> etc/config.csh/prefs.openmpi
+echo 'export MPI_ARCH_PATH="$WM_PROJECT_DIR/env"' >> etc/config.sh/prefs.openmpi
+echo 'setenv MPI_ARCH_PATH "$WM_PROJECT_DIR/env"' >> etc/config.csh/prefs.openmpi
 
 
 # Set paths of GMP and MPFR (dependencies of CGAL)
-GMP_PATH='$WM_PROJECT_DIR/env'
-MPFR_PATH='$WM_PROJECT_DIR/env'
+sed -i '' 's|# export GMP_ARCH_PATH=...|export GMP_ARCH_PATH="$WM_PROJECT_DIR/env"|' etc/config.sh/CGAL
+sed -i '' 's|# setenv GMP_ARCH_PATH ...|setenv GMP_ARCH_PATH "$WM_PROJECT_DIR/env"|' etc/config.csh/CGAL
 
-sed -i '' "s|\# export GMP_ARCH_PATH=...|export GMP_ARCH_PATH=\"$GMP_PATH\"|" etc/config.sh/CGAL
-sed -i '' "s|\# setenv GMP_ARCH_PATH ...|setenv GMP_ARCH_PATH \"$GMP_PATH\"|" etc/config.csh/CGAL
-
-sed -i '' "s|\# export MPFR_ARCH_PATH=...|export MPFR_ARCH_PATH=\"$MPFR_PATH\"|" etc/config.sh/CGAL
-sed -i '' "s|\# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH \"$MPFR_PATH\"|" etc/config.csh/CGAL
+sed -i '' 's|# export MPFR_ARCH_PATH=...|export MPFR_ARCH_PATH="$WM_PROJECT_DIR/env"|' etc/config.sh/CGAL
+sed -i '' 's|# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH "$WM_PROJECT_DIR/env"|' etc/config.csh/CGAL
 
 
 # OpenMP support
-OPENMP_PATH='$WM_PROJECT_DIR/env'
-
 if [ $(bin/foamEtcFile -show-api) -lt 2212 ]; then
-    echo "export CPATH=\"$OPENMP_PATH/include\${CPATH+:\$CPATH}\"" >> etc/prefs.sh
-    echo "setenv CPATH \"$OPENMP_PATH/include\`[ \${?CPATH} == 1 ] && echo \":\${CPATH}\"\`\"" >> etc/prefs.csh
+    echo 'export CPATH="$WM_PROJECT_DIR/env/include${CPATH+:$CPATH}"' >> etc/prefs.sh
+    echo 'setenv CPATH "$WM_PROJECT_DIR/env/include`[ ${?CPATH} == 1 ] && echo ":${CPATH}"`"' >> etc/prefs.csh
 
-    echo "export LIBRARY_PATH=\"$OPENMP_PATH/lib\${LIBRARY_PATH+:\$LIBRARY_PATH}\"" >> etc/prefs.sh
-    echo "setenv LIBRARY_PATH \"$OPENMP_PATH/lib\`[ \${?LIBRARY_PATH} == 1 ] && echo \":\${LIBRARY_PATH}\"\`\"" >> etc/prefs.csh
+    echo 'export LIBRARY_PATH="$WM_PROJECT_DIR/env/lib${LIBRARY_PATH+:$LIBRARY_PATH}"' >> etc/prefs.sh
+    echo 'setenv LIBRARY_PATH "$WM_PROJECT_DIR/env/lib`[ ${?LIBRARY_PATH} == 1 ] && echo ":${LIBRARY_PATH}"`"' >> etc/prefs.csh
 else
-    echo "export FOAM_EXTRA_CFLAGS=\"-I$OPENMP_PATH/include \$FOAM_EXTRA_CFLAGS\"" >> etc/prefs.sh
-    echo "setenv FOAM_EXTRA_CFLAGS \"-I$OPENMP_PATH/include \$FOAM_EXTRA_CFLAGS\"" >> etc/prefs.csh
+    echo 'export FOAM_EXTRA_CFLAGS="-I$WM_PROJECT_DIR/env/include $FOAM_EXTRA_CFLAGS"' >> etc/prefs.sh
+    echo 'setenv FOAM_EXTRA_CFLAGS "-I$WM_PROJECT_DIR/env/include $FOAM_EXTRA_CFLAGS"' >> etc/prefs.csh
 
-    echo "export FOAM_EXTRA_CXXFLAGS=\"-I$OPENMP_PATH/include \$FOAM_EXTRA_CXXFLAGS\"" >> etc/prefs.sh
-    echo "setenv FOAM_EXTRA_CXXFLAGS \"-I$OPENMP_PATH/include \$FOAM_EXTRA_CXXFLAGS\"" >> etc/prefs.csh
+    echo 'export FOAM_EXTRA_CXXFLAGS="-I$WM_PROJECT_DIR/env/include $FOAM_EXTRA_CXXFLAGS"' >> etc/prefs.sh
+    echo 'setenv FOAM_EXTRA_CXXFLAGS "-I$WM_PROJECT_DIR/env/include $FOAM_EXTRA_CXXFLAGS"' >> etc/prefs.csh
 
-    echo "export FOAM_EXTRA_LDFLAGS=\"-L$OPENMP_PATH/lib \$FOAM_EXTRA_LDFLAGS\"" >> etc/prefs.sh
-    echo "setenv FOAM_EXTRA_LDFLAGS \"-L$OPENMP_PATH/lib \$FOAM_EXTRA_LDFLAGS\"" >> etc/prefs.csh
+    echo 'export FOAM_EXTRA_LDFLAGS="-L$WM_PROJECT_DIR/env/lib $FOAM_EXTRA_LDFLAGS"' >> etc/prefs.sh
+    echo 'setenv FOAM_EXTRA_LDFLAGS "-L$WM_PROJECT_DIR/env/lib $FOAM_EXTRA_LDFLAGS"' >> etc/prefs.csh
 fi
 
 
 # Use bundled Bash
-BASH_PATH='$WM_PROJECT_DIR/env'
+echo 'export PATH="$WM_PROJECT_DIR/env/bin${PATH+:$PATH}"' >> etc/prefs.sh
+echo 'setenv PATH $WM_PROJECT_DIR/env/bin:$PATH' >> etc/prefs.csh
 
-echo "export PATH=\"$BASH_PATH/bin\${PATH+:\$PATH}\"" >> etc/prefs.sh
-echo "setenv PATH $BASH_PATH/bin:\$PATH" >> etc/prefs.csh
+echo 'export MANPATH="$WM_PROJECT_DIR/env/share/man${MANPATH+:$MANPATH}:"' >> etc/prefs.sh
+echo 'setenv MANPATH "$WM_PROJECT_DIR/env/share/man`[ ${?MANPATH} == 1 ] && echo ":${MANPATH}"`"' >> etc/prefs.csh
 
-echo "export MANPATH=\"$BASH_PATH/share/man\${MANPATH+:\$MANPATH}:\"" >> etc/prefs.sh
-echo "setenv MANPATH $BASH_PATH/share/man\`[ \${?MANPATH} == 1 ] && echo \":\${MANPATH}\"\`:" >> etc/prefs.csh
-
-echo "export INFOPATH=\"$BASH_PATH/share/info:\${INFOPATH:-}\"" >> etc/prefs.sh
-echo "setenv INFOPATH $BASH_PATH/share/info\`[ \${?INFOPATH} == 1 ] && echo \":\${INFOPATH}\"\`" >> etc/prefs.csh
+echo 'export INFOPATH="$WM_PROJECT_DIR/envshare/info:${INFOPATH:-}"' >> etc/prefs.sh
+echo 'setenv INFOPATH "$WM_PROJECT_DIR/env/share/info`[ ${?INFOPATH} == 1 ] && echo ":${INFOPATH}"`"' >> etc/prefs.csh
 
 
 # Set RPATH to find bundled libraries
@@ -92,7 +83,7 @@ echo 'PROJECT_RPATH += -rpath @loader_path/../../../env/lib' >> wmake/rules/darw
 
 
 # Backport of https://develop.openfoam.com/Development/openfoam/-/issues/2555
-[ $(bin/foamEtcFile -show-api) -ge 2212 ] || patch src/meshTools/triSurface/triSurfaceTools/geompack/geompack.C <<EOF
+[ $(bin/foamEtcFile -show-api) -ge 2212 ] || patch src/meshTools/triSurface/triSurfaceTools/geompack/geompack.C <<'EOF'
 @@ -6,6 +6,10 @@
  # include <ctime>
  # include <cstring>
