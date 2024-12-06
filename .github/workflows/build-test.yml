@@ -109,9 +109,8 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [macos-12, macos-13, macos-14, macos-15]
+        os: [macos-13, macos-14, macos-15]
         exclude:
-          - os: ${{ inputs.build-os == 'macos-14' && 'macos-12' || ''}}
           - os: ${{ inputs.build-os == 'macos-14' && 'macos-13' || ''}}
           - os: ${{ inputs.build-os != 'macos-14' && 'macos-14' || ''}}
           - os: ${{ inputs.build-os != 'macos-14' && 'macos-15' || ''}}
