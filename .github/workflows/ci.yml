@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         build-os: [macos-14, macos-13]
-        openfoam-version: [2406, 2312]
+        openfoam-version: [2412, 2406]
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
