@@ -6,29 +6,32 @@ environments:
     packages:
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/aioshutil-1.5-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/blas-2.129-blis.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/blas-devel-3.9.0-29_hcc04dd8_blis.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/blis-0.9.0-hec52a4b_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/bzip2-1.0.8-hfdf4475_7.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ca-certificates-2025.1.31-h8857fd0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/colorama-0.4.6-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.2.2-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/foamlib-0.8.3-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/iniconfig-2.0.0-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/libblas-3.9.0-28_h7f60823_openblas.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/libcblas-3.9.0-28_hff6cab4_openblas.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/libblas-3.9.0-29_hcc31c3a_blis.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/libcblas-3.9.0-29_h1b39828_blis.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libcxx-19.1.7-hf95d169_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libexpat-2.6.4-h240833e_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/libffi-3.4.2-h0d85af4_5.tar.bz2
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/libffi-3.4.6-h281671d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libgfortran-5.0.0-13_2_0_h97931a8_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libgfortran5-13.2.0-h2873a65_3.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/liblapack-3.9.0-28_h236ab99_openblas.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/liblzma-5.6.3-hd471939_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/liblapack-3.9.0-8_hc2a6a11_netlib.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/liblapacke-3.9.0-8_hc2a6a11_netlib.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/liblzma-5.6.4-hd471939_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libmpdec-4.0.0-hfdf4475_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/libopenblas-0.3.28-openmp_hbf64a52_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libsqlite-3.48.0-hdb6dae5_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libzlib-1.3.1-hd23fc13_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/llvm-openmp-19.1.7-ha54dae1_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ncurses-6.5-h0622a9a_3.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/numpy-2.2.2-py313hc518a0f_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.4.0-hc426f3f_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/numpy-2.2.3-py313hc518a0f_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.4.1-hc426f3f_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-24.2-pyhd8ed1ab_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/pixi-pack-0.3.1-heafdebc_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.5.0-pyhd8ed1ab_1.conda
@@ -45,29 +48,31 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025a-h78e105d_0.conda
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/aioshutil-1.5-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/blas-2.129-accelerate.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/blas-devel-3.9.0-29_h55bc449_accelerate.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/bzip2-1.0.8-h99b78c6_7.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ca-certificates-2025.1.31-hf0a4a13_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/colorama-0.4.6-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.2.2-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/foamlib-0.8.3-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/iniconfig-2.0.0-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libblas-3.9.0-28_h10e41b3_openblas.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libcblas-3.9.0-28_hb3479ef_openblas.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libblas-3.9.0-29_h504e6c8_accelerate.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libcblas-3.9.0-29_h8d39bcd_accelerate.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libcxx-19.1.7-ha82da77_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libexpat-2.6.4-h286801f_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libffi-3.4.2-h3422bc3_5.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libgfortran-5.0.0-13_2_0_hd922786_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libgfortran5-13.2.0-hf226fd6_3.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblapack-3.9.0-28_hc9a63f6_openblas.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblzma-5.6.3-h39f12f2_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblapack-3.9.0-29_h3c9cff3_accelerate.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblapacke-3.9.0-29_h09be921_accelerate.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblzma-5.6.4-h39f12f2_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libmpdec-4.0.0-h99b78c6_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopenblas-0.3.28-openmp_hf332438_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libsqlite-3.48.0-h3f77e49_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libzlib-1.3.1-h8359307_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/llvm-openmp-19.1.7-hdb05f8b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ncurses-6.5-h5e97a16_3.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.2.2-py313h41a2e72_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.4.0-h81ee809_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.2.3-py313h41a2e72_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.4.1-h81ee809_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-24.2-pyhd8ed1ab_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-pack-0.3.1-h5613be0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.5.0-pyhd8ed1ab_1.conda
@@ -106,7 +111,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libgfortran5-13.2.0-h2873a65_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libhwloc-2.11.2-default_h4cdd727_1001.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libiconv-1.17-hd75f5a5_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/liblzma-5.6.3-hd471939_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/liblzma-5.6.4-hd471939_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libpmix-5.0.6-h2a508f7_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libscotch-7.0.6-h7a28ce2_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/libxml2-2.13.5-hebb159f_1.conda
@@ -116,7 +121,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/mpi-1.0-openmpi.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ncurses-6.5-h0622a9a_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/openmpi-5.0.6-h3ed5c4a_102.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.4.0-hc426f3f_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.4.1-hc426f3f_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/readline-8.2-h9e318b2_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/scotch-7.0.6-h40132e6_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.6-h915ae27_0.conda
@@ -140,7 +145,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libgfortran5-13.2.0-hf226fd6_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libhwloc-2.11.2-default_hbce5d74_1001.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libiconv-1.17-h0d3ecfb_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblzma-5.6.3-h39f12f2_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblzma-5.6.4-h39f12f2_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libpmix-5.0.6-h6500a5a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libscotch-7.0.6-he56f69b_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libxml2-2.13.5-h178c5d8_1.conda
@@ -150,7 +155,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/mpi-1.0-openmpi.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ncurses-6.5-h5e97a16_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openmpi-5.0.6-h31ce4ef_102.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.4.0-h81ee809_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.4.1-h81ee809_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/readline-8.2-h92ec313_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/scotch-7.0.6-hc1c4572_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.6-hb46c0d2_0.conda
@@ -187,6 +192,68 @@ packages:
   license_family: GPL
   size: 1566335
   timestamp: 1706046819536
+- conda: https://conda.anaconda.org/conda-forge/osx-64/blas-2.129-blis.conda
+  build_number: 29
+  sha256: 5cfad204568b8920141eeebc83f01a6117269ffe749f1ce1510225fac2d1eca2
+  md5: 655979acd9de0e092cc0984cb507257d
+  depends:
+  - blas-devel 3.9.0 29*_blis
+  arch: x86_64
+  platform: osx
+  license: BSD-3-Clause
+  size: 16994
+  timestamp: 1739426071370
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/blas-2.129-accelerate.conda
+  build_number: 29
+  sha256: 3f6c963fc047f117619b790350774b535c47e336cd6f2c99ab3bd3fa3326f771
+  md5: e88d61405b4b983fb3b7a4dff928d19f
+  depends:
+  - blas-devel 3.9.0 29*_accelerate
+  arch: arm64
+  platform: osx
+  license: BSD-3-Clause
+  size: 17163
+  timestamp: 1739426332878
+- conda: https://conda.anaconda.org/conda-forge/osx-64/blas-devel-3.9.0-29_hcc04dd8_blis.conda
+  build_number: 29
+  sha256: c9c8cb3acabff175f70438127602352bf47a018f8805f6084ab7edd5f1287500
+  md5: d59ce76de3c611ac5e43e39655f9e5f1
+  depends:
+  - blis 0.9.0.*
+  - libblas 3.9.0 29_hcc31c3a_blis
+  - libcblas 3.9.0 29_h1b39828_blis
+  - liblapack 3.9.0 *_netlib
+  - liblapacke 3.9.0 *_netlib
+  arch: x86_64
+  platform: osx
+  license: BSD-3-Clause
+  size: 16605
+  timestamp: 1739426025311
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/blas-devel-3.9.0-29_h55bc449_accelerate.conda
+  build_number: 29
+  sha256: 31c3bf6b2ef3148f5f8fc35e45d133b8b2166083d081be7a3db7d883d1fc2886
+  md5: 799e9b59b50cb14164c17a6da5169c20
+  depends:
+  - libblas 3.9.0 29_h504e6c8_accelerate
+  - libcblas 3.9.0 29_h8d39bcd_accelerate
+  - liblapack 3.9.0 29_h3c9cff3_accelerate
+  - liblapacke 3.9.0 29_h09be921_accelerate
+  arch: arm64
+  platform: osx
+  license: BSD-3-Clause
+  size: 16635
+  timestamp: 1739426308535
+- conda: https://conda.anaconda.org/conda-forge/osx-64/blis-0.9.0-hec52a4b_2.conda
+  sha256: 709d70079d8b629cc6a9f96c52e818546ffe67fe97c7e09b2264611f19551934
+  md5: 2bbab6245067770bc4e9652a3e60de86
+  depends:
+  - __osx >=10.9
+  arch: x86_64
+  platform: osx
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 1346304
+  timestamp: 1713878136186
 - conda: https://conda.anaconda.org/conda-forge/osx-64/bzip2-1.0.8-hfdf4475_7.conda
   sha256: cad153608b81fb24fc8c509357daa9ae4e49dfc535b2cb49b91e23dbd68fc3c5
   md5: 7ed4301d437b59045be7e051a0308211
@@ -392,42 +459,42 @@ packages:
   license_family: MIT
   size: 11474
   timestamp: 1733223232820
-- conda: https://conda.anaconda.org/conda-forge/osx-64/libblas-3.9.0-28_h7f60823_openblas.conda
-  build_number: 28
-  sha256: c44341975c7d0b4b02c2676af30a723b109698b2939928b80c45efc2aa36ef2d
-  md5: c9f0b30e5ab2f4ddc450b95743d2070d
+- conda: https://conda.anaconda.org/conda-forge/osx-64/libblas-3.9.0-29_hcc31c3a_blis.conda
+  build_number: 29
+  sha256: 566aa8ca816600cac7a84afb8e4cc2bc358fe1dab2002608ae237c675ad079bc
+  md5: fba60535ea11e194560df44e727208ea
   depends:
-  - libopenblas >=0.3.28,<0.3.29.0a0
-  - libopenblas >=0.3.28,<1.0a0
+  - blis >=0.9.0,<0.9.1.0a0
   constrains:
-  - liblapacke =3.9.0=28*_openblas
-  - libcblas =3.9.0=28*_openblas
-  - blas =2.128=openblas
-  - liblapack =3.9.0=28*_openblas
+  - libcblas =3.9.0=29*_blis
+  - blas =2.129=blis
   arch: x86_64
   platform: osx
+  track_features:
+  - blas_blis
   license: BSD-3-Clause
-  license_family: BSD
-  size: 16854
-  timestamp: 1738114357360
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libblas-3.9.0-28_h10e41b3_openblas.conda
-  build_number: 28
-  sha256: 5bea855a1a7435ce2238535aa4b13db8af8ee301d99a42b083b63fa64c1ea144
-  md5: 166166d84a0e9571dc50210baf993b46
+  size: 16906
+  timestamp: 1739426000678
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libblas-3.9.0-29_h504e6c8_accelerate.conda
+  build_number: 29
+  sha256: 9c6022be99ee71baf3905ab01a6fc4dd93da915a187ed7418d4cbf2222589a1b
+  md5: 5b0043c72c6929ac34a33c854797186f
   depends:
-  - libopenblas >=0.3.28,<0.3.29.0a0
-  - libopenblas >=0.3.28,<1.0a0
+  - __osx >=11.0
+  - libgfortran 5.*
+  - libgfortran5 >=13.2.0
   constrains:
-  - liblapack =3.9.0=28*_openblas
-  - liblapacke =3.9.0=28*_openblas
-  - blas =2.128=openblas
-  - libcblas =3.9.0=28*_openblas
+  - liblapack =3.9.0=29*_accelerate
+  - blas =2.129=accelerate
+  - libcblas =3.9.0=29*_accelerate
+  - liblapacke =3.9.0=29*_accelerate
   arch: arm64
   platform: osx
+  track_features:
+  - blas_accelerate
   license: BSD-3-Clause
-  license_family: BSD
-  size: 16840
-  timestamp: 1738114389937
+  size: 2581644
+  timestamp: 1739426280446
 - conda: https://conda.anaconda.org/conda-forge/osx-64/libboost-1.86.0-hf0da243_3.conda
   sha256: 7758971337b07d1f4fd0c55eed4bfb06e3c0512a7e4549c648a01383926c1fcd
   md5: 1e25fad7b2c160cd3b9b52f3507eb272
@@ -510,38 +577,38 @@ packages:
   license: BSL-1.0
   size: 14139980
   timestamp: 1733503796088
-- conda: https://conda.anaconda.org/conda-forge/osx-64/libcblas-3.9.0-28_hff6cab4_openblas.conda
-  build_number: 28
-  sha256: 3940ad1fe20fac8a21fe699ade336a649d0509bc6ff9bfc080b258f68cd056df
-  md5: bf672fd5b62c531028cda585c6ee91b1
+- conda: https://conda.anaconda.org/conda-forge/osx-64/libcblas-3.9.0-29_h1b39828_blis.conda
+  build_number: 29
+  sha256: d3dec60349c5041522ed2a72a721375f325ca0470c1271721e73919a433be096
+  md5: a7e3a276782530e97cbf56c865517b3d
   depends:
-  - libblas 3.9.0 28_h7f60823_openblas
+  - libblas 3.9.0 29_hcc31c3a_blis
   constrains:
-  - liblapacke =3.9.0=28*_openblas
-  - blas =2.128=openblas
-  - liblapack =3.9.0=28*_openblas
+  - blas =2.129=blis
   arch: x86_64
   platform: osx
+  track_features:
+  - blas_blis
   license: BSD-3-Clause
-  license_family: BSD
-  size: 16772
-  timestamp: 1738114371625
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libcblas-3.9.0-28_hb3479ef_openblas.conda
-  build_number: 28
-  sha256: f08adea59381babb3568e6d23e52aff874cbc25f299821647ab1127d1e1332ca
-  md5: 30942dea911ce333765003a8adec4e8a
+  size: 16898
+  timestamp: 1739426011877
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libcblas-3.9.0-29_h8d39bcd_accelerate.conda
+  build_number: 29
+  sha256: 8d219c6f962b2c20d39dcd41e4c2745b14cd40fecb68cf8e68272050d47a9666
+  md5: b4a149cec88e29995ea13be99ee89c99
   depends:
-  - libblas 3.9.0 28_h10e41b3_openblas
+  - libblas 3.9.0 29_h504e6c8_accelerate
   constrains:
-  - blas =2.128=openblas
-  - liblapacke =3.9.0=28*_openblas
-  - liblapack =3.9.0=28*_openblas
+  - liblapack =3.9.0=29*_accelerate
+  - blas =2.129=accelerate
+  - liblapacke =3.9.0=29*_accelerate
   arch: arm64
   platform: osx
+  track_features:
+  - blas_accelerate
   license: BSD-3-Clause
-  license_family: BSD
-  size: 16788
-  timestamp: 1738114399962
+  size: 16994
+  timestamp: 1739426290771
 - conda: https://conda.anaconda.org/conda-forge/osx-64/libcxx-19.1.7-hf95d169_0.conda
   sha256: 6b2fa3fb1e8cd2000b0ed259e0c4e49cbef7b76890157fac3e494bc659a20330
   md5: 4b8f8dc448d814169dbc58fc7286057d
@@ -656,15 +723,17 @@ packages:
   license_family: BSD
   size: 324546
   timestamp: 1734451796037
-- conda: https://conda.anaconda.org/conda-forge/osx-64/libffi-3.4.2-h0d85af4_5.tar.bz2
-  sha256: 7a2d27a936ceee6942ea4d397f9c7d136f12549d86f7617e8b6bad51e01a941f
-  md5: ccb34fb14960ad8b125962d3d79b31a9
+- conda: https://conda.anaconda.org/conda-forge/osx-64/libffi-3.4.6-h281671d_0.conda
+  sha256: 7805fdc536a3da7fb63dc48e040105cd4260c69a1d2bf5804dadd31bde8bab51
+  md5: b8667b0d0400b8dcb6844d8e06b2027d
+  depends:
+  - __osx >=10.13
   arch: x86_64
   platform: osx
   license: MIT
   license_family: MIT
-  size: 51348
-  timestamp: 1636488394370
+  size: 47258
+  timestamp: 1739260651925
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libffi-3.4.2-h3422bc3_5.tar.bz2
   sha256: 41b3d13efb775e340e4dba549ab5c029611ea6918703096b2eaa9c015c0750ca
   md5: 086914b672be056eb70fd4285b6783b6
@@ -764,62 +833,96 @@ packages:
   license: LGPL-2.1-only
   size: 676469
   timestamp: 1702682458114
-- conda: https://conda.anaconda.org/conda-forge/osx-64/liblapack-3.9.0-28_h236ab99_openblas.conda
-  build_number: 28
-  sha256: 862267d20bd7a248cef3dad1fefe5b31d44503943bd9745de42e8be17c86c806
-  md5: edbfe8906ba99637eebb9ebe675a57d3
-  depends:
-  - libblas 3.9.0 28_h7f60823_openblas
-  constrains:
-  - liblapacke =3.9.0=28*_openblas
-  - libcblas =3.9.0=28*_openblas
-  - blas =2.128=openblas
-  arch: x86_64
-  platform: osx
-  license: BSD-3-Clause
-  license_family: BSD
-  size: 16758
-  timestamp: 1738114383382
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblapack-3.9.0-28_hc9a63f6_openblas.conda
-  build_number: 28
-  sha256: 79c75a02bff20f8b001e6aecfee8d22a51552c3986e7037fca68e5ed071cc213
-  md5: 45f26652530b558c21083ceb7adaf273
-  depends:
-  - libblas 3.9.0 28_h10e41b3_openblas
-  constrains:
-  - blas =2.128=openblas
-  - liblapacke =3.9.0=28*_openblas
-  - libcblas =3.9.0=28*_openblas
-  arch: arm64
-  platform: osx
-  license: BSD-3-Clause
-  license_family: BSD
-  size: 16793
-  timestamp: 1738114407021
-- conda: https://conda.anaconda.org/conda-forge/osx-64/liblzma-5.6.3-hd471939_1.conda
-  sha256: c70639ff3cb034a8e31cb081c907879b6a639bb12b0e090069a68eb69125b10e
-  md5: f9e9205fed9c664421c1c09f0b90ce6d
+- conda: https://conda.anaconda.org/conda-forge/osx-64/liblapack-3.9.0-8_hc2a6a11_netlib.conda
+  build_number: 8
+  sha256: 5786cba2c1cb5cf361d6e6bc3d559d55fe01c2f9f8fe994793df2ce718d6eade
+  md5: 527b66e3362e463a590be09b47f0af3b
   depends:
   - __osx >=10.13
+  - libblas 3.9.0.*
+  - libgfortran 5.*
+  - libgfortran5 >=13.2.0
+  arch: x86_64
+  platform: osx
+  track_features:
+  - blas_netlib blas_netlib_2
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 2630263
+  timestamp: 1731108182477
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblapack-3.9.0-29_h3c9cff3_accelerate.conda
+  build_number: 29
+  sha256: 2dac9d97fbbc3ee14aca5de465b490089bc119c0c115c0ab51c28081fdaa7144
+  md5: 564acf4a56883b1cadf3413f4b80ee54
+  depends:
+  - libblas 3.9.0 29_h504e6c8_accelerate
   constrains:
-  - xz ==5.6.3=*_1
+  - blas =2.129=accelerate
+  - libcblas =3.9.0=29*_accelerate
+  - liblapacke =3.9.0=29*_accelerate
+  arch: arm64
+  platform: osx
+  track_features:
+  - blas_accelerate
+  license: BSD-3-Clause
+  size: 17004
+  timestamp: 1739426297957
+- conda: https://conda.anaconda.org/conda-forge/osx-64/liblapacke-3.9.0-8_hc2a6a11_netlib.conda
+  build_number: 8
+  sha256: f7532d01608dc384d612aa061691905d6816d0079d6cd5c9dfbac9f1be3bb04a
+  md5: 6e1b35409977017efac93b9503ab6e16
+  depends:
+  - __osx >=10.13
+  - libblas 3.9.0.*
+  - libcblas 3.9.0.*
+  - libgfortran 5.*
+  - libgfortran5 >=13.2.0
+  - liblapack 3.9.0.*
+  arch: x86_64
+  platform: osx
+  track_features:
+  - blas_netlib blas_netlib_2
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 364713
+  timestamp: 1731108207011
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblapacke-3.9.0-29_h09be921_accelerate.conda
+  build_number: 29
+  sha256: bfb602cafd128f11bdebcabd431a89c7e46b99232a078ca1f64ba05856be34d4
+  md5: 4fea59f39ff5753888f8e0141c37e8da
+  depends:
+  - libblas 3.9.0 29_h504e6c8_accelerate
+  - libcblas 3.9.0 29_h8d39bcd_accelerate
+  - liblapack 3.9.0 29_h3c9cff3_accelerate
+  constrains:
+  - blas =2.129=accelerate
+  arch: arm64
+  platform: osx
+  track_features:
+  - blas_accelerate
+  license: BSD-3-Clause
+  size: 17021
+  timestamp: 1739426305425
+- conda: https://conda.anaconda.org/conda-forge/osx-64/liblzma-5.6.4-hd471939_0.conda
+  sha256: a895b5b16468a6ed436f022d72ee52a657f9b58214b91fabfab6230e3592a6dd
+  md5: db9d7b0152613f097cdb61ccf9f70ef5
+  depends:
+  - __osx >=10.13
   arch: x86_64
   platform: osx
   license: 0BSD
-  size: 103745
-  timestamp: 1733407504892
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblzma-5.6.3-h39f12f2_1.conda
-  sha256: d863b8257406918ffdc50ae65502f2b2d6cede29404d09a094f59509d6a0aaf1
-  md5: b2553114a7f5e20ccd02378a77d836aa
+  size: 103749
+  timestamp: 1738525448522
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/liblzma-5.6.4-h39f12f2_0.conda
+  sha256: 560c59d3834cc652a84fb45531bd335ad06e271b34ebc216e380a89798fe8e2c
+  md5: e3fd1f8320a100f2b210e690a57cd615
   depends:
   - __osx >=11.0
-  constrains:
-  - xz ==5.6.3=*_1
   arch: arm64
   platform: osx
   license: 0BSD
-  size: 99129
-  timestamp: 1733407496073
+  size: 98945
+  timestamp: 1738525462560
 - conda: https://conda.anaconda.org/conda-forge/osx-64/libmpdec-4.0.0-hfdf4475_0.conda
   sha256: 791be3d30d8e37ec49bcc23eb8f1e1415d911a7c023fa93685f2ea485179e258
   md5: ed625b2e59dff82859c23dd24774156b
@@ -842,38 +945,6 @@ packages:
   license_family: BSD
   size: 69263
   timestamp: 1723817629767
-- conda: https://conda.anaconda.org/conda-forge/osx-64/libopenblas-0.3.28-openmp_hbf64a52_1.conda
-  sha256: cef5856952688ce9303f85f5bc62c99e8c2256b4c679f63afdfb381f222e90c7
-  md5: cd2c572c02a73b88c4d378eb31110e85
-  depends:
-  - __osx >=10.13
-  - libgfortran 5.*
-  - libgfortran5 >=13.2.0
-  - llvm-openmp >=18.1.8
-  constrains:
-  - openblas >=0.3.28,<0.3.29.0a0
-  arch: x86_64
-  platform: osx
-  license: BSD-3-Clause
-  license_family: BSD
-  size: 6165715
-  timestamp: 1730773348340
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libopenblas-0.3.28-openmp_hf332438_1.conda
-  sha256: 62bb669c37a845129096f73d446cdb6bb170e4927f2fea2b661329680dbbc373
-  md5: 40803a48d947c8639da6704e9a44d3ce
-  depends:
-  - __osx >=11.0
-  - libgfortran 5.*
-  - libgfortran5 >=13.2.0
-  - llvm-openmp >=18.1.8
-  constrains:
-  - openblas >=0.3.28,<0.3.29.0a0
-  arch: arm64
-  platform: osx
-  license: BSD-3-Clause
-  license_family: BSD
-  size: 4165774
-  timestamp: 1730772154295
 - conda: https://conda.anaconda.org/conda-forge/osx-64/libpmix-5.0.6-h2a508f7_0.conda
   sha256: 9695c45c110e2766132afd0334b73ac0d9ca81ca6551c632274a01c12486d83d
   md5: 19cecd90ad4c1b40f93fc66fee7f3ac6
@@ -1093,9 +1164,9 @@ packages:
   license: X11 AND BSD-3-Clause
   size: 797030
   timestamp: 1738196177597
-- conda: https://conda.anaconda.org/conda-forge/osx-64/numpy-2.2.2-py313hc518a0f_0.conda
-  sha256: fc9bbc035c76bdf73a2db22210770a9e180aa246dc0c3e7501deb9a732d73e0b
-  md5: 29e4372c6eee3fad119b2914ba595567
+- conda: https://conda.anaconda.org/conda-forge/osx-64/numpy-2.2.3-py313hc518a0f_0.conda
+  sha256: ca2b58aee31320a18c5bd692de6d670a061952d8910333292adc1af05427d96e
+  md5: 00507d7aed9644a2dc5929328b15629f
   depends:
   - __osx >=10.13
   - libblas >=3.9.0,<4.0a0
@@ -1109,12 +1180,11 @@ packages:
   arch: x86_64
   platform: osx
   license: BSD-3-Clause
-  license_family: BSD
-  size: 7700285
-  timestamp: 1737331657943
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.2.2-py313h41a2e72_0.conda
-  sha256: 0e7f27766505a73ceafaf48c2d791e4f1aa197f61456038c9f4ae042b811d5df
-  md5: e5041789d91a22a14205a69faf4ee324
+  size: 7676665
+  timestamp: 1739426056824
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.2.3-py313h41a2e72_0.conda
+  sha256: a60c012a3b87e5e4cb002a41aa164b8f0e6cd8a35d63eadf0b025c259129a580
+  md5: 67d7e7f829d06baf1a53dd27b0e8b01d
   depends:
   - __osx >=11.0
   - libblas >=3.9.0,<4.0a0
@@ -1129,9 +1199,8 @@ packages:
   arch: arm64
   platform: osx
   license: BSD-3-Clause
-  license_family: BSD
-  size: 6517665
-  timestamp: 1737331575921
+  size: 6533531
+  timestamp: 1739426241828
 - conda: https://conda.anaconda.org/conda-forge/osx-64/openmpi-5.0.6-h3ed5c4a_102.conda
   sha256: e215c1f41961d3a62ee04b027b9eef8667b2f489609a1e0f84e80f2bfe9db89a
   md5: 1ab910c15a3742268d0d2b49f1e3735e
@@ -1178,9 +1247,9 @@ packages:
   license_family: BSD
   size: 2349538
   timestamp: 1737870479714
-- conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.4.0-hc426f3f_1.conda
-  sha256: 879a960d586cf8a64131ac0c060ef575cfb8aa9f6813093cba92042a86ee867c
-  md5: eaae23dbfc9ec84775097898526c72ea
+- conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.4.1-hc426f3f_0.conda
+  sha256: 505a46671dab5d66df8e684f99a9ae735a607816b12810b572d63caa512224df
+  md5: a7d63f8e7ab23f71327ea6d27e2d5eae
   depends:
   - __osx >=10.13
   - ca-certificates
@@ -1188,11 +1257,11 @@ packages:
   platform: osx
   license: Apache-2.0
   license_family: Apache
-  size: 2590210
-  timestamp: 1736086530077
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.4.0-h81ee809_1.conda
-  sha256: 97772762abc70b3a537683ca9fc3ff3d6099eb64e4aba3b9c99e6fce48422d21
-  md5: 22f971393637480bda8c679f374d8861
+  size: 2591479
+  timestamp: 1739302628009
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.4.1-h81ee809_0.conda
+  sha256: 4f8e2389e1b711b44182a075516d02c80fa7a3a7e25a71ff1b5ace9eae57a17a
+  md5: 75f9f0c7b1740017e2db83a53ab9a28e
   depends:
   - __osx >=11.0
   - ca-certificates
@@ -1200,8 +1269,8 @@ packages:
   platform: osx
   license: Apache-2.0
   license_family: Apache
-  size: 2936415
-  timestamp: 1736086108693
+  size: 2934522
+  timestamp: 1739301896733
 - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-24.2-pyhd8ed1ab_2.conda
   sha256: da157b19bcd398b9804c5c52fc000fcb8ab0525bdb9c70f95beaa0bb42f85af1
   md5: 3bfed7e6228ebf2f7b9eaa47f1b4e2aa
