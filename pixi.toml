@@ -14,12 +14,6 @@ pytest = ">=8.3.3"
 pytest-asyncio-cooperative = ">=0.37.0"
 foamlib = ">=0.6.6"
 
-[target.osx-64.dependencies]
-blas = { version = ">=2.128,<3", build = "blis" }
-
-[target.osx-arm64.dependencies]
-blas = { version = ">=2.128,<3", build = "accelerate" }
-
 [feature.openfoam.dependencies]
 llvm-openmp = ">=19.1.1"
 openmpi = ">=5.0.5"
@@ -27,6 +21,12 @@ fftw = ">=3.3.10"
 scotch = ">=7.0.5"
 cgal-cpp = ">=5.6.1,<6"
 bash = ">=5.2.21"
+
+[feature.openfoam.target.osx-64.dependencies]
+blas = { version = ">=2.128,<3", build = "blis" }
+
+[feature.openfoam.target.osx-arm64.dependencies]
+blas = { version = ">=2.128,<3", build = "accelerate" }
 
 [environments]
 openfoam = {features = ["openfoam"], no-default-feature = true}
