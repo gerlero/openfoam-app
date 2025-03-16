@@ -42,7 +42,6 @@ volume_id_file = $(volume)/.vol_id
 
 app_contents = \
 	build/$(APP_NAME).app/Contents/Info.plist \
-	build/$(APP_NAME).app/Contents/MacOS/launch \
 	build/$(APP_NAME).app/Contents/Resources/etc/openfoam \
 	build/$(APP_NAME).app/Contents/Resources/etc/bashrc \
 	build/$(APP_NAME).app/Contents/Resources/LICENSE \
@@ -58,21 +57,26 @@ build/$(DIST_NAME).zip: build/$(APP_NAME).app
 	shasum -a 256 build/$(DIST_NAME).zip
 
 build/$(APP_NAME).app: $(app_contents)
+	xattr -c -r $@
+	codesign --force --deep --sign - $@
 
-build/$(APP_NAME).app/Contents/Info.plist: Contents/Info.plist | build/$(APP_NAME).app/Contents/MacOS/launch build/$(APP_NAME).app/Contents/Resources/icon.icns
-	mkdir -p build/$(APP_NAME).app/Contents
-	cp Contents/Info.plist build/$(APP_NAME).app/Contents/
-	sed -i '' "s|{{app_version}}|$(APP_VERSION)|g" build/$(APP_NAME).app/Contents/Info.plist
-	sed -i '' "s|{{deps_kind}}|$(DEPS_KIND)|g" build/$(APP_NAME).app/Contents/Info.plist
-	sed -i '' "s|{{arch}}|$(shell uname -m)|g" build/$(APP_NAME).app/Contents/Info.plist
+build/$(APP_NAME).app/Contents/Info.plist:
+	rm -rf build/$(APP_NAME).app
+	mkdir -p build
+	osacompile -o build/$(APP_NAME).app launch.applescript
+	plutil -replace CFBundleDevelopmentRegion -string "en" $@
+	plutil -insert CFBundleVersion -string "$(APP_VERSION)-$(DEPENDENCIES_KIND)-$(shell uname -m)" $@
+	plutil -insert CFBundleShortVersionString -string "$(APP_VERSION)" $@
+	plutil -replace CFBundleIconFile -string "icon.icns" $@
+	rm build/$(APP_NAME).app/Contents/Resources/applet.icns
 
-build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Resources/volume
+build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Info.plist
 	mkdir -p build/$(APP_NAME).app/Contents/Resources/etc
 	cp Contents/Resources/etc/openfoam build/$(APP_NAME).app/Contents/Resources/etc/
 	sed -i '' "s|{{app_name}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 	sed -i '' "s|{{app_homepage}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 
-build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg | build/$(APP_NAME).app/Contents/Info.plist
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/
 	[ ! -d $(volume) ] || hdiutil detach $(volume)
@@ -82,7 +86,7 @@ build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build
 	sed -i '' "s|{{volume_id}}|$$(cat $(volume_id_file))|g" build/$(APP_NAME).app/Contents/Resources/volume
 	hdiutil detach $(volume)
 
-build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
+build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE | build/$(APP_NAME).app/Contents/Info.plist
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp LICENSE build/$(APP_NAME).app/Contents/Resources/
 
