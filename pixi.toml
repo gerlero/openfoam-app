@@ -22,5 +22,11 @@ scotch = ">=7.0.5"
 cgal-cpp = ">=5.6.1,<6"
 bash = ">=5.2.21"
 
+[feature.openfoam.target.osx-64.dependencies]
+blas = { version = ">=2.128,<3", build = "blis" }
+
+[feature.openfoam.target.osx-arm64.dependencies]
+blas = { version = ">=2.128,<3", build = "accelerate" }
+
 [environments]
 openfoam = {features = ["openfoam"], no-default-feature = true}
