@@ -135,7 +135,7 @@ If you need an older version of OpenFOAM, you can:
 * Use an older release of **OpenFOAM.app** (note that these apps are no longer updated):
 
     * [**OpenFOAM-v2312.app** 2.0.0](https://github.com/gerlero/openfoam-app/releases/tag/v2.0.0)
-        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2306`
+        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2312`
         * [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/download/v2.0.0/openfoam2312-app-arm64.zip): tested with macOS 14 Sonoma and macOS 15 Sequoia
         * [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/download/v2.0.0/openfoam2312-app-x86_64.zip): tested with macOS 12 Monterey and macOS 13 Ventura
 
