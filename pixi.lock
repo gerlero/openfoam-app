@@ -33,6 +33,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/openssl-3.5.0-hc426f3f_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-25.0-pyh29332c3_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/pixi-pack-0.7.1-hffa81eb_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/pixi-unpack-0.7.1-hffa81eb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.6.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pygments-2.19.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.2.3-pyhd8ed1ab_1.conda
@@ -76,6 +77,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.5.0-h81ee809_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-25.0-pyh29332c3_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-pack-0.7.1-h2b2570c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-unpack-0.7.1-h2b2570c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.6.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pygments-2.19.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.2.3-pyhd8ed1ab_1.conda
@@ -1207,6 +1209,7 @@ packages:
   constrains:
   - numpy-base <0a0
   license: BSD-3-Clause
+  license_family: BSD
   size: 7602309
   timestamp: 1751342608687
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.3.1-py313h41a2e72_0.conda
@@ -1224,6 +1227,7 @@ packages:
   constrains:
   - numpy-base <0a0
   license: BSD-3-Clause
+  license_family: BSD
   size: 6567388
   timestamp: 1751342678109
 - conda: https://conda.anaconda.org/conda-forge/osx-64/openmpi-5.0.8-h442dfbe_100.conda
@@ -1309,6 +1313,7 @@ packages:
   constrains:
   - __osx >=10.13
   license: BSD-3-Clause
+  license_family: BSD
   size: 4055006
   timestamp: 1751015348578
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-pack-0.7.1-h2b2570c_0.conda
@@ -1320,8 +1325,33 @@ packages:
   constrains:
   - __osx >=11.0
   license: BSD-3-Clause
+  license_family: BSD
   size: 4091428
   timestamp: 1751015410632
+- conda: https://conda.anaconda.org/conda-forge/osx-64/pixi-unpack-0.7.1-hffa81eb_0.conda
+  sha256: 3b453bd5f34d3f47fdb27b0d05feb2143a35cdb6bf3b65d7c586bbe9d0f2dc27
+  md5: 80906e99a9d2d89118fec2146810ee45
+  depends:
+  - __osx >=10.13
+  - openssl >=3.5.0,<4.0a0
+  constrains:
+  - __osx >=10.13
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 3905794
+  timestamp: 1751015348578
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/pixi-unpack-0.7.1-h2b2570c_0.conda
+  sha256: d68bd1ba30132e1b75b4bbe6a9686af6cfb0d9c81995cabedeccac9a6ea86edd
+  md5: 3de0b54adae5fa0d45f159014cfd6dac
+  depends:
+  - __osx >=11.0
+  - openssl >=3.5.0,<4.0a0
+  constrains:
+  - __osx >=11.0
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 3887860
+  timestamp: 1751015410631
 - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.6.0-pyhd8ed1ab_0.conda
   sha256: a8eb555eef5063bbb7ba06a379fa7ea714f57d9741fe0efdb9442dbbc2cccbcc
   md5: 7da7ccd349dbf6487a7778579d2bb971
