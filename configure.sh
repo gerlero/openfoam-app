@@ -15,6 +15,18 @@ bin/tools/foamConfigurePaths \
     -metis-path '$WM_PROJECT_DIR/env' \
     -scotch-path '$WM_PROJECT_DIR/env'
 
+if [ $(bin/foamEtcFile -show-api) -lt 2506 ]; then
+    sed -i '' 's|# export GMP_ARCH_PATH=...|export GMP_ARCH_PATH="$WM_PROJECT_DIR/env"|' etc/config.sh/CGAL
+    sed -i '' 's|# setenv GMP_ARCH_PATH ...|setenv GMP_ARCH_PATH "$WM_PROJECT_DIR/env"|' etc/config.csh/CGAL
+
+    sed -i '' 's|# export MPFR_ARCH_PATH=...|export MPFR_ARCH_PATH="$WM_PROJECT_DIR/env"|' etc/config.sh/CGAL
+    sed -i '' 's|# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH "$WM_PROJECT_DIR/env"|' etc/config.csh/CGAL
+else
+    bin/tools/foamConfigurePaths \
+        -gmp-path '$WM_PROJECT_DIR/env' \
+        -mpfr-path '$WM_PROJECT_DIR/env'
+fi
+
 
 # Set path to the MPI install
 echo 'export FOAM_MPI=openmpi' >> etc/config.sh/prefs.openmpi
@@ -22,14 +34,6 @@ echo 'setenv FOAM_MPI openmpi' >> etc/config.csh/prefs.openmpi
 
 echo 'export MPI_ARCH_PATH="$WM_PROJECT_DIR/env"' >> etc/config.sh/prefs.openmpi
 echo 'setenv MPI_ARCH_PATH "$WM_PROJECT_DIR/env"' >> etc/config.csh/prefs.openmpi
-
-
-# Set paths of GMP and MPFR (dependencies of CGAL)
-sed -i '' 's|# export GMP_ARCH_PATH=...|export GMP_ARCH_PATH="$WM_PROJECT_DIR/env"|' etc/config.sh/CGAL
-sed -i '' 's|# setenv GMP_ARCH_PATH ...|setenv GMP_ARCH_PATH "$WM_PROJECT_DIR/env"|' etc/config.csh/CGAL
-
-sed -i '' 's|# export MPFR_ARCH_PATH=...|export MPFR_ARCH_PATH="$WM_PROJECT_DIR/env"|' etc/config.sh/CGAL
-sed -i '' 's|# setenv MPFR_ARCH_PATH ...|setenv MPFR_ARCH_PATH "$WM_PROJECT_DIR/env"|' etc/config.csh/CGAL
 
 
 # OpenMP support
@@ -63,7 +67,11 @@ echo 'setenv INFOPATH "$WM_PROJECT_DIR/env/share/info`[ ${?INFOPATH} == 1 ] && e
 
 
 # Set RPATH to find bundled libraries
-echo 'PROJECT_RPATH += -rpath @loader_path/../../../env/lib' >> wmake/rules/darwin64Clang/rpath
+if [ $(bin/foamEtcFile -show-api) -lt 2506 ]; then
+    echo 'PROJECT_RPATH += -rpath @loader_path/../../../env/lib' >> wmake/rules/darwin64Clang/rpath
+else
+    echo 'PROJECT_RPATH += -rpath @loader_path/../../../env/lib' >> wmake/rules/darwin64/rpath
+fi
 
 
 # Disable floating point exception trapping when on Apple silicon
