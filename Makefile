@@ -140,7 +140,7 @@ else ifdef OPENFOAM_GIT_BRANCH
 	git -C $(volume) pull origin $(OPENFOAM_GIT_BRANCH)
 	git -C $(volume) submodule update --init --recursive
 endif
-	pixi-pack unpack --output-directory $(volume) environment.tar
+	pixi-unpack --output-directory $(volume) environment.tar
 	rm -f $(volume)/activate.sh
 	cd $(volume) && "$(CURDIR)/configure.sh"
 	cd $(volume) \
@@ -151,7 +151,7 @@ endif
 	hdiutil detach $(volume)
 
 environment.tar: pixi.lock
-	pixi-pack pack --environment openfoam
+	pixi-pack --environment openfoam
 
 $(openfoam_tarball): | $(openfoam_tarball).sha256
 	curl -L -o $(openfoam_tarball) $(OPENFOAM_TARBALL_URL)
