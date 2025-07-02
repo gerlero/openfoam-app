@@ -2,6 +2,9 @@
 
 # **OpenFOAM.app**: OpenFOAM for macOS
 
+| 🎉  [OpenFOAM v2506 is now available!](#-install) |
+| ---- |
+
 **Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
@@ -29,6 +32,16 @@
 
 * Or, choose the OpenFOAM version(s) you want:
 
+    * **OpenFOAM v2506**
+
+        * Install with [Homebrew](https://brew.sh):
+
+            ```sh
+            brew install --no-quarantine gerlero/openfoam/openfoam@2506
+            ```
+
+        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2506-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2506-app-x86_64.zip)
+
     * **OpenFOAM v2412**
 
         * Install with [Homebrew](https://brew.sh):
@@ -38,16 +51,6 @@
             ```
 
         * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2412-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2412-app-x86_64.zip)
-
-    * **OpenFOAM v2406**
-
-        * Install with [Homebrew](https://brew.sh):
-
-            ```sh
-            brew install --no-quarantine gerlero/openfoam/openfoam@2406
-            ```
-
-        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2406-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2406-app-x86_64.zip)
 
 * _Need an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam)_
 
@@ -68,7 +71,7 @@ openfoam
 If you did not install with Homebrew, you can get the same by invoking the following command (replace the path and app name as needed):
 
 ```sh
-/Applications/OpenFOAM-v2412.app/Contents/Resources/etc/openfoam
+/Applications/OpenFOAM-v2506.app/Contents/Resources/etc/openfoam
 ```
 
 
@@ -133,6 +136,11 @@ Whatever alternative you choose, please avoid opening an issue if something does
 If you need an older version of OpenFOAM, you can:
 
 * Use an older release of **OpenFOAM.app** (note that these apps are no longer updated):
+
+    * [**OpenFOAM-v2406.app** 2.1.0](https://github.com/gerlero/openfoam-app/releases/tag/v2.1.0)
+        * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2406`
+        * [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/download/v2.1.0/openfoam22406-app-arm64.zip): tested with macOS 14 Sonoma and macOS 15 Sequoia
+        * [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/download/v2.1.0/openfoam2406-app-x86_64.zip): tested with macOS 13 Ventura
 
     * [**OpenFOAM-v2312.app** 2.0.0](https://github.com/gerlero/openfoam-app/releases/tag/v2.0.0)
         * Homebrew: `brew install --no-quarantine gerlero/openfoam/openfoam@2312`
