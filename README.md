@@ -49,7 +49,7 @@
 
         * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2412-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2412-app-x86_64.zip)
 
-* _Need an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam)_
+    * _Need an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam)_
 
 ## 🧑‍💻 Use
 
@@ -74,17 +74,19 @@ If you did not install with Homebrew, you can get the same by invoking the follo
 
 ## 🙋 Q&A
 
-### I also need ParaView. How can I get that?
+<details><summary><b>I also need ParaView. How can I get it?</b></summary>
 
-Get the native macOS version of ParaView from the [official site](https://www.paraview.org/download/) or [install with Homebrew](https://formulae.brew.sh/cask/paraview) (prefer the latter if you'd like to use OpenFOAM's `paraFoam` command).
+Get the native macOS version of ParaView from the [official site](https://www.paraview.org/download/) or [install it with Homebrew](https://formulae.brew.sh/cask/paraview) (prefer the latter if you'd like to use OpenFOAM's `paraFoam` command).
+</details>
 
-### Why do I see a dialog that says the app "cannot be opened because the developer cannot be verified"?
+<details><summary><b>Why do I see a dialog that says the app "cannot be opened because the developer cannot be verified"?</b></summary>
 
-This message appears because the app is not notarized by Apple. You can tell macOS to allow the app to run by [right-clicking on the app in a Finder window and selecting Open from the context menu](https://docs.brew.sh/FAQ#why-cant-i-open-a-mac-app-from-an-unidentified-developer). You only need to do this for the first launch of the app.
+This message appears because the app is not notarized by Apple. You can [tell macOS to allow the app to run](https://support.apple.com/en-us/102445#openanyway). You only need to do this for the first launch of the app.
    
 If you're installing with Homebrew, the suggested ``--no-quarantine`` option does this for you on install.
+</details>
 
-### Can I compile and install my own (or third-party) solvers?
+<details><summary><b>Can I compile and install my own (or third-party) solvers?</b></summary>
 
 Yes. Just a few things to keep in mind:
 
@@ -92,21 +94,25 @@ Yes. Just a few things to keep in mind:
 
 * The compiler used on macOS is Apple's Clang, which is not the same as the GCC compiler used by default on Linux. If your code was never tested with Clang before, some lines might require a little tweaking ([this is the most common fix that is needed](https://github.com/gerlero/openfoam-app/issues/87)) to be able to build across both compilers.
 
-* The default macOS filesystem is case-insensitive, which differs from Linux. See below for what this means.
+* The default macOS filesystem is case-insensitive, which differs from Linux. See the next question for what this means.
 
-### What's the deal with case sensitivity?
+</details>
+
+<details><summary><b>What's the deal with case sensitivity?</b></summary>
 
 [OpenFOAM is notably developed with a case-sensitive filesystem in mind](https://develop.openfoam.com/Development/openfoam/-/issues/1602). This is a non-issue on Linux systems, which conventionally use case-sensitive filesystems. In practice, a case-sensitive filesystem means that two different files named `phi` and `Phi` in the same directory can exist just fine. In contrast, a case-_insensitive_ filesystem, as is the default on macOS, will only allow one of those files to exist in the same folder.
 
 This project gets around potential case-sensitivity issues by putting OpenFOAM itself inside a (read-only) disk image with its own case-sensitive filesystem, which is mounted as a virtual volume during use. This is enough to accommodate OpenFOAM, and for most purposes you can just use your regular filesystem for everything else (e.g. to store OpenFOAM cases).
 
 However, there are a few circumstances where this is not sufficient (e.g. solvers/cases using case-sensitive field names). If you fall under one of these, consider [creating a case-sensitive disk image with the macOS Disk Utility](https://support.apple.com/en-gb/guide/disk-utility/dskutl11888/mac) for the case-sensitive stuff.
+</details>
 
-### Why do I get a dialog prompting me to install the "command line developer tools"?
+<details><summary><b>Why do I get a dialog prompting me to install the "command line developer tools"?</b></summary>
 
 You are attempting something that requires development tools (e.g. a compiler), and you do not have such tools installed yet. Just follow the steps to install the necessary tools from Apple and you should be good to go.
+</details>
 
-### I have an older version of macOS and cannot upgrade to a supported version. What can I do?
+<details><summary><b>I have an older version of macOS and cannot upgrade to a supported version. What can I do?</b></summary>
 
 If you cannot upgrade to a newer macOS, you still have a few alternatives:
 
@@ -127,8 +133,9 @@ If you cannot upgrade to a newer macOS, you still have a few alternatives:
 * Or, you can try [building the app from source](#-building-from-source) on the system where you'll be using it
 
 Whatever alternative you choose, please avoid opening an issue if something doesn't work as expected when running an older version of macOS.
+</details>
 
-### Can I get an older version of OpenFOAM?
+<details><summary><b>Can I get an older version of OpenFOAM?</b></summary>
 
 If you need an older version of OpenFOAM, you can:
 
@@ -167,19 +174,21 @@ If you need an older version of OpenFOAM, you can:
 * Or, you can try your luck at [building the app from source](#-building-from-source) with the version of OpenFOAM you need
 
 Please avoid opening an issue if something doesn't work as expected when using an older version of OpenFOAM.
+</details>
 
-### Can I get an app for a version from the OpenFOAM Foundation ([openfoam.org](openfoam.org), e.g. OpenFOAM 10)?
+<details><summary><b>Can I get an app for a version from the OpenFOAM Foundation ([openfoam.org](https://openfoam.org), e.g. OpenFOAM 13)?</b></summary>
 
 No. The OpenFOAM Foundation's distribution [does not support native compilation on macOS](https://github.com/gerlero/openfoam-app/issues/14#issuecomment-1049843002).
+</details>
 
-### How do I uninstall the app?
+<details><summary><b>How do I uninstall the app?</b></summary>
 
 If you installed with Homebrew, uninstall with ``brew uninstall``. If you downloaded manually, delete the app.
-
+</details>
 
 ## 🔨 Building from source
 
-If you need to, building an **OpenFOAM.app** entirely from source is easy as cloning this repo and running `make`, i.e.:
+If you need to, building an **OpenFOAM.app** entirely from source is as easy as running:
 
 ```sh
 git clone https://github.com/gerlero/openfoam-app.git
