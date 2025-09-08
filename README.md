@@ -176,7 +176,7 @@ If you need an older version of OpenFOAM, you can:
 Please avoid opening an issue if something doesn't work as expected when using an older version of OpenFOAM.
 </details>
 
-<details><summary><b>Can I get an app for a version from the OpenFOAM Foundation ([openfoam.org](openfoam.org), e.g. OpenFOAM 13)?</b></summary>
+<details><summary><b>Can I get an app for a version from the OpenFOAM Foundation ([openfoam.org](https://openfoam.org), e.g. OpenFOAM 13)?</b></summary>
 
 No. The OpenFOAM Foundation's distribution [does not support native compilation on macOS](https://github.com/gerlero/openfoam-app/issues/14#issuecomment-1049843002).
 </details>
