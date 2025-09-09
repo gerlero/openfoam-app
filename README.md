@@ -16,7 +16,7 @@
 * A recent version of macOS
     * Apple silicon: macOS 14 Sonoma or later
     * Intel: macOS 13 Ventura or later
-    * _Running an older version of macOS? [See here](#i-have-an-older-version-of-macos-and-cannot-upgrade-to-a-supported-version-what-can-i-do)_
+    * _Running an older version of macOS? [See here](#-qa)_
 
 
 ## 📦 Install
@@ -49,7 +49,7 @@
 
         * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2412-app-arm64.zip) | [⬇️ Intel](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2412-app-x86_64.zip)
 
-    * _Need an older version of OpenFOAM? [See here](#can-i-get-an-older-version-of-openfoam)_
+    * _Need an older version of OpenFOAM? [See here](#-qa)_
 
 ## 🧑‍💻 Use
 
@@ -176,7 +176,7 @@ If you need an older version of OpenFOAM, you can:
 Please avoid opening an issue if something doesn't work as expected when using an older version of OpenFOAM.
 </details>
 
-<details><summary><b>Can I get an app for a version from the OpenFOAM Foundation ([openfoam.org](https://openfoam.org), e.g. OpenFOAM 13)?</b></summary>
+<details><summary><b>Can I get an app for a version from the OpenFOAM Foundation (openfoam.org, e.g. OpenFOAM 13)?</b></summary>
 
 No. The OpenFOAM Foundation's distribution [does not support native compilation on macOS](https://github.com/gerlero/openfoam-app/issues/14#issuecomment-1049843002).
 </details>
