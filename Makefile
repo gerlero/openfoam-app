@@ -145,7 +145,7 @@ build/icon.iconset/icon_32x32.png: images/icon.png
 	magick images/icon.png -resize 32x32 build/icon.iconset/icon_32x32.png
 
 build/icon.iconset/icon_16x16@2x.png: build/icon.iconset/icon_32x32.png
-	cp build/icon.iconset/icon_64x64.png build/icon.iconset/icon_32x32@2x.png
+	cp build/icon.iconset/icon_32x32.png build/icon.iconset/icon_16x16@2x.png
 
 build/icon.iconset/icon_16x16.png: images/icon.png
 	mkdir -p build/icon.iconset
