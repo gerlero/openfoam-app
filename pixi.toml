@@ -11,6 +11,7 @@ macos = "11"
 [dependencies]
 pixi-pack = ">=0.7.0"
 pixi-unpack = ">=0.7.0"
+imagemagick = ">=7.1.2_3,<8"
 pytest = ">=8.3.3"
 pytest-asyncio-cooperative = ">=0.37.0"
 foamlib = ">=0.6.6"

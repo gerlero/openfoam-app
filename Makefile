@@ -70,13 +70,13 @@ build/$(APP_NAME).app/Contents/Info.plist:
 	plutil -replace CFBundleIconFile -string "icon.icns" $@
 	rm build/$(APP_NAME).app/Contents/Resources/applet.icns
 
-build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam | build/$(APP_NAME).app/Contents/Info.plist
+build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/openfoam
 	mkdir -p build/$(APP_NAME).app/Contents/Resources/etc
 	cp Contents/Resources/etc/openfoam build/$(APP_NAME).app/Contents/Resources/etc/
 	sed -i '' "s|{{app_name}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 	sed -i '' "s|{{app_homepage}}|$(APP_HOMEPAGE)|g" build/$(APP_NAME).app/Contents/Resources/etc/openfoam
 
-build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg | build/$(APP_NAME).app/Contents/Info.plist
+build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/
 	[ ! -d $(volume) ] || hdiutil detach $(volume)
@@ -86,7 +86,72 @@ build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build
 	sed -i '' "s|{{volume_id}}|$$(cat $(volume_id_file))|g" build/$(APP_NAME).app/Contents/Resources/volume
 	hdiutil detach $(volume)
 
-build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE | build/$(APP_NAME).app/Contents/Info.plist
+icon_set_files = \
+	build/icon.iconset/icon_1024x1024.png \
+	build/icon.iconset/icon_512x512@2x.png \
+	build/icon.iconset/icon_512x512.png \
+	build/icon.iconset/icon_256x256@2x.png \
+	build/icon.iconset/icon_256x256.png \
+	build/icon.iconset/icon_128x128@2x.png \
+	build/icon.iconset/icon_128x128.png \
+	build/icon.iconset/icon_64x64@2x.png \
+	build/icon.iconset/icon_64x64.png \
+	build/icon.iconset/icon_32x32@2x.png \
+	build/icon.iconset/icon_32x32.png \
+	build/icon.iconset/icon_16x16@2x.png \
+	build/icon.iconset/icon_16x16.png
+
+build/$(APP_NAME).app/Contents/Resources/icon.icns: $(icon_set_files)
+	mkdir -p build/$(APP_NAME).app/Contents/Resources
+	iconutil --convert icns --output build/$(APP_NAME).app/Contents/Resources/icon.icns build/icon.iconset
+
+build/icon.iconset/icon_1024x1024.png: images/icon.png
+	mkdir -p build/icon.iconset
+	cp images/icon.png build/icon.iconset/icon_1024x1024.png
+
+build/icon.iconset/icon_512x512@2x.png: build/icon.iconset/icon_1024x1024.png
+	cp build/icon.iconset/icon_1024x1024.png build/icon.iconset/icon_512x512@2x.png
+
+build/icon.iconset/icon_512x512.png: images/icon.png
+	mkdir -p build/icon.iconset
+	magick images/icon.png -resize 512x512 build/icon.iconset/icon_512x512.png
+
+build/icon.iconset/icon_256x256@2x.png: build/icon.iconset/icon_512x512.png
+	cp build/icon.iconset/icon_512x512.png build/icon.iconset/icon_256x256@2x.png
+
+build/icon.iconset/icon_256x256.png: images/icon.png
+	mkdir -p build/icon.iconset
+	magick images/icon.png -resize 256x256 build/icon.iconset/icon_256x256.png
+
+build/icon.iconset/icon_128x128@2x.png: build/icon.iconset/icon_256x256.png
+	cp build/icon.iconset/icon_256x256.png build/icon.iconset/icon_128x128@2x.png
+
+build/icon.iconset/icon_128x128.png: images/icon.png
+	mkdir -p build/icon.iconset
+	magick images/icon.png -resize 128x128 build/icon.iconset/icon_128x128.png
+
+build/icon.iconset/icon_64x64@2x.png: build/icon.iconset/icon_128x128.png
+	cp build/icon.iconset/icon_128x128.png build/icon.iconset/icon_64x64@2x.png
+
+build/icon.iconset/icon_64x64.png: images/icon.png
+	mkdir -p build/icon.iconset
+	magick images/icon.png -resize 64x64 build/icon.iconset/icon_64x64.png
+
+build/icon.iconset/icon_32x32@2x.png: build/icon.iconset/icon_64x64.png
+	cp build/icon.iconset/icon_64x64.png build/icon.iconset/icon_32x32@2x.png
+
+build/icon.iconset/icon_32x32.png: images/icon.png
+	mkdir -p build/icon.iconset
+	magick images/icon.png -resize 32x32 build/icon.iconset/icon_32x32.png
+
+build/icon.iconset/icon_16x16@2x.png: build/icon.iconset/icon_32x32.png
+	cp build/icon.iconset/icon_32x32.png build/icon.iconset/icon_16x16@2x.png
+
+build/icon.iconset/icon_16x16.png: images/icon.png
+	mkdir -p build/icon.iconset
+	magick images/icon.png -resize 16x16 build/icon.iconset/icon_16x16.png
+
+build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp LICENSE build/$(APP_NAME).app/Contents/Resources/
 
@@ -94,13 +159,13 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	mkdir -p $(@D)
 	cp -a $< $@
 
-build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle Contents/Resources/icon.icns
+build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns
 	[ ! -d $(volume) ] || hdiutil detach $(volume)
 	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
 		-shadow
-	cp Contents/Resources/icon.icns $(volume)/.VolumeIcon.icns
+	cp build/$(APP_NAME).app/Contents/Resources/icon.icns $(volume)/.VolumeIcon.icns
 	SetFile -c icnC $(volume)/.VolumeIcon.icns
 	SetFile -a C $(volume)
 	uuidgen > $(volume_id_file)
@@ -184,5 +249,5 @@ uninstall:
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
-.SECONDARY: $(openfoam_tarball) environment.tar
+.SECONDARY: $(openfoam_tarball) environment.tar $(icon_set_files)
 .DELETE_ON_ERROR:
