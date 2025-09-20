@@ -33,10 +33,9 @@ on:
         required: true
         description: Build using this macOS image
         options:
+          - macos-15
+          - macos-15-intel
           - macos-14
-          - macos-13
-          - macos-12
-          - macos-11
       openfoam-version:
         type: string
         default: ''
@@ -109,11 +108,11 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [macos-13, macos-14, macos-15]
+        os: [macos-15, macos-15-intel, macos-14]
         exclude:
-          - os: ${{ inputs.build-os == 'macos-14' && 'macos-13' || ''}}
-          - os: ${{ inputs.build-os != 'macos-14' && 'macos-14' || ''}}
-          - os: ${{ inputs.build-os != 'macos-14' && 'macos-15' || ''}}
+          - os: ${{ inputs.build-os != 'macos-15-intel' && 'macos-15-intel' || ''}}
+          - os: ${{ inputs.build-os == 'macos-15-intel' && 'macos-14' || ''}}
+          - os: ${{ inputs.build-os == 'macos-15-intel' && 'macos-15' || ''}}
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
