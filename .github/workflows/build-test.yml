@@ -73,7 +73,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.9.0
+        uses: prefix-dev/setup-pixi@v0.9.1
       - name: Prepare caching
         run: |
           pixi run make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
@@ -119,7 +119,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.9.0
+        uses: prefix-dev/setup-pixi@v0.9.1
       - name: Download app artifact
         uses: actions/download-artifact@v5
         with:
