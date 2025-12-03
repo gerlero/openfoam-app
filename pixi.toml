@@ -1,4 +1,4 @@
-[project]
+[workspace]
 authors = ["Gabriel S. Gerlero <ggerlero@cimec.unl.edu.ar>"]
 channels = ["conda-forge"]
 description = "Native OpenFOAM for macOS"
