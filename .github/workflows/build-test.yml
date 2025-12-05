@@ -3,7 +3,7 @@ name: Build and test
 on:
   workflow_call:
     inputs:
-      arch:
+      build-os:
         type: string
         required: true
       openfoam-version:
@@ -68,27 +68,25 @@ env:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: ${{ inputs.build-os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Set up Pixi
-        run: |
-          curl -fsSL https://pixi.sh/install.sh | arch -${{ inputs.arch }} sh
-          echo ~/.pixi/bin >> "$GITHUB_PATH"
+        uses: prefix-dev/setup-pixi@v0.9.3
       - name: Prepare caching
         run: |
-          arch -${{ inputs.arch }} pixi run make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
+          pixi run make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
       - name: Restore cached build
         id: cache
         uses: actions/cache/restore@v4
         with:
           path: build/*.sparsebundle
-          key: build-${{ env.OPENFOAM }}-${{ inputs.arch }}-${{ hashFiles('make_build.txt', 'pixi.lock', 'configure.sh') }}
+          key: build-${{ env.OPENFOAM }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'pixi.lock', 'configure.sh') }}
       - name: Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          arch -${{ inputs.arch }} pixi run make build ${{ env.MAKE_VARS }}
+          pixi run make build ${{ env.MAKE_VARS }}
       - name: Save build to cache
         if: steps.cache.outputs.cache-hit != 'true' && inputs.cache-build
         uses: actions/cache/save@v4
@@ -98,11 +96,11 @@ jobs:
       - name: Make app
         run: |
           touch -c build/*.sparsebundle
-          arch -${{ inputs.arch }} pixi run make zip ${{ env.MAKE_VARS }}
+          pixi run make zip ${{ env.MAKE_VARS }}
       - name: Upload app artifact
         uses: actions/upload-artifact@v5
         with:
-          name: app-${{ env.OPENFOAM }}-${{ inputs.arch }}
+          name: app-${{ env.OPENFOAM }}-${{ runner.arch }}
           path: build/*-app-*.zip
           if-no-files-found: error
 
@@ -110,22 +108,22 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [macos-15, macos-14, macos-15-intel]
+        os: [macos-15, macos-15-intel, macos-14]
         exclude:
-          - os: ${{ inputs.arch == 'arm64' && 'macos-15-intel' || ''}}
+          - os: ${{ inputs.build-os != 'macos-15-intel' && 'macos-15-intel' || ''}}
+          - os: ${{ inputs.build-os == 'macos-15-intel' && 'macos-14' || ''}}
+          - os: ${{ inputs.build-os == 'macos-15-intel' && 'macos-15' || ''}}
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Set up Pixi
-        run: |
-          curl -fsSL https://pixi.sh/install.sh | arch -${{ inputs.arch }} sh
-          echo ~/.pixi/bin >> "$GITHUB_PATH"
+        uses: prefix-dev/setup-pixi@v0.9.3
       - name: Download app artifact
         uses: actions/download-artifact@v6
         with:
-          name: app-${{ env.OPENFOAM }}-${{ inputs.arch }}
+          name: app-${{ env.OPENFOAM }}-${{ runner.arch }}
           path: build
       - name: Unzip app
         run: |
@@ -133,6 +131,6 @@ jobs:
         working-directory: build
       - name: Test
         run: |
-          arch -${{ inputs.arch }} pixi run make test ${{ env.MAKE_VARS }}
+          pixi run make test ${{ env.MAKE_VARS }}
         env:
           PRTE_MCA_rmaps_default_mapping_policy: ':oversubscribe'
