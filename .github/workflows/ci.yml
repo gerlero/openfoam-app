@@ -24,12 +24,10 @@ jobs:
   ci:
     strategy:
       matrix:
-        build-os: [macos-15-intel, macos-14]
         openfoam-version: [2506, 2412]
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
-      build-os: ${{ matrix.build-os }}
       openfoam-version: ${{ matrix.openfoam-version }}
       app-version: ${{ inputs.app-version }}
       cache-build: ${{ github.event_name == 'workflow_dispatch' && inputs.cache-build || github.event_name != 'workflow_dispatch' }}

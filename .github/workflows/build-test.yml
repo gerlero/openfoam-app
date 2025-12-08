@@ -3,9 +3,6 @@ name: Build and test
 on:
   workflow_call:
     inputs:
-      build-os:
-        type: string
-        required: true
       openfoam-version:
         type: string
         default: ''
@@ -28,14 +25,6 @@ on:
         required: false
   workflow_dispatch:
     inputs:
-      build-os:
-        type: choice
-        required: true
-        description: Build using this macOS image
-        options:
-          - macos-15
-          - macos-15-intel
-          - macos-14
       openfoam-version:
         type: string
         default: ''
@@ -68,7 +57,7 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ inputs.build-os }}
+    runs-on: macos-14
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -108,11 +97,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [macos-15, macos-15-intel, macos-14]
-        exclude:
-          - os: ${{ inputs.build-os != 'macos-15-intel' && 'macos-15-intel' || ''}}
-          - os: ${{ inputs.build-os == 'macos-15-intel' && 'macos-14' || ''}}
-          - os: ${{ inputs.build-os == 'macos-15-intel' && 'macos-15' || ''}}
+        os: [macos-14, macos-15]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:

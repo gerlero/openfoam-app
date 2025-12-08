@@ -9,12 +9,10 @@ jobs:
   openfoam-dev-branch:
     strategy:
       matrix:
-        build-os: [macos-15-intel, macos-14]
         openfoam-git-branch: [master, develop]
       fail-fast: false
     uses: ./.github/workflows/build-test.yml
     with:
-      build-os: ${{ matrix.build-os }}
       app-name: OpenFOAM-${{ matrix.openfoam-git-branch }}
       app-version: ${{ matrix.openfoam-git-branch }}
       openfoam-git-branch: ${{ matrix.openfoam-git-branch }}
