@@ -12,7 +12,7 @@ OPENFOAM_PATCH_LEVEL = 0
 endif
 
 OPENFOAM_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION)$(if $(filter-out 0, $(OPENFOAM_PATCH_LEVEL)),_$(OPENFOAM_PATCH_LEVEL)).tgz
-OPENFOAM_GIT_REPO_URL = https://develop.openfoam.com/Development/openfoam.git
+OPENFOAM_GIT_REPO_URL = https://gitlab.com/openfoam/core/openfoam.git
 OPENFOAM_GIT_BRANCH =
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
 WMAKE_NJOBS =
