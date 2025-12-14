@@ -229,8 +229,12 @@ environment.tar: pixi pixi.lock
 pixi: $(pixi_binary_tar)
 	tar -xzf $(pixi_binary_tar) -C .
 
-$(pixi_binary_tar):
+$(pixi_binary_tar): | $(pixi_binary_tar).sha256
 	curl -L -o $(pixi_binary_tar) $(pixi_binary_url)
+	shasum -a 256 --check $(pixi_binary_tar).sha256
+
+$(pixi_binary_tar).sha256:
+	curl -L -o $(pixi_binary_tar).sha256 $(pixi_binary_url).sha256
 
 $(openfoam_tarball): | $(openfoam_tarball).sha256
 	curl -L -o $(openfoam_tarball) $(OPENFOAM_TARBALL_URL)
@@ -257,12 +261,12 @@ clean-build: clean-app
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(openfoam_tarball) $(pixi_binary_tar) pixi environment.tar
+	rm -f $(openfoam_tarball) $(openfoam_tarball).sha256 $(pixi_binary_tar) $(pixi_binary_tar).sha256 pixi environment.tar
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
-.SECONDARY: $(openfoam_tarball) $(pixi_binary_tar) pixi environment.tar $(icon_set_files)
+.SECONDARY: $(openfoam_tarball) $(openfoam_tarball).sha256 $(pixi_binary_tar) $(pixi_binary_tar).sha256 pixi environment.tar $(icon_set_files)
 .DELETE_ON_ERROR:
