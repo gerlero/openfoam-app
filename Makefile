@@ -23,11 +23,15 @@ DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = /Applications
 
 PIXI_VERSION = 0.61.0
+PIXI_AARCH64_SHA256 = 4aa381f945d003fece37bd2b87c341d0fd3c3b735675e9946a9ded5c6c0e4aba
+PIXI_X86_64_SHA256 = ca20787331875a977fca777896ff7220814f10146d2bcc69c0f3685cb42353a7
 
 ifeq ($(shell uname -m),arm64)
 pixi_binary_tar = pixi-aarch64-apple-darwin.tar.gz
+pixi_binary_sha256 = $(PIXI_AARCH64_SHA256)
 else
 pixi_binary_tar = pixi-$(shell uname -m)-apple-darwin.tar.gz
+pixi_binary_sha256 = $(PIXI_X86_64_SHA256)
 endif
 pixi_binary_url = https://github.com/prefix-dev/pixi/releases/download/v$(PIXI_VERSION)/$(pixi_binary_tar)
 ifndef OPENFOAM_GIT_BRANCH
@@ -231,6 +235,7 @@ pixi: $(pixi_binary_tar)
 
 $(pixi_binary_tar):
 	curl -L -o $(pixi_binary_tar) $(pixi_binary_url)
+	echo "$(pixi_binary_sha256)  $(pixi_binary_tar)" | shasum -a 256 --check || (rm -f $(pixi_binary_tar) && false)
 
 $(openfoam_tarball): | $(openfoam_tarball).sha256
 	curl -L -o $(openfoam_tarball) $(OPENFOAM_TARBALL_URL)
@@ -257,12 +262,12 @@ clean-build: clean-app
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(openfoam_tarball) $(pixi_binary_tar) pixi environment.tar
+	rm -f $(openfoam_tarball) $(openfoam_tarball).sha256 $(pixi_binary_tar) pixi environment.tar
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
-.SECONDARY: $(openfoam_tarball) $(pixi_binary_tar) pixi environment.tar $(icon_set_files)
+.SECONDARY: $(openfoam_tarball) $(openfoam_tarball).sha256 $(pixi_binary_tar) pixi environment.tar $(icon_set_files)
 .DELETE_ON_ERROR:
