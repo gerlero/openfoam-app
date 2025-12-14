@@ -22,6 +22,14 @@ APP_VERSION =
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = /Applications
 
+PIXI_VERSION = 0.61.0
+
+ifeq ($(shell uname -m),arm64)
+pixi_binary_tar = pixi-aarch64-apple-darwin.tar.gz
+else
+pixi_binary_tar = pixi-$(shell uname -m)-apple-darwin.tar.gz
+endif
+pixi_binary_url = https://github.com/prefix-dev/pixi/releases/download/v$(PIXI_VERSION)/$(pixi_binary_tar)
 ifndef OPENFOAM_GIT_BRANCH
 openfoam_tarball = sources/$(shell basename $(OPENFOAM_TARBALL_URL))
 endif
@@ -112,44 +120,44 @@ build/icon.iconset/icon_1024x1024.png: images/icon.png
 build/icon.iconset/icon_512x512@2x.png: build/icon.iconset/icon_1024x1024.png
 	cp build/icon.iconset/icon_1024x1024.png build/icon.iconset/icon_512x512@2x.png
 
-build/icon.iconset/icon_512x512.png: images/icon.png
+build/icon.iconset/icon_512x512.png: pixi images/icon.png
 	mkdir -p build/icon.iconset
-	magick images/icon.png -resize 512x512 build/icon.iconset/icon_512x512.png
+	./pixi run magick images/icon.png -resize 512x512 build/icon.iconset/icon_512x512.png
 
 build/icon.iconset/icon_256x256@2x.png: build/icon.iconset/icon_512x512.png
 	cp build/icon.iconset/icon_512x512.png build/icon.iconset/icon_256x256@2x.png
 
-build/icon.iconset/icon_256x256.png: images/icon.png
+build/icon.iconset/icon_256x256.png: pixi images/icon.png
 	mkdir -p build/icon.iconset
-	magick images/icon.png -resize 256x256 build/icon.iconset/icon_256x256.png
+	./pixi run magick images/icon.png -resize 256x256 build/icon.iconset/icon_256x256.png
 
 build/icon.iconset/icon_128x128@2x.png: build/icon.iconset/icon_256x256.png
 	cp build/icon.iconset/icon_256x256.png build/icon.iconset/icon_128x128@2x.png
 
-build/icon.iconset/icon_128x128.png: images/icon.png
+build/icon.iconset/icon_128x128.png: pixi images/icon.png
 	mkdir -p build/icon.iconset
-	magick images/icon.png -resize 128x128 build/icon.iconset/icon_128x128.png
+	./pixi run magick images/icon.png -resize 128x128 build/icon.iconset/icon_128x128.png
 
 build/icon.iconset/icon_64x64@2x.png: build/icon.iconset/icon_128x128.png
 	cp build/icon.iconset/icon_128x128.png build/icon.iconset/icon_64x64@2x.png
 
-build/icon.iconset/icon_64x64.png: images/icon.png
+build/icon.iconset/icon_64x64.png: pixi images/icon.png
 	mkdir -p build/icon.iconset
-	magick images/icon.png -resize 64x64 build/icon.iconset/icon_64x64.png
+	./pixi run magick images/icon.png -resize 64x64 build/icon.iconset/icon_64x64.png
 
 build/icon.iconset/icon_32x32@2x.png: build/icon.iconset/icon_64x64.png
 	cp build/icon.iconset/icon_64x64.png build/icon.iconset/icon_32x32@2x.png
 
-build/icon.iconset/icon_32x32.png: images/icon.png
+build/icon.iconset/icon_32x32.png: pixi images/icon.png
 	mkdir -p build/icon.iconset
-	magick images/icon.png -resize 32x32 build/icon.iconset/icon_32x32.png
+	./pixi run magick images/icon.png -resize 32x32 build/icon.iconset/icon_32x32.png
 
 build/icon.iconset/icon_16x16@2x.png: build/icon.iconset/icon_32x32.png
 	cp build/icon.iconset/icon_32x32.png build/icon.iconset/icon_16x16@2x.png
 
-build/icon.iconset/icon_16x16.png: images/icon.png
+build/icon.iconset/icon_16x16.png: pixi images/icon.png
 	mkdir -p build/icon.iconset
-	magick images/icon.png -resize 16x16 build/icon.iconset/icon_16x16.png
+	./pixi run magick images/icon.png -resize 16x16 build/icon.iconset/icon_16x16.png
 
 build/$(APP_NAME).app/Contents/Resources/LICENSE: LICENSE
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
@@ -185,7 +193,7 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	hdiutil detach $(volume)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-build/$(APP_NAME)-build.sparsebundle: $(openfoam_tarball) environment.tar configure.sh
+build/$(APP_NAME)-build.sparsebundle: $(openfoam_tarball) pixi environment.tar configure.sh
 	[ ! -d $(volume) ] || hdiutil detach $(volume)
 	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
 	mkdir -p build
@@ -205,7 +213,7 @@ else ifdef OPENFOAM_GIT_BRANCH
 	git -C $(volume) pull origin $(OPENFOAM_GIT_BRANCH)
 	git -C $(volume) submodule update --init --recursive
 endif
-	pixi-unpack --output-directory $(volume) environment.tar
+	./pixi run pixi-unpack --output-directory $(volume) environment.tar
 	rm -f $(volume)/activate.sh
 	cd $(volume) && "$(CURDIR)/configure.sh"
 	cd $(volume) \
@@ -215,8 +223,14 @@ endif
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	hdiutil detach $(volume)
 
-environment.tar: pixi.lock
-	pixi-pack --environment openfoam
+environment.tar: pixi pixi.lock
+	./pixi run pixi-pack --environment openfoam
+
+pixi: $(pixi_binary_tar)
+	tar -xzf $(pixi_binary_tar) -C .
+
+$(pixi_binary_tar):
+	curl -L -o $(pixi_binary_tar) $(pixi_binary_url)
 
 $(openfoam_tarball): | $(openfoam_tarball).sha256
 	curl -L -o $(openfoam_tarball) $(OPENFOAM_TARBALL_URL)
@@ -227,9 +241,9 @@ $(openfoam_tarball).sha256:
 
 
 # Non-build targets and rules
-test:
+test: pixi
 	[ ! -d $(volume) ] || hdiutil detach $(volume)	
-	build/$(APP_NAME).app/Contents/Resources/etc/openfoam pytest
+	./pixi run build/$(APP_NAME).app/Contents/Resources/etc/openfoam pytest
 	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(volume) ]
 
 clean-app:
@@ -239,15 +253,16 @@ clean-app:
 clean-build: clean-app
 	rm -f build/$(DIST_NAME).zip
 	rm -rf build/$(APP_NAME)-build.sparsebundle
+	rm -rf build/icon.iconset
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(openfoam_tarball) environment.tar
+	rm -f $(openfoam_tarball) $(pixi_binary_tar) pixi environment.tar
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
 
 # Set special targets
 .PHONY: app build deps fetch-source zip install test clean-app clean-build clean uninstall
-.SECONDARY: $(openfoam_tarball) environment.tar $(icon_set_files)
+.SECONDARY: $(openfoam_tarball) $(pixi_binary_tar) pixi environment.tar $(icon_set_files)
 .DELETE_ON_ERROR:
