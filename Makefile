@@ -229,12 +229,12 @@ environment.tar: pixi pixi.lock
 pixi: $(pixi_binary_tar)
 	tar -xzf $(pixi_binary_tar) -C .
 
-$(pixi_binary_tar): | $(pixi_binary_tar).sha256
+$(pixi_binary_tar): $(pixi_binary_tar).sha256
 	curl -L -o $(pixi_binary_tar) $(pixi_binary_url)
-	shasum -a 256 --check $(pixi_binary_tar).sha256
+	shasum -a 256 --check $(pixi_binary_tar).sha256 || (rm -f $(pixi_binary_tar) && false)
 
 $(pixi_binary_tar).sha256:
-	curl -L -o $(pixi_binary_tar).sha256 $(pixi_binary_url).sha256
+	curl -f -L -o $(pixi_binary_tar).sha256 $(pixi_binary_url).sha256
 
 $(openfoam_tarball): | $(openfoam_tarball).sha256
 	curl -L -o $(openfoam_tarball) $(OPENFOAM_TARBALL_URL)
