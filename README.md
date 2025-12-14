@@ -1,14 +1,15 @@
-[<img src="images/icon.png" width="175">](#)
+<div align="center">
+<img src="images/icon.png" width="200">
 
-# **OpenFOAM.app**: OpenFOAM for macOS
+# OpenFOAM.app
 
-**Native OpenFOAM as a Mac app**, with binaries compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam/-/blob/master/doc/Build.md). Intel and Apple silicon variants.
+**Native OpenFOAM as a Mac app**, compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam). Intel and Apple silicon variants.
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
 [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml)
 [![GitHub all releases](https://img.shields.io/github/downloads/gerlero/openfoam-app/total)](https://github.com/gerlero/openfoam-app/releases)
 [![homebrew cask](https://img.shields.io/badge/homebrew%20cask-gerlero%2Fopenfoam%2Fopenfoam-informational)](https://github.com/gerlero/homebrew-openfoam)
-
+</div>
 
 ## 🍏 Prerequisites
 
@@ -55,7 +56,7 @@
 
 Just open the **OpenFOAM** app to start an OpenFOAM session in a new Terminal window.
 
-<img src="images/screenshot.png" width="650">
+<div align="center"><img src="images/screenshot.png" width="650"></div>
 
 That's it! When using OpenFOAM, a read-only volume will be loaded and visible in the Finder. The OpenFOAM installation lives inside this virtual disk. When you're not actively using OpenFOAM, it is safe to "eject" the volume from the Finder sidebar.
 
