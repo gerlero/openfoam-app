@@ -102,7 +102,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Download app artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: app-${{ env.OPENFOAM }}-${{ runner.arch }}
           path: build
