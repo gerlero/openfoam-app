@@ -66,7 +66,7 @@ jobs:
           make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
       - name: Restore cached build
         id: cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: build/*.sparsebundle
           key: build-${{ env.OPENFOAM }}-${{ runner.arch }}-${{ hashFiles('make_build.txt', 'pixi.lock', 'configure.sh') }}
@@ -76,7 +76,7 @@ jobs:
           make build ${{ env.MAKE_VARS }}
       - name: Save build to cache
         if: steps.cache.outputs.cache-hit != 'true' && inputs.cache-build
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: build/*.sparsebundle
           key: ${{ steps.cache.outputs.cache-primary-key }}
