@@ -85,7 +85,7 @@ jobs:
           touch -c build/*.sparsebundle
           make zip ${{ env.MAKE_VARS }}
       - name: Upload app artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: app-${{ env.OPENFOAM }}-${{ runner.arch }}
           path: build/*-app-*.zip
