@@ -189,16 +189,15 @@ If you installed with Homebrew, uninstall with ``brew uninstall``. If you downlo
 
 ## 🔨 Building from source
 
-If you need to, building an **OpenFOAM.app** entirely from source is as easy as running:
+If you need to, building an **OpenFOAM.app** entirely from source is as easy as cloning this repository and running `make`, i.e.:
 
 ```sh
 git clone https://github.com/gerlero/openfoam-app.git
 cd openfoam-app
-pixi run make
+make
 ```
 
-[Pixi](https://pixi.sh/) and the Xcode Command Line Tools are required. See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
-
+The Xcode Command Line Tools are required (you will be prompted to install them if you don't have them). See the available configuration variables and alternative targets for `make` in the [`Makefile`](Makefile). Note that the compilation of OpenFOAM from source may take a while.
 
 ## 📄 Legal notices
 

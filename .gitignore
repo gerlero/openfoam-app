@@ -1,5 +1,7 @@
 /build
 *.tgz
+*.tar.gz
+pixi
 .pixi
 /environment.tar
 __pycache__

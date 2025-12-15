@@ -61,11 +61,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.9.3
       - name: Prepare caching
         run: |
-          pixi run make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
+          make build --dry-run ${{ env.MAKE_VARS }} > make_build.txt
       - name: Restore cached build
         id: cache
         uses: actions/cache/restore@v4
@@ -75,7 +73,7 @@ jobs:
       - name: Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          pixi run make build ${{ env.MAKE_VARS }}
+          make build ${{ env.MAKE_VARS }}
       - name: Save build to cache
         if: steps.cache.outputs.cache-hit != 'true' && inputs.cache-build
         uses: actions/cache/save@v4
@@ -85,7 +83,7 @@ jobs:
       - name: Make app
         run: |
           touch -c build/*.sparsebundle
-          pixi run make zip ${{ env.MAKE_VARS }}
+          make zip ${{ env.MAKE_VARS }}
       - name: Upload app artifact
         uses: actions/upload-artifact@v5
         with:
@@ -103,8 +101,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.9.3
       - name: Download app artifact
         uses: actions/download-artifact@v6
         with:
@@ -116,6 +112,6 @@ jobs:
         working-directory: build
       - name: Test
         run: |
-          pixi run make test ${{ env.MAKE_VARS }}
+          make test ${{ env.MAKE_VARS }}
         env:
           PRTE_MCA_rmaps_default_mapping_policy: ':oversubscribe'
