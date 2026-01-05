@@ -7,7 +7,7 @@
 |:-:|
 | ⚠️ Intel Macs are no longer supported. See the [Q&A](#-qa) for details. |
 
-**Native OpenFOAM as a Mac app**, compiled from the [OpenFOAM source code](https://develop.openfoam.com/Development/openfoam)
+**Native OpenFOAM as a Mac app**, compiled from the [OpenFOAM source code](https://gitlab.com/openfoam/core/openfoam)
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
 [![Release](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/release.yml)
@@ -104,7 +104,7 @@ Yes. Just a few things to keep in mind:
 
 <details><summary><b>What's the deal with case sensitivity?</b></summary>
 
-[OpenFOAM is notably developed with a case-sensitive filesystem in mind](https://develop.openfoam.com/Development/openfoam/-/issues/1602). This is a non-issue on Linux systems, which conventionally use case-sensitive filesystems. In practice, a case-sensitive filesystem means that two different files named `phi` and `Phi` in the same directory can exist just fine. In contrast, a case-_insensitive_ filesystem, as is the default on macOS, will only allow one of those files to exist in the same folder.
+[OpenFOAM is notably developed with a case-sensitive filesystem in mind](https://gitlab.com/openfoam/core/openfoam/-/issues/1602). This is a non-issue on Linux systems, which conventionally use case-sensitive filesystems. In practice, a case-sensitive filesystem means that two different files named `phi` and `Phi` in the same directory can exist just fine. In contrast, a case-_insensitive_ filesystem, as is the default on macOS, will only allow one of those files to exist in the same folder.
 
 This project gets around potential case-sensitivity issues by putting OpenFOAM itself inside a (read-only) disk image with its own case-sensitive filesystem, which is mounted as a virtual volume during use. This is enough to accommodate OpenFOAM, and for most purposes you can just use your regular filesystem for everything else (e.g. to store OpenFOAM cases).
 
