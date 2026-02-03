@@ -118,7 +118,10 @@ You are attempting something that requires development tools (e.g. a compiler), 
 
 Due to the fact that OpenFOAM currently fails to build for Intel on macOS 15 Sequoia and later (whether natively or through Rosetta 2), and limited resources preventing me from finding a working patch and/or accessing older macOS versions; starting with **OpenFOAM.app** 2.1.3, Intel Macs are no longer supported.
 
-This means that the last release compatible with Intel Macs is [**OpenFOAM.app** 2.1.2](https://github.com/gerlero/openfoam-app/releases/tag/v2.1.2) ([⬇️ OpenFOAM v2506](https://github.com/gerlero/openfoam-app/releases/download/v2.1.2/openfoam2506-app-x86_64.zip), [⬇️ OpenFOAM v2412](https://github.com/gerlero/openfoam-app/releases/download/v2.1.2/openfoam2412-app-x86_64.zip)).
+This means that the last release compatible with Intel Macs is [**OpenFOAM.app** 2.1.2](https://github.com/gerlero/openfoam-app/releases/tag/v2.1.2). You can install up to OpenFOAM v2506 through that release:
+
+* Homebrew: `brew install gerlero/openfoam/openfoam@2506`
+* [⬇️ OpenFOAM v2506](https://github.com/gerlero/openfoam-app/releases/download/v2.1.2/openfoam2506-app-x86_64.zip)
 
 Note that if you have an Intel-based Mac (especially one running macOS 14 or earlier), you _may_ be able to [build the app from source](#-building-from-source). If you find a way to get OpenFOAM to compile on Intel Macs running more current macOS versions, I'd be happy to hear about it!
 </details>
