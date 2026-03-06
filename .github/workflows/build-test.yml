@@ -95,7 +95,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [macos-14, macos-15]
+        os: [macos-14, macos-15, macos-26]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
