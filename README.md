@@ -3,10 +3,6 @@
 
 # OpenFOAM.app
 
-| 🎉  [OpenFOAM v2512 is now available!](#-install) |
-|:-:|
-| ⚠️ Intel Macs are no longer supported. See the [Q&A](#-qa) for details. |
-
 **Native OpenFOAM as a Mac app**, compiled from the [OpenFOAM source code](https://gitlab.com/openfoam/core/openfoam)
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
