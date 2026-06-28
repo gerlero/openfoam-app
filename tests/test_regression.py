@@ -13,9 +13,11 @@ async def step():
         yield clone
 
 @pytest.mark.asyncio_cooperative
-async def test_step(step):
+async def test_step(step): # https://github.com/gerlero/openfoam-app/issues/5
     await step.run()
-    assert "FOAM Warning" not in (step.path / "log.simpleFoam").read_text()
+    log = (step.path / "log.simpleFoam").read_text()
+    assert "Could not load" not in log
+    assert "Unknown function type" not in log
 
 @pytest.mark.skipif(int(os.environ["FOAM_API"]) > 2312, reason="cfMesh removed from default installation")
 def test_cf_mesh(): # https://github.com/gerlero/openfoam-app/issues/88
