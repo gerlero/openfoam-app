@@ -18,7 +18,7 @@ llvm-openmp = ">=19.1.1"
 openmpi = ">=5.0.5"
 fftw = ">=3.3.10"
 scotch = ">=7.0.5"
-cgal-cpp = ">=5.6.1,<6"
+cgal-cpp = ">=5.6.1"
 bash = ">=5.2.21"
 
 [feature.openfoam.target.osx-64.dependencies]
