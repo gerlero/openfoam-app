@@ -5,9 +5,6 @@ description = "Native OpenFOAM for macOS"
 name = "openfoam-app"
 platforms = ["osx-arm64", "osx-64"]
 
-[system-requirements]
-macos = "11"
-
 [dependencies]
 pixi-pack = ">=0.7.0"
 pixi-unpack = ">=0.7.0"
