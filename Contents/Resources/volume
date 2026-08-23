@@ -75,7 +75,7 @@ case "$1" in
             if [ ! -f "$volume_id_file" ] || [ "$volume_id" != "$(< "$volume_id_file")" ]; then
                 if $force; then
                     $quiet || echo "Ejecting different volume already mounted at $volume..."
-                    if ! hdiutil detach -quiet "$volume" -force; then
+                    if ! diskutil quiet eject force "$volume"; then
                         echo "ERROR: Failed to force eject a different volume at $volume" 1>&2
                         exit 1
                     fi
@@ -88,7 +88,7 @@ case "$1" in
             $quiet || echo "The $app_name volume is already mounted."
         else
             $quiet || echo "Mounting the $app_name volume..."
-            if ! hdiutil attach -quiet -noverify "$dmg_file"; then
+            if ! diskutil quiet image attach "$dmg_file"; then
                 echo "ERROR: Failed to mount the $app_name volume" 1>&2
                 exit 1
             fi
@@ -108,7 +108,7 @@ case "$1" in
         fi
         if $force; then
             $quiet || echo "Ejecting the volume at $volume..."
-            if ! hdiutil detach -quiet "$volume" -force; then
+            if ! diskutil quiet eject force "$volume"; then
                 echo "ERROR: Failed to force eject the volume at $volume" 1>&2
                 exit 1
             fi
@@ -118,7 +118,7 @@ case "$1" in
                 exit 0
             fi
             $quiet || echo "Ejecting the $app_name volume..."
-            if ! hdiutil detach -quiet "$volume"; then
+            if ! diskutil quiet eject "$volume"; then
                 echo "ERROR: Failed to eject the $app_name volume" 1>&2
                 echo "The volume is probably in use (use -force to override)" 1>&2
                 exit 1
