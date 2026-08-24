@@ -91,12 +91,12 @@ build/$(APP_NAME).app/Contents/Resources/etc/openfoam: Contents/Resources/etc/op
 build/$(APP_NAME).app/Contents/Resources/volume: Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
 	cp Contents/Resources/volume build/$(APP_NAME).app/Contents/Resources/
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
-	hdiutil attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	[ ! -d $(volume) ] || diskutil eject $(volume)
+	diskutil image attach build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	cat $(volume_id_file)
 	sed -i '' "s|{{app_name}}|$(APP_NAME)|g" build/$(APP_NAME).app/Contents/Resources/volume
 	sed -i '' "s|{{volume_id}}|$$(cat $(volume_id_file))|g" build/$(APP_NAME).app/Contents/Resources/volume
-	hdiutil detach $(volume)
+	diskutil eject $(volume)
 
 icon_set_files = \
 	build/icon.iconset/icon_1024x1024.png \
@@ -172,7 +172,7 @@ build/$(APP_NAME).app/Contents/%: Contents/%
 	cp -a $< $@
 
 build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-build.sparsebundle build/$(APP_NAME).app/Contents/Resources/icon.icns
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
+	[ ! -d $(volume) ] || diskutil eject $(volume)
 	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
 	hdiutil attach \
 		build/$(APP_NAME)-build.sparsebundle \
@@ -187,27 +187,27 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	rm -f $(volume)/**/.DS_Store
 	rm -rf $(volume)/.fseventsd
 	mkdir -p build/$(APP_NAME).app/Contents/Resources
+	rm -f build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
 	hdiutil create \
 		-format $(DMG_FORMAT) \
 		-fs $(VOLUME_FILESYSTEM) \
 		-srcfolder $(volume) \
 		-nocrossdev \
-		build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg \
-		-ov
-	hdiutil detach $(volume)
+		build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg
+	diskutil eject $(volume)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
 build/$(APP_NAME)-build.sparsebundle: $(openfoam_tarball) pixi environment.tar configure.sh
-	[ ! -d $(volume) ] || hdiutil detach $(volume)
+	[ ! -d $(volume) ] || diskutil eject $(volume)
 	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
+	rm -rf build/$(APP_NAME)-build.sparsebundle
 	mkdir -p build
 	hdiutil create \
 		-size 50g \
 		-fs $(VOLUME_FILESYSTEM) \
 		-volname $(APP_NAME) \
-		build/$(APP_NAME)-build.sparsebundle \
-		-ov
-	hdiutil attach build/$(APP_NAME)-build.sparsebundle
+		build/$(APP_NAME)-build.sparsebundle
+	diskutil image attach build/$(APP_NAME)-build.sparsebundle
 ifdef openfoam_tarball
 	tar -xzf $(openfoam_tarball) --strip-components 1 -C $(volume)
 else ifdef OPENFOAM_GIT_BRANCH
@@ -225,7 +225,7 @@ endif
 		&& foamSystemCheck \
 		&& ( ./Allwmake -j $(WMAKE_NJOBS) -s -q -k || true ) \
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
-	hdiutil detach $(volume)
+	diskutil eject $(volume)
 
 environment.tar: pixi pixi.lock
 	./pixi run pixi-pack --environment openfoam
@@ -245,12 +245,12 @@ $(openfoam_tarball).sha256:
 
 # Non-build targets and rules
 test: pixi
-	[ ! -d $(volume) ] || hdiutil detach $(volume)	
+	[ ! -d $(volume) ] || diskutil eject $(volume)	
 	./pixi run build/$(APP_NAME).app/Contents/Resources/etc/openfoam pytest
-	build/$(APP_NAME).app/Contents/Resources/volume eject && [ ! -d $(volume) ]
+	diskutil eject $(volume) && [ ! -d $(volume) ]
 
 clean-app:
-	[ ! -d $(volume) ] || hdiutil detach $(volume)	
+	[ ! -d $(volume) ] || diskutil eject $(volume)	
 	rm -rf build/$(APP_NAME).app build/$(APP_NAME)-build.sparsebundle.shadow
 
 clean-build: clean-app
