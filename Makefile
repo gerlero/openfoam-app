@@ -124,42 +124,42 @@ build/icon.iconset/icon_1024x1024.png: images/icon.png
 build/icon.iconset/icon_512x512@2x.png: build/icon.iconset/icon_1024x1024.png
 	cp build/icon.iconset/icon_1024x1024.png build/icon.iconset/icon_512x512@2x.png
 
-build/icon.iconset/icon_512x512.png: pixi images/icon.png
+build/icon.iconset/icon_512x512.png: images/icon.png | pixi
 	mkdir -p build/icon.iconset
 	./pixi run magick images/icon.png -resize 512x512 build/icon.iconset/icon_512x512.png
 
 build/icon.iconset/icon_256x256@2x.png: build/icon.iconset/icon_512x512.png
 	cp build/icon.iconset/icon_512x512.png build/icon.iconset/icon_256x256@2x.png
 
-build/icon.iconset/icon_256x256.png: pixi images/icon.png
+build/icon.iconset/icon_256x256.png: images/icon.png | pixi
 	mkdir -p build/icon.iconset
 	./pixi run magick images/icon.png -resize 256x256 build/icon.iconset/icon_256x256.png
 
 build/icon.iconset/icon_128x128@2x.png: build/icon.iconset/icon_256x256.png
 	cp build/icon.iconset/icon_256x256.png build/icon.iconset/icon_128x128@2x.png
 
-build/icon.iconset/icon_128x128.png: pixi images/icon.png
+build/icon.iconset/icon_128x128.png: images/icon.png | pixi
 	mkdir -p build/icon.iconset
 	./pixi run magick images/icon.png -resize 128x128 build/icon.iconset/icon_128x128.png
 
 build/icon.iconset/icon_64x64@2x.png: build/icon.iconset/icon_128x128.png
 	cp build/icon.iconset/icon_128x128.png build/icon.iconset/icon_64x64@2x.png
 
-build/icon.iconset/icon_64x64.png: pixi images/icon.png
+build/icon.iconset/icon_64x64.png: images/icon.png | pixi
 	mkdir -p build/icon.iconset
 	./pixi run magick images/icon.png -resize 64x64 build/icon.iconset/icon_64x64.png
 
 build/icon.iconset/icon_32x32@2x.png: build/icon.iconset/icon_64x64.png
 	cp build/icon.iconset/icon_64x64.png build/icon.iconset/icon_32x32@2x.png
 
-build/icon.iconset/icon_32x32.png: pixi images/icon.png
+build/icon.iconset/icon_32x32.png: images/icon.png | pixi
 	mkdir -p build/icon.iconset
 	./pixi run magick images/icon.png -resize 32x32 build/icon.iconset/icon_32x32.png
 
 build/icon.iconset/icon_16x16@2x.png: build/icon.iconset/icon_32x32.png
 	cp build/icon.iconset/icon_32x32.png build/icon.iconset/icon_16x16@2x.png
 
-build/icon.iconset/icon_16x16.png: pixi images/icon.png
+build/icon.iconset/icon_16x16.png: images/icon.png | pixi
 	mkdir -p build/icon.iconset
 	./pixi run magick images/icon.png -resize 16x16 build/icon.iconset/icon_16x16.png
 
@@ -197,7 +197,7 @@ build/$(APP_NAME).app/Contents/Resources/$(APP_NAME).dmg: build/$(APP_NAME)-buil
 	diskutil eject $(volume)
 	rm build/$(APP_NAME)-build.sparsebundle.shadow
 
-build/$(APP_NAME)-build.sparsebundle: $(openfoam_tarball) pixi environment.tar configure.sh
+build/$(APP_NAME)-build.sparsebundle: $(openfoam_tarball) environment.tar configure.sh | pixi
 	[ ! -d $(volume) ] || diskutil eject $(volume)
 	rm -f build/$(APP_NAME)-build.sparsebundle.shadow
 	rm -rf build/$(APP_NAME)-build.sparsebundle
@@ -227,7 +227,7 @@ endif
 		&& ./Allwmake -j $(WMAKE_NJOBS) -s
 	diskutil eject $(volume)
 
-environment.tar: pixi pixi.lock
+environment.tar: pixi.lock | pixi
 	./pixi run pixi-pack --environment openfoam
 
 pixi:
@@ -244,7 +244,7 @@ $(openfoam_tarball).sha256:
 
 
 # Non-build targets and rules
-test: pixi
+test: | pixi
 	[ ! -d $(volume) ] || diskutil eject $(volume)	
 	./pixi run build/$(APP_NAME).app/Contents/Resources/etc/openfoam pytest
 	diskutil eject $(volume) && [ ! -d $(volume) ]
