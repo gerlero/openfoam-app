@@ -3,7 +3,7 @@ authors = ["Gabriel S. Gerlero <ggerlero@cimec.unl.edu.ar>"]
 channels = ["conda-forge"]
 description = "Native OpenFOAM for macOS"
 name = "openfoam-app"
-platforms = ["osx-arm64", "osx-64"]
+platforms = [{platform = "osx-arm64", macos = "14"}, "osx-64"]
 
 [dependencies]
 pixi-pack = ">=0.7.0"
