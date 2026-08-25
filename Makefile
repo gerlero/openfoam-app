@@ -260,7 +260,7 @@ clean-build: clean-app
 	rmdir build || true
 
 clean: clean-build
-	rm -f $(openfoam_tarball) $(openfoam_tarball).sha256 pixi environment.tar
+	rm -f $(openfoam_tarball) pixi environment.tar
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
