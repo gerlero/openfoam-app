@@ -3,9 +3,6 @@
 
 # OpenFOAM.app
 
-| 🎉  [OpenFOAM v2606 is now available!](#-install) |
-| ---- |
-
 **Native OpenFOAM as a Mac app**, compiled from the [OpenFOAM source code](https://gitlab.com/openfoam/core/openfoam)
 
 [![CI](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gerlero/openfoam-app/actions/workflows/ci.yml)
@@ -40,7 +37,7 @@ _Intel Mac? Running an older version of macOS? [See here](#-qa)_
             brew install gerlero/openfoam/openfoam@2606
             ```
 
-        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2606-app-arm64.zip)
+        * Or: [⬇️ manual download](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2606-app-arm64.zip)
 
     * **OpenFOAM v2512**
 
@@ -50,7 +47,7 @@ _Intel Mac? Running an older version of macOS? [See here](#-qa)_
             brew install gerlero/openfoam/openfoam@2512
             ```
 
-        * Manual download: [⬇️ Apple silicon](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2512-app-arm64.zip)
+        * Or: [⬇️ manual download](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2512-app-arm64.zip)
 
     * _Need an older version of OpenFOAM? [See here](#-qa)_
 
