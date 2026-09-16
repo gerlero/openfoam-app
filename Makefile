@@ -261,6 +261,7 @@ clean-build: clean-app
 
 clean: clean-build
 	rm -f $(openfoam_tarball) pixi environment.tar
+	rm -rf .pixi
 
 uninstall:
 	rm -rf $(INSTALL_DIR)/$(APP_NAME).app
