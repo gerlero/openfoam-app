@@ -3,7 +3,7 @@ authors = ["Gabriel S. Gerlero <ggerlero@cimec.unl.edu.ar>"]
 channels = ["conda-forge"]
 description = "Native OpenFOAM for macOS"
 name = "openfoam-app"
-platforms = [{platform = "osx-arm64", macos = "14"}, "osx-64"]
+platforms = [{platform = "osx-arm64", macos = "14"}]
 
 [dependencies]
 pixi-pack = ">=0.7.0"
@@ -20,11 +20,6 @@ fftw = ">=3.3.10"
 scotch = ">=7.0.5"
 cgal-cpp = ">=5.6.1"
 bash = ">=5.2.21"
-
-[feature.openfoam.target.osx-64.dependencies]
-blas = { version = ">=2.128,<3", build = "blis" }
-
-[feature.openfoam.target.osx-arm64.dependencies]
 blas = { version = ">=2.128,<3", build = "accelerate" }
 
 [environments]
