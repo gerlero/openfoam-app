@@ -3,15 +3,7 @@ SHELL = /bin/bash
 OPENFOAM_VERSION = 2606
 APP_NAME = OpenFOAM-v$(OPENFOAM_VERSION)
 
-ifeq ($(OPENFOAM_VERSION),2112)
-OPENFOAM_PATCH_LEVEL = 220610
-else ifeq ($(OPENFOAM_VERSION),2212)
-OPENFOAM_PATCH_LEVEL = 230612
-else
-OPENFOAM_PATCH_LEVEL = 0
-endif
-
-OPENFOAM_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION)$(if $(filter-out 0, $(OPENFOAM_PATCH_LEVEL)),_$(OPENFOAM_PATCH_LEVEL)).tgz
+OPENFOAM_TARBALL_URL = https://dl.openfoam.com/source/v$(OPENFOAM_VERSION)/OpenFOAM-v$(OPENFOAM_VERSION).tgz
 OPENFOAM_GIT_REPO_URL = https://gitlab.com/openfoam/core/openfoam.git
 OPENFOAM_GIT_BRANCH =
 VOLUME_FILESYSTEM = 'Case-sensitive APFS'
@@ -23,16 +15,9 @@ DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = /Applications
 
 PIXI_VERSION = 0.77.1
-PIXI_AARCH64_SHA256 = d26a9d6b70aca19f0714e66a5d702278e0906447c3bf21772618b43f65a4305c
-PIXI_X86_64_SHA256 = 40998e6ff4358a18c3d04eb16afdc8a7235eca4eb14a1365e3e15c91f055ced7
+PIXI_SHA256 = d26a9d6b70aca19f0714e66a5d702278e0906447c3bf21772618b43f65a4305c
 
-ifeq ($(shell uname -m),arm64)
 pixi_binary_url = https://github.com/prefix-dev/pixi/releases/download/v$(PIXI_VERSION)/pixi-aarch64-apple-darwin
-pixi_binary_sha256 = $(PIXI_AARCH64_SHA256)
-else
-pixi_binary_url = https://github.com/prefix-dev/pixi/releases/download/v$(PIXI_VERSION)/pixi-$(shell uname -m)-apple-darwin
-pixi_binary_sha256 = $(PIXI_X86_64_SHA256)
-endif
 
 ifndef OPENFOAM_GIT_BRANCH
 openfoam_tarball = sources/$(shell basename $(OPENFOAM_TARBALL_URL))
@@ -232,7 +217,7 @@ environment.tar: pixi.lock | pixi
 
 pixi:
 	curl -L -o pixi $(pixi_binary_url)
-	echo "$(pixi_binary_sha256)  pixi" | shasum -a 256 --check || (rm -f pixi && false)
+	echo "$(PIXI_SHA256)  pixi" | shasum -a 256 --check || (rm -f pixi && false)
 	chmod +x pixi
 
 $(openfoam_tarball): | $(openfoam_tarball).sha256
