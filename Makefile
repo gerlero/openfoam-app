@@ -14,8 +14,8 @@ APP_VERSION =
 DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
 INSTALL_DIR = /Applications
 
-PIXI_VERSION = 0.77.1
-PIXI_SHA256 = d26a9d6b70aca19f0714e66a5d702278e0906447c3bf21772618b43f65a4305c
+PIXI_VERSION = 0.84.2
+PIXI_SHA256 = 86b4e47c6fbbf3da8aa47a2ad8ea2e1ec3f505ecf6d7d4c4fdaa203071690148
 
 pixi_binary_url = https://github.com/prefix-dev/pixi/releases/download/v$(PIXI_VERSION)/pixi-aarch64-apple-darwin
 
