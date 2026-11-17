@@ -1,6 +1,6 @@
 version: 7
 platforms:
-- name: p1
+- name: osx-arm64-macos-14
   subdir: osx-arm64
   virtual-packages:
   - __osx=14
@@ -11,7 +11,7 @@ environments:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
     packages:
-      p1:
+      osx-arm64-macos-14:
       - conda: https://conda.anaconda.org/conda-forge/noarch/adwaita-icon-theme-51.0-unix_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/aioshutil-1.6-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.23-hbd8a1cb_0.conda
@@ -141,7 +141,7 @@ environments:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
     packages:
-      p1:
+      osx-arm64-macos-14:
       - conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.10.23-hbd8a1cb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/libboost-headers-1.90.0-h707e725_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/mpi-1.0.1-openmpi.conda
