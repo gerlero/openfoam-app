@@ -14,7 +14,7 @@
 ## 🍏 Prerequisites
 
 * An Apple silicon Mac
-* macOS 14 Sonoma or later
+* macOS 15 Sequoia or later
 
 _Intel Mac? Running an older version of macOS? [See here](#-qa)_
 
@@ -125,6 +125,8 @@ If you cannot upgrade to a newer macOS, you still have a couple of alternatives:
 * **Try [installing the latest release](#-install) anyway.** The [required macOS versions](#-prerequisites) are those on which the latest release has been tested and is known to work. It is possible that the app will work too on some previous versions of macOS, but due to limited resources I cannot test with older OS versions
 
 * Download an older release that was tested with your configuration:
+
+    * Apple silicon — last release tested with macOS 14 Sonoma: [**OpenFOAM.app** 2.2.3](https://github.com/gerlero/openfoam-app/releases/tag/v2.2.3) ([⬇️ OpenFOAM v2606](https://github.com/gerlero/openfoam-app/releases/download/v2.2.3/openfoam2606-app-arm64.zip), [⬇️ OpenFOAM v2512](https://github.com/gerlero/openfoam-app/releases/download/v2.2.3/openfoam2512-app-arm64.zip))
 
     * Apple silicon — last release tested with macOS 13 Ventura: [**OpenFOAM.app** 1.10.2](https://github.com/gerlero/openfoam-app/releases/tag/v1.10.2) ([⬇️ OpenFOAM v2306](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2306-app-standalone-arm64.zip), [⬇️ OpenFOAM v2212](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2212-app-standalone-arm64.zip), [⬇️ OpenFOAM v2206](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2206-app-standalone-arm64.zip), [⬇️ OpenFOAM v2112](https://github.com/gerlero/openfoam-app/releases/download/v1.10.2/openfoam2112-app-standalone-arm64.zip))
 
