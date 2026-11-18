@@ -37,7 +37,7 @@ _Intel Mac? Running an older version of macOS? [See here](#-qa)_
             brew install gerlero/openfoam/openfoam@2606
             ```
 
-        * Or: [⬇️ manual download](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2606-app-arm64.zip)
+        * Or: [⬇️ manual download](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2606-app.zip)
 
     * **OpenFOAM v2512**
 
@@ -47,7 +47,7 @@ _Intel Mac? Running an older version of macOS? [See here](#-qa)_
             brew install gerlero/openfoam/openfoam@2512
             ```
 
-        * Or: [⬇️ manual download](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2512-app-arm64.zip)
+        * Or: [⬇️ manual download](https://github.com/gerlero/openfoam-app/releases/latest/download/openfoam2512-app.zip)
 
     * _Need an older version of OpenFOAM? [See here](#-qa)_
 

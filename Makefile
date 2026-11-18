@@ -11,7 +11,7 @@ WMAKE_NJOBS =
 DMG_FORMAT = UDRO
 APP_HOMEPAGE = https://github.com/gerlero/openfoam-app
 APP_VERSION =
-DIST_NAME = openfoam$(OPENFOAM_VERSION)-app-$(shell uname -m)
+DIST_NAME = openfoam$(OPENFOAM_VERSION)-app
 INSTALL_DIR = /Applications
 
 PIXI_VERSION = 0.84.2
@@ -62,7 +62,7 @@ build/$(APP_NAME).app/Contents/Info.plist:
 	mkdir -p build
 	osacompile -o build/$(APP_NAME).app launch.applescript
 	plutil -replace CFBundleDevelopmentRegion -string "en" $@
-	plutil -insert CFBundleVersion -string "$(APP_VERSION)-$(DEPENDENCIES_KIND)-$(shell uname -m)" $@
+	plutil -insert CFBundleVersion -string "$(APP_VERSION)" $@
 	plutil -insert CFBundleShortVersionString -string "$(APP_VERSION)" $@
 	plutil -replace CFBundleIconFile -string "icon.icns" $@
 	rm build/$(APP_NAME).app/Contents/Resources/applet.icns
