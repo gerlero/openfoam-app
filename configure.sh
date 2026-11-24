@@ -52,6 +52,6 @@ echo 'setenv INFOPATH "$WM_PROJECT_DIR/env/share/info`[ ${?INFOPATH} == 1 ] && e
 echo 'PROJECT_RPATH += -rpath @loader_path/../../../env/lib' >> wmake/rules/darwin64/rpath
 
 
-# Workaround for https://develop.openfoam.com/Development/openfoam/-/issues/2958
+# Workaround for https://gitlab.com/openfoam/core/openfoam/-/work_items/2958
 sed -i '' 's|-ftrapping-math|-ftrapping-math -ffp-contract=off|' wmake/rules/darwin64Clang/c
 sed -i '' 's|-ftrapping-math|-ftrapping-math -ffp-contract=off|' wmake/rules/darwin64Clang/c++
